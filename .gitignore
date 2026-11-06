@@ -1,0 +1,26 @@
+
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.csproj.user
+
+# Build results
+**/bin/
+**/obj/
+
+# User Secrets
+**/secrets.json
+
+# Test results
+**/TestResults/
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.cache
+

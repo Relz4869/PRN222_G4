@@ -1,0 +1,96 @@
+﻿
+@model FEMS.ViewModels.Account.LoginViewModel
+
+@{
+    Layout = "~/Views/Shared/_AuthLayout.cshtml";
+    ViewData["Title"] = "Login";
+}
+
+<div class="auth-container">
+
+    <!-- Left panel -->
+    <section class="auth-brand">
+        <div class="auth-brand-content">
+
+            <h1>
+                Tài chính hộ gia đình
+                <br />
+                ở một nơi duy nhất
+            </h1>
+
+            <p>
+                Quản lý ví cá nhân, đặt hạn mức chi tiêu,
+                <br />
+                theo dõi báo cáo và nhận cảnh báo tức thì.
+            </p>
+
+            <div class="auth-brand-logo">
+                FEMS Wallet
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Right panel -->
+    <section class="auth-form-section">
+        <div class="auth-form">
+
+            <h2>Đăng nhập</h2>
+
+            <form asp-controller="Account"
+                  asp-action="Login"
+                  method="post">
+
+                <div asp-validation-summary="ModelOnly"
+                     class="auth-validation">
+                </div>
+
+                <div class="auth-group">
+                    <label asp-for="Email">Email</label>
+
+                    <input asp-for="Email"
+                           class="auth-input"
+                           placeholder="Nhập email"
+                           autocomplete="username" />
+
+                    <span asp-validation-for="Email"
+                          class="auth-field-error">
+                    </span>
+                </div>
+
+                <div class="auth-group">
+                    <label asp-for="Password">Mật khẩu</label>
+
+                    <input asp-for="Password"
+                           class="auth-input"
+                           placeholder="Nhập mật khẩu"
+                           autocomplete="current-password" />
+
+                    <span asp-validation-for="Password"
+                          class="auth-field-error">
+                    </span>
+                </div>
+
+                <a href="#" class="auth-link">
+                    Quên mật khẩu? (Forgot Password)
+                </a>
+
+                <button type="submit" class="auth-button">
+                    Đăng nhập
+                </button>
+
+                <div class="auth-footer">
+                    Chưa có tài khoản?
+                    <span>Đăng ký ngay</span>
+                </div>
+
+            </form>
+
+        </div>
+    </section>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
