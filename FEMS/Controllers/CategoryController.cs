@@ -98,10 +98,10 @@ namespace FEMS.Controllers
         // POST: /Category/ToggleStatus (Xử lý nút Tắt / Khôi phục)
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ToggleStatus(int id, string status)
+        public async Task<IActionResult> ToggleStatus(int id, string status, int page = 1, string? search = null, string? statusFilter = null)
         {
             await _categoryService.ChangeStatusAsync(id, status);
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", new { page, search, status = statusFilter });
         }
     }
 }
