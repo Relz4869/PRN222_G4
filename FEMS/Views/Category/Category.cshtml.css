@@ -1,0 +1,88 @@
+/* CSS for Category view */
+
+.category-page {
+    background-color: #f5f8f7;
+    padding: 20px;
+    border-radius: 12px;
+}
+
+.text-fems {
+    color: #0d7a5f;
+}
+
+.bg-fems {
+    background-color: #0d7a5f;
+    color: #ffffff;
+}
+
+.btn-fems {
+    background-color: #0d7a5f;
+    color: #ffffff;
+    font-weight: 600;
+    border: none;
+}
+
+.btn-fems:hover {
+    background-color: #095c47;
+    color: #ffffff;
+}
+
+.card-custom {
+    background-color: #ffffff;
+    border: 1px solid #e4ece9;
+    border-radius: 16px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+}
+
+.owner-box {
+    background-color: #f3f7f9;
+    border-radius: 12px;
+    padding: 12px;
+}
+
+/* Cố định kích thước khung bảng ở mức 7 danh mục */
+.table-fixed-7 {
+    min-height: 410px;
+}
+
+.table-fixed-7 tbody tr {
+    height: 52px;
+}
+
+/* Cố định chiều rộng các cột trong bảng */
+.table-category {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.col-stt {
+    width: 8%;
+}
+
+.col-name {
+    width: 24%;
+}
+
+.col-desc {
+    width: 34%;
+}
+
+.col-status {
+    width: 14%;
+}
+
+.col-action {
+    width: 20%;
+}
+
+/* Mặc định xuống dòng theo dấu cách; từ dài >= 8 ký tự xuống dòng tự do */
+.text-wrap-cell {
+    white-space: normal;
+    word-break: normal;
+    overflow-wrap: break-word;
+}
+
+.long-word,
+::deep .long-word {
+    word-break: break-all;
+}

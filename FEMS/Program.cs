@@ -23,9 +23,11 @@ namespace FEMS
             );
             // Repository Registration
             builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 
             // Service Registration
             builder.Services.AddScoped<IAccountService, AccountService>();
+            builder.Services.AddScoped<ICategoryService, CategoryService>();
 
             // Authentication Configuration
             builder.Services
