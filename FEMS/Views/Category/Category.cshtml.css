@@ -40,9 +40,9 @@
     padding: 12px;
 }
 
-/* Cố định kích thước khung bảng ở mức 7 danh mục */
+/* Cố định kích thước khung bảng ở mức 5 danh mục */
 .table-fixed-7 {
-    min-height: 410px;
+    min-height: 305px;
 }
 
 .table-fixed-7 tbody tr {

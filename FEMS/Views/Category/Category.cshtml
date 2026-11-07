@@ -7,8 +7,8 @@
     int activeCount = Model.Categories.Count(c => c.Status == "Active");
     int inactiveCount = Model.Categories.Count(c => c.Status == "Inactive");
 
-    // Cấu hình phân trang: 7 danh mục / 1 trang
-    int pageSize = 7;
+    // Cấu hình phân trang: 5 danh mục / 1 trang
+    int pageSize = 5;
     int currentPage = ViewBag.CurrentPage ?? 1;
     int totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
     if (totalPages < 1) totalPages = 1;
@@ -23,21 +23,13 @@
 
 <div class="category-page">
 
-    <!-- Đường dẫn Breadcrumb -->
-    <div class="small text-muted mb-1">
-        FEMS &gt; Ví cá nhân &gt; <span class="text-fems fw-bold">Danh mục chi tiêu cá nhân</span>
-    </div>
-
     <!-- Tiêu đề trang & Thống kê -->
     <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
         <div>
             <h2 class="fw-bold mb-1">Quản lý Danh mục Cá nhân</h2>
-            <p class="text-muted small mb-0">
-                Quản lý và cá nhân hóa các danh mục chi tiêu cho ví cá nhân của bạn (@User.Identity?.Name)
-            </p>
         </div>
 
-        <div class="d-flex gap-2 mt-2 mt-md-0">
+        <div id="categoryStats" class="d-flex gap-2 mt-2 mt-md-0">
             <span class="badge bg-white text-dark border px-3 py-2 rounded-pill">
                 📁 Tổng danh mục: <strong>@totalCount</strong>
             </span>
@@ -69,9 +61,6 @@
                 <div class="owner-box d-flex justify-content-between align-items-center mb-3">
                     <div>
                         <div class="fw-bold small">@User.Identity?.Name (Bạn)</div>
-                        <div class="text-muted" style="font-size: 12px;">
-                            Ví cá nhân chính • HouseholdMemberID: @Model.HouseholdMemberId
-                        </div>
                     </div>
                     <span class="badge bg-fems">Chủ sở hữu</span>
                 </div>
@@ -86,7 +75,6 @@
                             <label asp-for="CategoryName" class="form-label fw-bold small">
                                 Tên danh mục cá nhân <span class="text-danger">*</span>
                             </label>
-                            <span class="text-muted small">CategoryName</span>
                         </div>
                         <input asp-for="CategoryName"
                                class="form-control"
@@ -94,35 +82,16 @@
                         <span asp-validation-for="CategoryName" class="text-danger small"></span>
                     </div>
 
-                    <div class="mb-3">
+                    <div class="mb-4">
                         <div class="d-flex justify-content-between">
                             <label asp-for="Description" class="form-label fw-bold small">
                                 Mô tả mục đích chi tiêu
                             </label>
-                            <span class="text-muted small">Description</span>
                         </div>
                         <textarea asp-for="Description"
                                   rows="3"
                                   class="form-control"
                                   placeholder="Ví dụ: Chi phí ăn sáng trưa công sở, xăng xe đi làm..."></textarea>
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="form-label fw-bold small">Trạng thái danh mục</label>
-                        <div class="owner-box d-flex gap-4">
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" asp-for="Status" value="Active" id="statusActive" />
-                                <label class="form-check-label small fw-semibold" for="statusActive">
-                                    Hoạt động (Active)
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" asp-for="Status" value="Inactive" id="statusInactive" />
-                                <label class="form-check-label small fw-semibold" for="statusInactive">
-                                    Vô hiệu hóa
-                                </label>
-                            </div>
-                        </div>
                     </div>
 
                     <button type="submit" class="btn btn-fems w-100 py-2">
@@ -141,7 +110,7 @@
         </div>
 
         <!-- CỘT PHẢI: DANH SÁCH DANH MỤC -->
-        <div class="col-md-8">
+        <div id="categoryListArea" class="col-md-8">
             <div class="card card-custom p-4">
 
                 <!-- Thanh tiêu đề & Bộ lọc tìm kiếm -->
@@ -168,13 +137,13 @@
                     </form>
                 </div>
 
-                <!-- Bảng dữ liệu (Cố định chiều cao 7 danh mục & cố định độ rộng cột) -->
+                <!-- Bảng dữ liệu (Cố định chiều cao 5 danh mục & cố định độ rộng cột) -->
                 <div class="table-responsive table-fixed-7">
                     <table class="table align-middle mb-0 table-category">
                         <thead class="table-light small text-muted">
                             <tr>
                                 <th class="col-stt">STT</th>
-                                <th class="col-name">TÊN DANH MỤC CÁ NHÂN</th>
+                                <th class="col-name">TÊN DANH MỤC</th>
                                 <th class="col-desc">MÔ TẢ (DESCRIPTION)</th>
                                 <th class="col-status text-center">TRẠNG THÁI</th>
                                 <th class="col-action text-end">THAO TÁC</th>
@@ -224,9 +193,12 @@
                                                 <form asp-controller="Category"
                                                       asp-action="ToggleStatus"
                                                       method="post"
-                                                      class="d-inline">
+                                                      class="d-inline js-toggle-form">
                                                     <input type="hidden" name="id" value="@item.CategoryId" />
                                                     <input type="hidden" name="status" value="Inactive" />
+                                                    <input type="hidden" name="page" value="@currentPage" />
+                                                    <input type="hidden" name="search" value="@ViewBag.Search" />
+                                                    <input type="hidden" name="statusFilter" value="@ViewBag.Status" />
                                                     <button type="submit" class="btn btn-sm btn-outline-danger">
                                                         🗑️ Tắt
                                                     </button>
@@ -237,9 +209,12 @@
                                                 <form asp-controller="Category"
                                                       asp-action="ToggleStatus"
                                                       method="post"
-                                                      class="d-inline">
+                                                      class="d-inline js-toggle-form">
                                                     <input type="hidden" name="id" value="@item.CategoryId" />
                                                     <input type="hidden" name="status" value="Active" />
+                                                    <input type="hidden" name="page" value="@currentPage" />
+                                                    <input type="hidden" name="search" value="@ViewBag.Search" />
+                                                    <input type="hidden" name="statusFilter" value="@ViewBag.Status" />
                                                     <button type="submit" class="btn btn-sm btn-outline-warning text-dark">
                                                         🔄 Khôi phục
                                                     </button>
@@ -254,7 +229,7 @@
                     </table>
                 </div>
 
-                <!-- Chân bảng & Phân trang (7 danh mục / trang) -->
+                <!-- Chân bảng & Phân trang (5 danh mục / trang) -->
                 <div class="d-flex flex-wrap justify-content-between align-items-center mt-2">
                     <div class="small text-muted">
                         Hiển thị <strong>@pagedCategories.Count</strong> trên tổng số <strong>@totalCount</strong> danh mục cá nhân (Trang @currentPage / @totalPages)
@@ -310,9 +285,36 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
-        // Các từ < 8 ký tự sẽ xuống dòng theo dấu cách; từ dài >= 8 ký tự sẽ tự động ngắt dòng tự do
-        document.querySelectorAll('.text-wrap-cell').forEach(cell => {
-            cell.innerHTML = cell.textContent.replace(/\S{8,}/g, '<span class="long-word" style="word-break:break-all;">$&</span>');
+        // Hàm xử lý ngắt dòng cho từ dài >= 8 ký tự
+        function formatLongWords() {
+            document.querySelectorAll('.text-wrap-cell').forEach(cell => {
+                cell.innerHTML = cell.textContent.replace(/\S{8,}/g, '<span class="long-word" style="word-break:break-all;">$&</span>');
+            });
+        }
+
+        formatLongWords();
+
+        // Xử lý bấm nút Tắt / Khôi phục không bị refresh lại trang
+        document.addEventListener('submit', async function (e) {
+            if (e.target.classList.contains('js-toggle-form')) {
+                e.preventDefault();
+                const form = e.target;
+
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: new FormData(form)
+                });
+
+                if (response.ok) {
+                    const html = await response.text();
+                    const doc = new DOMParser().parseFromString(html, 'text/html');
+
+                    // Cập nhật lại bảng danh sách và số lượng thống kê ngay lập tức
+                    document.getElementById('categoryListArea').innerHTML = doc.getElementById('categoryListArea').innerHTML;
+                    document.getElementById('categoryStats').innerHTML = doc.getElementById('categoryStats').innerHTML;
+                    formatLongWords();
+                }
+            }
         });
     </script>
 }
