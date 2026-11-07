@@ -40,6 +40,12 @@ namespace FEMS.Services.Implementations
                 ).ToList();
             }
 
+            // Sắp xếp: Active ở trên, Inactive đẩy xuống cuối (vẫn giữ thứ tự từ trên xuống theo CategoryId)
+            list = list
+                .OrderBy(c => c.Status == "Inactive")
+                .ThenBy(c => c.CategoryId)
+                .ToList();
+
             return list;
         }
 
@@ -64,21 +70,21 @@ namespace FEMS.Services.Implementations
                 return false;
             }
 
-            // Nếu CategoryId == 0 thì là Thêm mới
+            // Nếu CategoryId == 0 thì là Thêm mới (mặc định Active)
             if (category.CategoryId == 0)
             {
                 category.CategoryName = category.CategoryName.Trim();
+                category.Status = "Active";
                 await _categoryRepository.AddAsync(category);
             }
             else
             {
-                // Ngược lại là Cập nhật
+                // Ngược lại là Cập nhật (giữ nguyên Status hiện tại)
                 var existing = await _categoryRepository.GetByIdAsync(category.CategoryId);
                 if (existing != null)
                 {
                     existing.CategoryName = category.CategoryName.Trim();
                     existing.Description = category.Description;
-                    existing.Status = category.Status;
                     await _categoryRepository.UpdateAsync(existing);
                 }
             }
