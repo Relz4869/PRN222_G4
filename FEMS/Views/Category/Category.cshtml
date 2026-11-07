@@ -1,0 +1,318 @@
+@model FEMS.ViewModels.Category.CategoryViewModel
+
+@{
+    ViewData["Title"] = "Quản lý Danh mục Cá nhân";
+
+    int totalCount = Model.Categories.Count;
+    int activeCount = Model.Categories.Count(c => c.Status == "Active");
+    int inactiveCount = Model.Categories.Count(c => c.Status == "Inactive");
+
+    // Cấu hình phân trang: 7 danh mục / 1 trang
+    int pageSize = 7;
+    int currentPage = ViewBag.CurrentPage ?? 1;
+    int totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+    if (totalPages < 1) totalPages = 1;
+    if (currentPage < 1) currentPage = 1;
+    if (currentPage > totalPages) currentPage = totalPages;
+
+    var pagedCategories = Model.Categories
+        .Skip((currentPage - 1) * pageSize)
+        .Take(pageSize)
+        .ToList();
+}
+
+<div class="category-page">
+
+    <!-- Đường dẫn Breadcrumb -->
+    <div class="small text-muted mb-1">
+        FEMS &gt; Ví cá nhân &gt; <span class="text-fems fw-bold">Danh mục chi tiêu cá nhân</span>
+    </div>
+
+    <!-- Tiêu đề trang & Thống kê -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Quản lý Danh mục Cá nhân</h2>
+            <p class="text-muted small mb-0">
+                Quản lý và cá nhân hóa các danh mục chi tiêu cho ví cá nhân của bạn (@User.Identity?.Name)
+            </p>
+        </div>
+
+        <div class="d-flex gap-2 mt-2 mt-md-0">
+            <span class="badge bg-white text-dark border px-3 py-2 rounded-pill">
+                📁 Tổng danh mục: <strong>@totalCount</strong>
+            </span>
+            <span class="badge bg-white text-dark border px-3 py-2 rounded-pill">
+                🟢 Đang hoạt động: <strong class="text-fems">@activeCount</strong>
+            </span>
+            <span class="badge bg-white text-dark border px-3 py-2 rounded-pill">
+                🟠 Đã vô hiệu hóa: <strong class="text-warning">@inactiveCount</strong>
+            </span>
+        </div>
+    </div>
+
+    <div class="row g-4">
+
+        <!-- CỘT TRÁI: FORM THÊM / SỬA DANH MỤC -->
+        <div class="col-md-4">
+            <div class="card card-custom p-4">
+
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold mb-0">
+                        @(Model.CategoryId == 0 ? "Thêm Danh mục Cá nhân" : "Cập nhật Danh mục")
+                    </h5>
+                    <span class="badge bg-fems rounded-pill">
+                        @(Model.CategoryId == 0 ? "Chế độ tạo" : "Chế độ sửa")
+                    </span>
+                </div>
+
+                <!-- Thông tin chủ sở hữu -->
+                <div class="owner-box d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <div class="fw-bold small">@User.Identity?.Name (Bạn)</div>
+                        <div class="text-muted" style="font-size: 12px;">
+                            Ví cá nhân chính • HouseholdMemberID: @Model.HouseholdMemberId
+                        </div>
+                    </div>
+                    <span class="badge bg-fems">Chủ sở hữu</span>
+                </div>
+
+                <!-- Form Lưu Danh Mục -->
+                <form asp-controller="Category" asp-action="Save" method="post">
+                    <input type="hidden" asp-for="CategoryId" />
+                    <input type="hidden" asp-for="HouseholdMemberId" />
+
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <label asp-for="CategoryName" class="form-label fw-bold small">
+                                Tên danh mục cá nhân <span class="text-danger">*</span>
+                            </label>
+                            <span class="text-muted small">CategoryName</span>
+                        </div>
+                        <input asp-for="CategoryName"
+                               class="form-control"
+                               placeholder="Ví dụ: Ăn uống cá nhân, Đi lại làm việc..." />
+                        <span asp-validation-for="CategoryName" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <label asp-for="Description" class="form-label fw-bold small">
+                                Mô tả mục đích chi tiêu
+                            </label>
+                            <span class="text-muted small">Description</span>
+                        </div>
+                        <textarea asp-for="Description"
+                                  rows="3"
+                                  class="form-control"
+                                  placeholder="Ví dụ: Chi phí ăn sáng trưa công sở, xăng xe đi làm..."></textarea>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold small">Trạng thái danh mục</label>
+                        <div class="owner-box d-flex gap-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" asp-for="Status" value="Active" id="statusActive" />
+                                <label class="form-check-label small fw-semibold" for="statusActive">
+                                    Hoạt động (Active)
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" asp-for="Status" value="Inactive" id="statusInactive" />
+                                <label class="form-check-label small fw-semibold" for="statusInactive">
+                                    Vô hiệu hóa
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-fems w-100 py-2">
+                        💾 Lưu danh mục cá nhân
+                    </button>
+
+                    @if (Model.CategoryId != 0)
+                    {
+                        <a asp-controller="Category" asp-action="Index" class="btn btn-light border w-100 mt-2 small">
+                            Hủy chỉnh sửa
+                        </a>
+                    }
+                </form>
+
+            </div>
+        </div>
+
+        <!-- CỘT PHẢI: DANH SÁCH DANH MỤC -->
+        <div class="col-md-8">
+            <div class="card card-custom p-4">
+
+                <!-- Thanh tiêu đề & Bộ lọc tìm kiếm -->
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+                    <div class="d-flex align-items-center gap-2">
+                        <h5 class="fw-bold mb-0">Danh sách Danh mục của bạn</h5>
+                        <span class="badge bg-fems rounded-pill">@totalCount danh mục</span>
+                    </div>
+
+                    <form asp-controller="Category" asp-action="Index" method="get" class="d-flex gap-2">
+                        <select name="status" class="form-select form-select-sm" style="width: 160px;" onchange="this.form.submit()">
+                            <option value="">Tất cả trạng thái</option>
+                            <option value="Active" selected="@(ViewBag.Status == "Active")">Đang hoạt động</option>
+                            <option value="Inactive" selected="@(ViewBag.Status == "Inactive")">Đã vô hiệu hóa</option>
+                        </select>
+
+                        <input type="text"
+                               name="search"
+                               value="@ViewBag.Search"
+                               class="form-control form-control-sm"
+                               placeholder="Tìm tên, mô tả danh mục..." />
+
+                        <button type="submit" class="btn btn-sm btn-fems">Tìm</button>
+                    </form>
+                </div>
+
+                <!-- Bảng dữ liệu (Cố định chiều cao 7 danh mục & cố định độ rộng cột) -->
+                <div class="table-responsive table-fixed-7">
+                    <table class="table align-middle mb-0 table-category">
+                        <thead class="table-light small text-muted">
+                            <tr>
+                                <th class="col-stt">STT</th>
+                                <th class="col-name">TÊN DANH MỤC CÁ NHÂN</th>
+                                <th class="col-desc">MÔ TẢ (DESCRIPTION)</th>
+                                <th class="col-status text-center">TRẠNG THÁI</th>
+                                <th class="col-action text-end">THAO TÁC</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (pagedCategories.Count == 0)
+                            {
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted py-4">
+                                        Chưa có danh mục nào.
+                                    </td>
+                                </tr>
+                            }
+                            else
+                            {
+                                int stt = (currentPage - 1) * pageSize + 1;
+                                foreach (var item in pagedCategories)
+                                {
+                                    <tr>
+                                        <td class="fw-bold text-fems">@stt</td>
+                                        <td class="fw-bold text-wrap-cell">@item.CategoryName</td>
+                                        <td class="text-muted small text-wrap-cell">@item.Description</td>
+                                        <td class="text-center">
+                                            @if (item.Status == "Active")
+                                            {
+                                                <span class="badge bg-fems rounded-pill px-3 py-1">• Active</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-warning text-dark rounded-pill px-3 py-1">• Inactive</span>
+                                            }
+                                        </td>
+                                        <td class="text-end">
+                                            @if (item.Status == "Active")
+                                            {
+                                                <a asp-controller="Category"
+                                                   asp-action="Index"
+                                                   asp-route-editId="@item.CategoryId"
+                                                   asp-route-page="@currentPage"
+                                                   asp-route-search="@ViewBag.Search"
+                                                   asp-route-status="@ViewBag.Status"
+                                                   class="btn btn-sm btn-outline-primary me-1">
+                                                    ✏️ Sửa
+                                                </a>
+
+                                                <form asp-controller="Category"
+                                                      asp-action="ToggleStatus"
+                                                      method="post"
+                                                      class="d-inline">
+                                                    <input type="hidden" name="id" value="@item.CategoryId" />
+                                                    <input type="hidden" name="status" value="Inactive" />
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                        🗑️ Tắt
+                                                    </button>
+                                                </form>
+                                            }
+                                            else
+                                            {
+                                                <form asp-controller="Category"
+                                                      asp-action="ToggleStatus"
+                                                      method="post"
+                                                      class="d-inline">
+                                                    <input type="hidden" name="id" value="@item.CategoryId" />
+                                                    <input type="hidden" name="status" value="Active" />
+                                                    <button type="submit" class="btn btn-sm btn-outline-warning text-dark">
+                                                        🔄 Khôi phục
+                                                    </button>
+                                                </form>
+                                            }
+                                        </td>
+                                    </tr>
+                                    stt++;
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Chân bảng & Phân trang (7 danh mục / trang) -->
+                <div class="d-flex flex-wrap justify-content-between align-items-center mt-2">
+                    <div class="small text-muted">
+                        Hiển thị <strong>@pagedCategories.Count</strong> trên tổng số <strong>@totalCount</strong> danh mục cá nhân (Trang @currentPage / @totalPages)
+                    </div>
+
+                    <nav>
+                        <ul class="pagination pagination-sm mb-0">
+                            <li class="page-item @(currentPage <= 1 ? "disabled" : "")">
+                                <a class="page-link"
+                                   asp-controller="Category"
+                                   asp-action="Index"
+                                   asp-route-page="@(currentPage - 1)"
+                                   asp-route-search="@ViewBag.Search"
+                                   asp-route-status="@ViewBag.Status">
+                                    &lt;
+                                </a>
+                            </li>
+
+                            @for (int i = 1; i <= totalPages; i++)
+                            {
+                                <li class="page-item @(i == currentPage ? "active" : "")">
+                                    <a class="page-link @(i == currentPage ? "bg-fems border-0" : "text-dark")"
+                                       asp-controller="Category"
+                                       asp-action="Index"
+                                       asp-route-page="@i"
+                                       asp-route-search="@ViewBag.Search"
+                                       asp-route-status="@ViewBag.Status">
+                                        @i
+                                    </a>
+                                </li>
+                            }
+
+                            <li class="page-item @(currentPage >= totalPages ? "disabled" : "")">
+                                <a class="page-link"
+                                   asp-controller="Category"
+                                   asp-action="Index"
+                                   asp-route-page="@(currentPage + 1)"
+                                   asp-route-search="@ViewBag.Search"
+                                   asp-route-status="@ViewBag.Status">
+                                    &gt;
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Các từ < 8 ký tự sẽ xuống dòng theo dấu cách; từ dài >= 8 ký tự sẽ tự động ngắt dòng tự do
+        document.querySelectorAll('.text-wrap-cell').forEach(cell => {
+            cell.innerHTML = cell.textContent.replace(/\S{8,}/g, '<span class="long-word" style="word-break:break-all;">$&</span>');
+        });
+    </script>
+}
