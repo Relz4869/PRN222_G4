@@ -37,6 +37,13 @@
 
             <h2>Đăng nhập</h2>
 
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="auth-success">
+                    @TempData["SuccessMessage"]
+                </div>
+            }
+
             <form asp-controller="Account"
                   asp-action="Login"
                   method="post">
@@ -72,7 +79,7 @@
                 </div>
 
                 <a href="#" class="auth-link">
-                    Quên mật khẩu? (Forgot Password)
+                    Quên mật khẩu? 
                 </a>
 
                 <button type="submit" class="auth-button">
@@ -80,8 +87,12 @@
                 </button>
 
                 <div class="auth-footer">
-                    Chưa có tài khoản?
-                    <span>Đăng ký ngay</span>
+                    <span>Chưa có tài khoản?</span>
+
+                    <a asp-controller="Account"
+                       asp-action="Register">
+                        Đăng ký ngay
+                    </a>
                 </div>
 
             </form>

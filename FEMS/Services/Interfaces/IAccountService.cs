@@ -6,5 +6,12 @@ namespace FEMS.Services.Interfaces
     {
         // Authenticate user
         Task<User?> AuthenticateAsync(string email, string password);
+
+        Task<bool> RegisterAsync(
+            string fullName,
+            string email,
+            string password,
+            string? phone
+        );
     }
 }

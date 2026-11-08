@@ -17,6 +17,10 @@ namespace FEMS.Controllers
             _accountService = accountService;
         }
 
+        // =========================================
+        // LOGIN
+        // =========================================
+
         // GET: /Account/Login
         [HttpGet]
         [AllowAnonymous]
@@ -86,6 +90,64 @@ namespace FEMS.Controllers
 
             return RedirectToAction("Index", "Home");
         }
+
+        // =========================================
+        // REGISTER
+        // =========================================
+
+        // GET: /Account/Register
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult Register()
+        {
+            if (User.Identity?.IsAuthenticated == true)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            return View();
+        }
+
+        // POST: /Account/Register
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Register(RegisterViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            bool registered = await _accountService.RegisterAsync(
+                model.FullName,
+                model.Email,
+                model.Password,
+                model.Phone
+            );
+
+            if (!registered)
+            {
+                ModelState.AddModelError(
+                    nameof(model.Email),
+                    "This email is already registered."
+                );
+
+                return View(model);
+            }
+
+            TempData["SuccessMessage"] =
+                "Registration successful. Please log in.";
+
+            return RedirectToAction(nameof(Login));
+        }
+
+
+        // =========================================
+        // LOGOUT
+        // =========================================
+
+        // POST: /Account/Logout
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
