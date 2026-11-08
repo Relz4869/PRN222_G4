@@ -7,14 +7,19 @@
     <title>@ViewData["Title"] - FEMS</title>
 
     <link rel="stylesheet"
+          href="~/css/site.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
       href="~/FEMS.styles.css"
       asp-append-version="true" />
 </head>
-<body>
+<body class="auth-page">
     @RenderBody()
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>
+
 </html>

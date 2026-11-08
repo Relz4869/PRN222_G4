@@ -1,24 +1,29 @@
-/* CSS for Login view */
-
 /* =========================================
    FEMS - LOGIN PAGE
-   ========================================= */
+   Color Palette:
+   Primary:   #0D9488
+   Secondary: #F59E0B
+   Neutral:   #FAFAFA
+========================================= */
 
 .auth-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
     width: 100%;
     min-height: 100vh;
-    color: #ffffff;
+    min-height: 100svh;
+    margin: 0;
+    padding: 0;
     font-family: Arial, sans-serif;
+    color: #1f2937;
 }
 
 /* =========================================
    LEFT PANEL - BRANDING
-   ========================================= */
+========================================= */
 
 .auth-brand {
-    background-color: #278b53;
+    background-color: #0D9488;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -32,22 +37,24 @@
 }
 
 .auth-brand h1 {
-    font-size: 26px;
+    color: #ffffff;
+    font-size: 28px;
     font-weight: 700;
-    line-height: 1.3;
-    margin-bottom: 55px;
+    line-height: 1.4;
+    margin-bottom: 45px;
 }
 
 .auth-brand p {
+    color: #ecfdf5;
     font-size: 14px;
-    line-height: 1.5;
+    line-height: 1.7;
     margin-bottom: 45px;
 }
 
 .auth-brand-logo {
     display: inline-block;
-    background-color: #35c99c;
-    color: #062d20;
+    background-color: #F59E0B;
+    color: #422006;
     padding: 13px 40px;
     border-radius: 7px;
     font-size: 16px;
@@ -56,10 +63,10 @@
 
 /* =========================================
    RIGHT PANEL - LOGIN FORM
-   ========================================= */
+========================================= */
 
 .auth-form-section {
-    background-color: #080b09;
+    background-color: #FAFAFA;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -68,78 +75,123 @@
 
 .auth-form {
     width: 100%;
-    max-width: 455px;
+    max-width: 440px;
 }
 
     .auth-form h2 {
+        color: #134e4a;
         text-align: center;
-        font-size: 23px;
+        font-size: 25px;
         font-weight: 700;
-        margin-bottom: 36px;
+        margin-bottom: 35px;
     }
 
-/* Form groups */
+    /* =========================================
+   FORM
+========================================= */
+
+    .auth-form form {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
 
 .auth-group {
-    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 22px;
 }
 
     .auth-group label {
         display: block;
-        color: #ffffff;
+        width: 100%;
+        color: #374151;
         font-size: 14px;
+        font-weight: 600;
         margin-bottom: 9px;
     }
 
 /* Input fields */
 
-.auth-input {
+/* Input fields */
+.auth-form .auth-group input.auth-input {
+    display: block;
     width: 100%;
-    height: 48px;
-    padding: 0 12px;
-    color: #ffffff;
-    background-color: #1c2320;
-    border: 1px solid #35443b;
-    border-radius: 6px;
+    height: 46px;
+    padding: 0 14px;
+    color: #374151;
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 7px;
     font-size: 14px;
     outline: none;
-    transition: border-color 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-    .auth-input::placeholder {
-        color: #9ca39e;
+    .auth-form .auth-group input.auth-input::placeholder {
+        color: #b0b7c3;
     }
 
-    .auth-input:focus {
-        border-color: #35c99c;
-        box-shadow: 0 0 0 2px rgba(53, 201, 156, 0.15);
+    .auth-form .auth-group input.auth-input:focus {
+        border-color: #0D9488;
+        box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.10);
+    }
+.auth-form {
+    width: 100%;
+    max-width: 440px;
+}
+
+    .auth-form form {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
     }
 
-/* Forgot password */
+.auth-group {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 22px;
+}
+
+    .auth-group label {
+        display: block;
+        margin-bottom: 9px;
+    }
+/* =========================================
+   FORGOT PASSWORD
+========================================= */
 
 .auth-link {
     display: block;
+    width: 100%;
     text-align: right;
-    color: #35c99c;
+    color: #0D9488;
     font-size: 13px;
     margin-top: -8px;
-    margin-bottom: 27px;
-    text-decoration: underline;
+    margin-bottom: 25px;
+    text-decoration: none;
 }
 
     .auth-link:hover {
-        color: #65e0bb;
+        color: #F59E0B;
+        text-decoration: underline;
     }
 
-/* Login button */
+/* =========================================
+   LOGIN BUTTON
+========================================= */
 
 .auth-button {
+    display: block;
     width: 100%;
     height: 48px;
-    background-color: #278b53;
+    background-color: #0D9488;
     color: #ffffff;
     border: none;
-    border-radius: 6px;
+    border-radius: 7px;
     font-size: 15px;
     font-weight: 700;
     cursor: pointer;
@@ -147,38 +199,66 @@
 }
 
     .auth-button:hover {
-        background-color: #32a565;
+        background-color: #0f766e;
     }
 
     .auth-button:active {
         transform: scale(0.99);
     }
 
-/* Register link */
+/* =========================================
+   REGISTER LINK
+========================================= */
 
 .auth-footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    width: 100%;
+    margin-top: 32px;
+    line-height: 1.6;
     text-align: center;
-    color: #ffffff;
+    color: #4b5563;
     font-size: 13px;
-    margin-top: 26px;
 }
 
-    .auth-footer span {
-        color: #35c99c;
-        text-decoration: underline;
+    /* Navigation link */
+    .auth-footer a,
+    .auth-footer a:link,
+    .auth-footer a:visited {
+        display: inline-block;
+        color: #0D9488 !important;
+        text-decoration: none !important;
+        font-weight: 600;
         cursor: pointer;
+        transition: color 0.2s ease;
     }
 
-        .auth-footer span:hover {
-            color: #65e0bb;
+        /* Hover */
+        .auth-footer a:hover {
+            color: #F59E0B !important;
+            text-decoration: none !important;
         }
 
+/* Register success message */
+.auth-success {
+    background-color: #ecfdf5;
+    color: #047857;
+    border: 1px solid #a7f3d0;
+    border-radius: 7px;
+    padding: 12px;
+    margin-bottom: 20px;
+    font-size: 13px;
+}
+
 /* =========================================
-   VALIDATION MESSAGES
-   ========================================= */
+   VALIDATION
+========================================= */
 
 .auth-validation {
-    color: #ff7777;
+    color: #dc2626;
     font-size: 13px;
     margin-bottom: 15px;
 }
@@ -189,22 +269,23 @@
 
 .auth-field-error {
     display: block;
-    color: #ff7777;
+    color: #dc2626;
     font-size: 12px;
     margin-top: 5px;
 }
 
 /* =========================================
    RESPONSIVE
-   ========================================= */
+========================================= */
 
 @media (max-width: 768px) {
+
     .auth-container {
         grid-template-columns: 1fr;
     }
 
     .auth-brand {
-        min-height: 260px;
+        min-height: 280px;
         padding: 30px 20px;
     }
 
@@ -219,25 +300,22 @@
         }
 
     .auth-form-section {
-        min-height: 450px;
+        min-height: 480px;
         padding: 35px 25px;
     }
 
     .auth-form h2 {
-        font-size: 21px;
+        font-size: 22px;
     }
 }
 
 @media (max-width: 400px) {
+
     .auth-brand {
-        min-height: 230px;
+        min-height: 240px;
     }
 
     .auth-form-section {
         padding: 30px 18px;
-    }
-
-    .auth-form h2 {
-        font-size: 19px;
     }
 }

@@ -1,0 +1,143 @@
+﻿
+@model FEMS.ViewModels.Account.RegisterViewModel
+
+@{
+    Layout = "~/Views/Shared/_AuthLayout.cshtml";
+    ViewData["Title"] = "Register";
+}
+
+<div class="auth-container">
+
+    <!-- Left panel -->
+    <section class="auth-brand">
+        <div class="auth-brand-content">
+
+            <h1>
+                Tài chính hộ gia đình
+                <br />
+                ở một nơi duy nhất
+            </h1>
+
+            <p>
+                Quản lý ví cá nhân, đặt hạn mức chi tiêu,
+                <br />
+                theo dõi báo cáo và nhận cảnh báo tức thì.
+            </p>
+
+            <div class="auth-brand-logo">
+                FEMS Wallet
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Right panel -->
+    <section class="auth-form-section">
+        <div class="auth-form">
+
+            <h2>Đăng ký tài khoản</h2>
+
+            <form asp-controller="Account"
+                  asp-action="Register"
+                  method="post">
+
+                <div asp-validation-summary="ModelOnly"
+                     class="auth-validation">
+                </div>
+
+                <!-- Full Name -->
+                <div class="auth-group">
+                    <label asp-for="FullName">Họ và tên</label>
+
+                    <input asp-for="FullName"
+                           class="auth-input"
+                           placeholder="Nhập họ và tên"
+                           autocomplete="name" />
+
+                    <span asp-validation-for="FullName"
+                          class="auth-field-error">
+                    </span>
+                </div>
+
+                <!-- Email -->
+                <div class="auth-group">
+                    <label asp-for="Email">Email</label>
+
+                    <input asp-for="Email"
+                           class="auth-input"
+                           placeholder="Nhập email"
+                           autocomplete="email" />
+
+                    <span asp-validation-for="Email"
+                          class="auth-field-error">
+                    </span>
+                </div>
+
+                <!-- Phone -->
+                <div class="auth-group">
+                    <label asp-for="Phone">Số điện thoại</label>
+
+                    <input asp-for="Phone"
+                           class="auth-input"
+                           placeholder="Nhập số điện thoại"
+                           type="tel"
+                           autocomplete="tel" />
+
+                    <span asp-validation-for="Phone"
+                          class="auth-field-error">
+                    </span>
+                </div>
+
+                <!-- Password -->
+                <div class="auth-group">
+                    <label asp-for="Password">Mật khẩu</label>
+
+                    <input asp-for="Password"
+                           class="auth-input"
+                           placeholder="Nhập mật khẩu"
+                           autocomplete="new-password" />
+
+                    <span asp-validation-for="Password"
+                          class="auth-field-error">
+                    </span>
+                </div>
+
+                <!-- Confirm Password -->
+                <div class="auth-group">
+                    <label asp-for="ConfirmPassword">
+                        Xác nhận mật khẩu
+                    </label>
+
+                    <input asp-for="ConfirmPassword"
+                           class="auth-input"
+                           placeholder="Nhập lại mật khẩu"
+                           autocomplete="new-password" />
+
+                    <span asp-validation-for="ConfirmPassword"
+                          class="auth-field-error">
+                    </span>
+                </div>
+
+                <button type="submit" class="auth-button">
+                    Đăng ký
+                </button>
+
+                <div class="auth-footer">
+                    <span>Đã có tài khoản?</span>
+
+                        <a asp-controller="Account"
+                            asp-action="Login">
+                            Đăng nhập ngay
+                        </a>
+                </div>
+
+            </form>
+
+        </div>
+    </section>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
