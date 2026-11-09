@@ -144,6 +144,16 @@
     font-weight: 700;
     padding: 4px 11px;
     border-radius: 999px;
+    white-space: nowrap;
+}
+
+.action-btn-row {
+    display: inline-flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+    white-space: nowrap;
 }
 
 .badge-role-manager {
@@ -205,6 +215,7 @@
     padding: 6px 12px;
     cursor: pointer;
     border: 1px solid transparent;
+    white-space: nowrap;
     transition: all 0.15s ease;
 }
 

@@ -149,7 +149,7 @@ namespace FEMS.Services.Implementations
             await _householdRepository.AddNotificationAsync(new Notification
             {
                 UserId = userId,
-                Message = $"Chúc mừng! Bạn đã tạo hộ gia đình \"{savedHousehold.HouseholdName}\" với vai trò Quản lý (Manager).",
+                Message = $"Chúc mừng! Bạn đã tạo hộ gia đình \"{savedHousehold.HouseholdName}\" với vai trò Quản lý hộ.",
                 IsRead = false,
                 CreatedAt = DateTime.Now
             });
@@ -158,7 +158,7 @@ namespace FEMS.Services.Implementations
         }
 
         // =========================================
-        // UC-07: INVITE MEMBER BY EMAIL (BR-06)
+        // INVITE MEMBER BY EMAIL
         // =========================================
         public async Task<(bool Success, string Message, string? InviteCode)> InviteMemberByEmailAsync(
             int managerUserId,
@@ -172,7 +172,7 @@ namespace FEMS.Services.Implementations
             var manager = await _householdRepository.GetActiveMemberByUserIdAsync(managerUserId);
             if (manager == null || !string.Equals(manager.Role, "Manager", StringComparison.OrdinalIgnoreCase))
             {
-                return (false, "Chỉ Quản lý (Manager) mới có quyền mời thành viên.", null);
+                return (false, "Chỉ Quản lý hộ mới có quyền mời thành viên.", null);
             }
 
             // BR-06: Chỉ mời được người dùng đã đăng ký tài khoản FEMS
@@ -237,7 +237,7 @@ namespace FEMS.Services.Implementations
             var manager = await _householdRepository.GetActiveMemberByUserIdAsync(managerUserId);
             if (manager == null || !string.Equals(manager.Role, "Manager", StringComparison.OrdinalIgnoreCase))
             {
-                return (false, "Chỉ Quản lý (Manager) mới có quyền hủy lời mời.");
+                return (false, "Chỉ Quản lý hộ mới có quyền hủy lời mời.");
             }
 
             var notification = await _householdRepository.GetNotificationByIdAsync(notificationId);
@@ -399,7 +399,7 @@ namespace FEMS.Services.Implementations
         }
 
         // =========================================
-        // UC-08: PROMOTE ROLE (BR-10, BR-42)
+        // PROMOTE ROLE
         // =========================================
         public async Task<(bool Success, string Message)> PromoteMemberAsync(
             int managerUserId,
@@ -408,7 +408,7 @@ namespace FEMS.Services.Implementations
             var manager = await _householdRepository.GetActiveMemberByUserIdAsync(managerUserId);
             if (manager == null || !string.Equals(manager.Role, "Manager", StringComparison.OrdinalIgnoreCase))
             {
-                return (false, "Chỉ Quản lý (Manager) mới có quyền thăng cấp thành viên.");
+                return (false, "Chỉ Quản lý hộ mới có quyền thăng cấp thành viên.");
             }
 
             var targetMember = await _householdRepository.GetMemberByIdAsync(targetHouseholdMemberId);
@@ -421,26 +421,25 @@ namespace FEMS.Services.Implementations
 
             if (string.Equals(targetMember.Role, "Manager", StringComparison.OrdinalIgnoreCase))
             {
-                return (false, $"Thành viên {targetMember.User.FullName} đã có vai trò Quản lý (Manager).");
+                return (false, $"Thành viên {targetMember.User.FullName} đã có vai trò Quản lý hộ.");
             }
 
             targetMember.Role = "Manager";
             await _householdRepository.UpdateMemberAsync(targetMember);
 
-            // BR-42: Gửi thông báo in-app khi thay đổi vai trò
             await _householdRepository.AddNotificationAsync(new Notification
             {
                 UserId = targetMember.UserId,
-                Message = $"Vai trò của bạn trong hộ gia đình \"{manager.Household.HouseholdName}\" đã được thăng cấp thành Quản lý (Manager).",
+                Message = $"Vai trò của bạn trong hộ gia đình \"{manager.Household.HouseholdName}\" đã được thăng cấp thành Quản lý hộ.",
                 IsRead = false,
                 CreatedAt = DateTime.Now
             });
 
-            return (true, $"Đã thăng cấp {targetMember.User.FullName} lên vai trò Quản lý (Manager).");
+            return (true, $"Đã thăng cấp {targetMember.User.FullName} lên vai trò Quản lý hộ.");
         }
 
         // =========================================
-        // DEMOTE ROLE (CREATOR / CHỦ HỘ GỠ QUYỀN MANAGER)
+        // DEMOTE ROLE (CHỦ HỘ GỠ QUYỀN QUẢN LÝ)
         // =========================================
         public async Task<(bool Success, string Message)> DemoteMemberAsync(
             int creatorUserId,
@@ -457,7 +456,7 @@ namespace FEMS.Services.Implementations
 
             if (creator == null || creator.UserId != creatorUserId)
             {
-                return (false, "Chỉ người tạo hộ gia đình (Chủ hộ) mới có quyền gỡ quyền Quản lý (Manager).");
+                return (false, "Chỉ người tạo hộ gia đình (Chủ hộ) mới có quyền gỡ quyền Quản lý hộ.");
             }
 
             var targetMember = activeMembers.FirstOrDefault(m => m.HouseholdMemberId == targetHouseholdMemberId);
@@ -473,7 +472,7 @@ namespace FEMS.Services.Implementations
 
             if (!string.Equals(targetMember.Role, "Manager", StringComparison.OrdinalIgnoreCase))
             {
-                return (false, $"Thành viên {targetMember.User.FullName} hiện đang là Thành viên (Member).");
+                return (false, $"Thành viên {targetMember.User.FullName} hiện đang là Thành viên.");
             }
 
             targetMember.Role = "Member";
@@ -482,16 +481,16 @@ namespace FEMS.Services.Implementations
             await _householdRepository.AddNotificationAsync(new Notification
             {
                 UserId = targetMember.UserId,
-                Message = $"Vai trò của bạn trong hộ gia đình \"{currentMember.Household.HouseholdName}\" đã được chuyển về Thành viên (Member).",
+                Message = $"Vai trò của bạn trong hộ gia đình \"{currentMember.Household.HouseholdName}\" đã được chuyển về Thành viên.",
                 IsRead = false,
                 CreatedAt = DateTime.Now
             });
 
-            return (true, $"Đã gỡ quyền Quản lý của {targetMember.User.FullName} (chuyển về Thành viên).");
+            return (true, $"Đã gỡ quyền Quản lý hộ của {targetMember.User.FullName} (chuyển về Thành viên).");
         }
 
         // =========================================
-        // UC-09: REMOVE MEMBER (BR-10, BR-11, BR-42 + CREATOR PRIVILEGE)
+        // REMOVE MEMBER
         // =========================================
         public async Task<(bool Success, string Message)> RemoveMemberAsync(
             int managerUserId,
@@ -500,7 +499,7 @@ namespace FEMS.Services.Implementations
             var manager = await _householdRepository.GetActiveMemberByUserIdAsync(managerUserId);
             if (manager == null || !string.Equals(manager.Role, "Manager", StringComparison.OrdinalIgnoreCase))
             {
-                return (false, "Chỉ Quản lý (Manager) mới có quyền xóa thành viên khỏi hộ gia đình.");
+                return (false, "Chỉ Quản lý hộ mới có quyền xóa thành viên khỏi hộ gia đình.");
             }
 
             var activeMembers = await _householdRepository.GetActiveMembersByHouseholdIdAsync(manager.HouseholdId);
@@ -526,15 +525,15 @@ namespace FEMS.Services.Implementations
             // Nếu đối tượng bị xóa là Manager: chỉ Người tạo hộ (Chủ hộ) mới được phép xóa
             if (string.Equals(targetMember.Role, "Manager", StringComparison.OrdinalIgnoreCase) && !isCreator)
             {
-                return (false, "Chỉ Người tạo hộ gia đình (Chủ hộ) mới có quyền xóa một Quản lý (Manager) khác.");
+                return (false, "Chỉ Người tạo hộ gia đình (Chủ hộ) mới có quyền xóa một Quản lý hộ khác.");
             }
 
-            // BR-11: Chuyển trạng thái sang Inactive để bảo toàn tài khoản, ví cá nhân, số dư và lịch sử giao dịch
+            // Chuyển trạng thái sang Inactive để bảo toàn tài khoản, ví cá nhân, số dư và lịch sử giao dịch
             targetMember.Status = "Inactive";
             targetMember.Role = "Member";
             await _householdRepository.UpdateMemberAsync(targetMember);
 
-            // BR-42: Gửi thông báo in-app cho thành viên bị xóa khỏi hộ
+            // Gửi thông báo in-app cho thành viên bị xóa khỏi hộ
             await _householdRepository.AddNotificationAsync(new Notification
             {
                 UserId = targetMember.UserId,
@@ -664,7 +663,7 @@ namespace FEMS.Services.Implementations
             var manager = await _householdRepository.GetActiveMemberByUserIdAsync(managerUserId);
             if (manager == null || !string.Equals(manager.Role, "Manager", StringComparison.OrdinalIgnoreCase))
             {
-                return (false, "Chỉ Quản lý (Manager) mới có quyền thiết lập ngưỡng cảnh báo giao dịch.");
+                return (false, "Chỉ Quản lý hộ mới có quyền thiết lập ngưỡng cảnh báo giao dịch.");
             }
 
             var targetMember = await _householdRepository.GetMemberByIdAsync(targetHouseholdMemberId);
@@ -722,16 +721,15 @@ namespace FEMS.Services.Implementations
             var manager = await _householdRepository.GetActiveMemberByUserIdAsync(managerUserId);
             if (manager == null || !string.Equals(manager.Role, "Manager", StringComparison.OrdinalIgnoreCase))
             {
-                return (false, "Chỉ Quản lý (Manager) mới có quyền xem thông tin ví và giao dịch của các thành viên trong hộ.", null);
+                return (false, "Chỉ Quản lý hộ mới có quyền xem thông tin ví và giao dịch của các thành viên trong hộ.", null);
             }
 
-            // BR-11 & BR-16: Chỉ được xem thông tin của thành viên hiện đang Active trong cùng hộ gia đình
             var targetMember = await _householdRepository.GetMemberByIdAsync(targetHouseholdMemberId);
             if (targetMember == null ||
                 targetMember.HouseholdId != manager.HouseholdId ||
                 targetMember.Status != "Active")
             {
-                return (false, "Thành viên này không tồn tại hoặc không còn thuộc hộ gia đình của bạn (BR-11).", null);
+                return (false, "Thành viên này không tồn tại hoặc không còn thuộc hộ gia đình của bạn.", null);
             }
 
             var wallets = await _householdRepository.GetWalletsByMemberIdAsync(targetMember.HouseholdMemberId);
@@ -799,11 +797,10 @@ namespace FEMS.Services.Implementations
 
             foreach (var exp in expenses)
             {
-                // BR-27: Nếu danh mục đã bị xóa/tắt (Inactive), hiển thị nhãn "Category Deleted"
                 string catDisplay = exp.Category == null
-                    ? "Category Deleted"
+                    ? "Danh mục đã xóa"
                     : (string.Equals(exp.Category.Status, "Inactive", StringComparison.OrdinalIgnoreCase)
-                        ? $"{exp.Category.CategoryName} (Category Deleted)"
+                        ? $"{exp.Category.CategoryName} (Đã ẩn)"
                         : exp.Category.CategoryName);
 
                 allTransactions.Add(new MemberTransactionItemViewModel

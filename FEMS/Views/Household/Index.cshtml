@@ -25,11 +25,11 @@
                         }
                         else if (Model.IsManager)
                         {
-                            <span class="badge-role badge-role-manager">Quản lý (Manager)</span>
+                            <span class="badge-role badge-role-manager">Quản lý hộ</span>
                         }
                         else
                         {
-                            <span class="badge-role badge-role-member">Thành viên (Member)</span>
+                            <span class="badge-role badge-role-member">Thành viên</span>
                         }
                     </span>
                 </div>
@@ -117,7 +117,7 @@
                             <input type="email"
                                    name="inviteEmail"
                                    class="form-control hh-input-control"
-                                   placeholder="Nhập email (VD: lan@gmail.com)"
+                                   placeholder="Nhập email (VD: abc@gmail.com)"
                                    required />
                         </div>
 
@@ -179,13 +179,13 @@
                     <div class="hh-rule-note mt-3">
                         <strong>Quy tắc quản lý:</strong>
                         <ul class="mb-0 ps-3 mt-1">
-                            <li>Chỉ mời được tài khoản đã đăng ký FEMS và chưa thuộc hộ gia đình nào khác (BR-04, BR-06).</li>
-                            <li>Có thể thăng cấp <em>Member</em> lên <em>Manager</em> (BR-10).</li>
+                            <li>Chỉ mời được tài khoản đã đăng ký FEMS và chưa thuộc hộ gia đình nào khác.</li>
+                            <li>Có thể thăng cấp <em>Thành viên</em> lên <em>Quản lí hộ</em>.</li>
                             @if (Model.IsCreator)
                             {
-                                <li>Bạn là <strong>Chủ hộ (Người tạo hộ)</strong>: có quyền <em>Gỡ quyền</em> hoặc <em>Xóa</em> bất kỳ thành viên nào (kể cả Manager), hoặc <em>Xóa hộ gia đình</em>.</li>
+                                <li>Bạn là <strong>Chủ hộ (Người tạo hộ)</strong>: có quyền <em>Gỡ quyền</em> hoặc <em>Xóa</em> bất kỳ thành viên nào (kể cả Quản lí hộ), hoặc <em>Xóa hộ gia đình</em>.</li>
                             }
-                            <li>Khi xóa hoặc rời hộ, toàn bộ ví cá nhân và giao dịch của thành viên vẫn được giữ nguyên (BR-11).</li>
+                            <li>Khi xóa hoặc rời hộ, toàn bộ ví cá nhân và giao dịch của thành viên vẫn được giữ nguyên.</li>
                         </ul>
                     </div>
                 </div>
@@ -196,7 +196,7 @@
                     <div class="hh-card-header">
                         <h5 class="mb-1">Quyền hạn Thành viên</h5>
                         <p class="text-muted small mb-0">
-                            Bạn đang tham gia hộ gia đình với vai trò <strong>Thành viên (Member)</strong>.
+                            Bạn đang tham gia hộ gia đình với vai trò <strong>Thành viên</strong>.
                         </p>
                     </div>
 
@@ -230,15 +230,15 @@
                     <table class="table align-middle hh-table mb-0">
                         <thead>
                             <tr>
-                                <th style="width: 6%;">#</th>
-                                <th style="width: 26%;">Họ và tên</th>
-                                <th style="width: 22%;">Liên hệ</th>
+                                <th style="width: 5%;">#</th>
+                                <th style="width: 24%;">Họ và tên</th>
+                                <th style="width: 21%;">Liên hệ</th>
                                 <th style="width: 14%;">Vai trò</th>
                                 @if (Model.IsManager)
                                 {
                                     <th style="width: 16%;" class="text-center">Ví &amp; Giao dịch</th>
                                 }
-                                <th style="width: @(Model.IsManager ? "16%" : "32%");" class="text-end">Thao tác</th>
+                                <th style="width: @(Model.IsManager ? "20%" : "36%");" class="text-end">Thao tác</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -275,17 +275,16 @@
                                         }
                                         else if (isItemManager)
                                         {
-                                            <span class="badge-role badge-role-manager">Manager</span>
+                                            <span class="badge-role badge-role-manager">Quản lý hộ</span>
                                         }
                                         else
                                         {
-                                            <span class="badge-role badge-role-member">Member</span>
+                                            <span class="badge-role badge-role-member">Thành viên</span>
                                         }
                                     </td>
                                     @if (Model.IsManager)
                                     {
                                         <td class="text-center">
-                                            <!-- Nút Xem Ví, Giao dịch & Cấu hình Ngưỡng cảnh báo (UC-12, UC-16, UC-29) -->
                                             <a asp-controller="Household"
                                                asp-action="MemberDetails"
                                                asp-route-id="@item.HouseholdMemberId"
@@ -298,19 +297,18 @@
                                     <td class="text-end">
                                         @if (Model.IsManager && !item.IsCreator && !isCurrentUser)
                                         {
-                                            <div class="d-inline-flex flex-wrap gap-2 justify-content-end">
+                                            <div class="action-btn-row">
                                                 @if (!isItemManager)
                                                 {
-                                                    <!-- Thành viên thường (Member): mọi Manager đều có thể Thăng cấp hoặc Xóa -->
                                                     <form asp-controller="Household"
                                                           asp-action="Promote"
                                                           method="post"
                                                           class="d-inline"
-                                                          onsubmit="return confirm('Bạn có chắc chắn muốn thăng cấp thành viên @item.FullName lên vai trò Quản lý (Manager)?');">
+                                                          onsubmit="return confirm('Bạn có chắc chắn muốn thăng cấp thành viên @item.FullName lên vai trò Quản lý hộ?');">
                                                         <input type="hidden" name="memberId" value="@item.HouseholdMemberId" />
                                                         <button type="submit"
                                                                 class="btn-action btn-promote"
-                                                                title="Thăng cấp lên Quản lý (Manager)">
+                                                                title="Thăng cấp lên Quản lý hộ">
                                                             Thăng cấp
                                                         </button>
                                                     </form>
@@ -330,16 +328,15 @@
                                                 }
                                                 else if (Model.IsCreator)
                                                 {
-                                                    <!-- Thành viên đã được thăng cấp lên Manager: Chủ hộ (Người tạo hộ) có quyền Gỡ quyền hoặc Xóa -->
                                                     <form asp-controller="Household"
                                                           asp-action="Demote"
                                                           method="post"
                                                           class="d-inline"
-                                                          onsubmit="return confirm('Bạn có chắc chắn muốn gỡ quyền Quản lý của @item.FullName (chuyển về Thành viên)?');">
+                                                          onsubmit="return confirm('Bạn có chắc chắn muốn gỡ quyền Quản lý hộ của @item.FullName (chuyển về Thành viên)?');">
                                                         <input type="hidden" name="memberId" value="@item.HouseholdMemberId" />
                                                         <button type="submit"
                                                                 class="btn-action btn-demote"
-                                                                title="Gỡ quyền Quản lý về lại Thành viên">
+                                                                title="Gỡ quyền Quản lý hộ về lại Thành viên">
                                                             Gỡ quyền
                                                         </button>
                                                     </form>
@@ -348,7 +345,7 @@
                                                           asp-action="Remove"
                                                           method="post"
                                                           class="d-inline"
-                                                          onsubmit="return confirm('Xác nhận xóa Quản lý @item.FullName khỏi hộ gia đình? (Tài khoản, ví cá nhân và giao dịch của họ vẫn được bảo toàn)');">
+                                                          onsubmit="return confirm('Xác nhận xóa Quản lý hộ @item.FullName khỏi hộ gia đình? (Tài khoản, ví cá nhân và giao dịch của họ vẫn được bảo toàn)');">
                                                         <input type="hidden" name="memberId" value="@item.HouseholdMemberId" />
                                                         <button type="submit"
                                                                 class="btn-action btn-remove"
