@@ -1,0 +1,117 @@
+@model FEMS.ViewModels.Household.JoinHouseholdViewModel
+
+@{
+    Layout = "~/Views/Shared/_AuthLayout.cshtml";
+    ViewData["Title"] = "Tham gia hộ gia đình";
+}
+
+<div class="join-hh-container">
+
+    <!-- Left panel -->
+    <section class="join-hh-brand">
+        <div class="join-hh-brand-content">
+            <h1>
+                Trang chờ &amp; Xác nhận
+                <br />
+                tham gia hộ gia đình
+            </h1>
+
+            <p>
+                Để tham gia một hộ gia đình, hãy nhờ <strong>Quản lý (Manager)</strong>
+                của hộ đó gửi lời mời qua địa chỉ email đăng ký của bạn, sau đó nhập mã
+                tham gia vào khung bên phải.
+            </p>
+
+            <div class="join-hh-logo">
+                FEMS Member
+            </div>
+        </div>
+    </section>
+
+    <!-- Right panel -->
+    <section class="join-hh-form-section">
+        <div class="join-hh-form-card">
+
+            <div class="waiting-badge">
+                <span class="pulse-dot"></span>
+                Đang chờ xác nhận mã hộ gia đình
+            </div>
+
+            <h2>Tham gia hộ gia đình</h2>
+            <p class="form-subtitle">
+                Nhập mã tham gia (ví dụ: <strong>FEMS-123456</strong>) từ lời mời của Quản lý để vào hộ.
+            </p>
+
+            @if (Model.PendingInvites != null && Model.PendingInvites.Any())
+            {
+                <div class="pending-invites-box">
+                    <div class="pending-title">
+                        Lời mời bạn nhận được (@Model.PendingInvites.Count):
+                    </div>
+
+                    @foreach (var invite in Model.PendingInvites)
+                    {
+                        <div class="invite-item">
+                            <div class="invite-info">
+                                <strong>@invite.HouseholdName</strong>
+                                <span>Mã mời: <code class="invite-code-pill">@invite.InviteCode</code></span>
+                            </div>
+                            <button type="button"
+                                    class="btn-use-code"
+                                    onclick="document.getElementById('InviteCodeInput').value='@invite.InviteCode'">
+                                Lấy mã
+                            </button>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="empty-invite-notice">
+                    Hiện chưa có lời mời tự động nào trong hộp thư thông báo của bạn.
+                    Bạn vẫn có thể nhập trực tiếp mã từ Quản lý hoặc bấm
+                    <a asp-controller="Household" asp-action="Join">Làm mới trang</a>.
+                </div>
+            }
+
+            <form asp-controller="Household"
+                  asp-action="Join"
+                  method="post">
+
+                <div asp-validation-summary="ModelOnly"
+                     class="hh-validation">
+                </div>
+
+                <div class="hh-group">
+                    <label asp-for="InviteCode">Mã tham gia hộ gia đình</label>
+                    <input asp-for="InviteCode"
+                           id="InviteCodeInput"
+                           class="hh-code-input"
+                           placeholder="Nhập mã (VD: FEMS-123456)"
+                           autocomplete="off" />
+                    <span asp-validation-for="InviteCode"
+                          class="hh-field-error">
+                    </span>
+                </div>
+
+                <button type="submit" class="hh-join-btn">
+                    Xác nhận &amp; Vào hộ gia đình
+                </button>
+
+                <div class="hh-back-row">
+                    <a asp-controller="Household" asp-action="Setup">
+                        &larr; Quay lại trang chọn
+                    </a>
+                </div>
+
+            </form>
+
+        </div>
+    </section>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+

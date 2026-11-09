@@ -1,0 +1,84 @@
+@model FEMS.ViewModels.Household.CreateHouseholdViewModel
+
+@{
+    Layout = "~/Views/Shared/_AuthLayout.cshtml";
+    ViewData["Title"] = "Tạo hộ gia đình";
+}
+
+<div class="create-hh-container">
+
+    <!-- Left panel -->
+    <section class="create-hh-brand">
+        <div class="create-hh-brand-content">
+            <h1>
+                Khởi tạo không gian
+                <br />
+                tài chính cho gia đình bạn
+            </h1>
+
+            <p>
+                Người tạo hộ gia đình sẽ được gán quyền <strong>Quản lý (Manager)</strong>,
+                có thể mời thành viên, phân bổ hạn mức chi tiêu và xem báo cáo tổng hợp.
+            </p>
+
+            <div class="create-hh-logo">
+                FEMS Manager
+            </div>
+        </div>
+    </section>
+
+    <!-- Right panel -->
+    <section class="create-hh-form-section">
+        <div class="create-hh-form-card">
+
+            <div class="step-badge">Bước 1 / 1 &bull; Dành cho Quản lý</div>
+            <h2>Nhập tên hộ gia đình</h2>
+            <p class="form-subtitle">
+                Đặt một tên gọi thân thuộc để các thành viên dễ dàng nhận diện khi tham gia.
+            </p>
+
+            <form asp-controller="Household"
+                  asp-action="Create"
+                  method="post">
+
+                <div asp-validation-summary="ModelOnly"
+                     class="hh-validation">
+                </div>
+
+                <div class="hh-group">
+                    <label asp-for="HouseholdName">Tên hộ gia đình</label>
+                    <input asp-for="HouseholdName"
+                           class="hh-input"
+                           placeholder="Ví dụ: Gia đình Nguyễn Văn Minh"
+                           autofocus />
+                    <span asp-validation-for="HouseholdName"
+                          class="hh-field-error">
+                    </span>
+                </div>
+
+                <div class="hh-info-box">
+                    <strong>Lưu ý:</strong> Sau khi nhấn tạo, bạn sẽ được chuyển thẳng vào trang chủ
+                    và có thể mời thêm các thành viên khác bất kỳ lúc nào tại mục <em>Hộ gia đình</em>.
+                </div>
+
+                <button type="submit" class="hh-submit-btn">
+                    Tạo hộ gia đình &amp; Vào trang chủ
+                </button>
+
+                <div class="hh-back-row">
+                    <a asp-controller="Household" asp-action="Setup">
+                        &larr; Quay lại trang chọn
+                    </a>
+                </div>
+
+            </form>
+
+        </div>
+    </section>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+

@@ -1,4 +1,4 @@
-﻿using FEMS.Services.Interfaces;
+using FEMS.Services.Interfaces;
 using FEMS.ViewModels.Account;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -11,10 +11,14 @@ namespace FEMS.Controllers
     public class AccountController : Controller
     {
         private readonly IAccountService _accountService;
+        private readonly IHouseholdService _householdService;
 
-        public AccountController(IAccountService accountService)
+        public AccountController(
+            IAccountService accountService,
+            IHouseholdService householdService)
         {
             _accountService = accountService;
+            _householdService = householdService;
         }
 
         // =========================================
@@ -24,10 +28,20 @@ namespace FEMS.Controllers
         // GET: /Account/Login
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult Login()
+        public async Task<IActionResult> Login()
         {
             if (User.Identity?.IsAuthenticated == true)
             {
+                string? uidStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (int.TryParse(uidStr, out int currentUserId))
+                {
+                    var activeMember = await _householdService.GetActiveMembershipAsync(currentUserId);
+                    if (activeMember == null)
+                    {
+                        return RedirectToAction("Setup", "Household");
+                    }
+                }
+
                 return RedirectToAction("Index", "Home");
             }
 
@@ -87,6 +101,12 @@ namespace FEMS.Controllers
                 principal,
                 properties
             );
+
+            var activeMembership = await _householdService.GetActiveMembershipAsync(user.UserId);
+            if (activeMembership == null)
+            {
+                return RedirectToAction("Setup", "Household");
+            }
 
             return RedirectToAction("Index", "Home");
         }

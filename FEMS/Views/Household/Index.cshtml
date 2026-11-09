@@ -1,0 +1,386 @@
+@model FEMS.ViewModels.Household.HouseholdDashboardViewModel
+
+@{
+    ViewData["Title"] = "Quản lý Hộ gia đình";
+}
+
+<div class="household-page">
+
+    <!-- Top Banner -->
+    <div class="hh-header-card">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+            <div class="hh-header-info">
+                <span class="hh-subtitle">HỘ GIA ĐÌNH CỦA BẠN</span>
+                <h1 class="hh-title">@Model.HouseholdName</h1>
+                <div class="hh-meta">
+                    <span>Ngày thành lập: <strong>@Model.CreatedAt.ToString("dd/MM/yyyy")</strong></span>
+                    <span class="meta-divider">&bull;</span>
+                    <span>Tổng số thành viên: <strong>@Model.Members.Count</strong></span>
+                    <span class="meta-divider">&bull;</span>
+                    <span>
+                        Vai trò của bạn:
+                        @if (Model.IsCreator)
+                        {
+                            <span class="badge-role badge-role-creator">Chủ hộ (Người tạo hộ)</span>
+                        }
+                        else if (Model.IsManager)
+                        {
+                            <span class="badge-role badge-role-manager">Quản lý (Manager)</span>
+                        }
+                        else
+                        {
+                            <span class="badge-role badge-role-member">Thành viên (Member)</span>
+                        }
+                    </span>
+                </div>
+            </div>
+
+            <div class="hh-header-actions">
+                @if (Model.IsCreator)
+                {
+                    <!-- Nút Xóa hộ gia đình (Dành riêng cho Người tạo hộ / Chủ hộ) -->
+                    <form asp-controller="Household"
+                          asp-action="DeleteHousehold"
+                          method="post"
+                          class="d-inline"
+                          onsubmit="return confirm('CẢNH BÁO: Bạn có chắc chắn muốn XÓA hộ gia đình @Model.HouseholdName không? Toàn bộ thành viên sẽ rời khỏi hộ (ví cá nhân và lịch sử giao dịch của mọi người vẫn được giữ nguyên).');">
+                        <button type="submit" class="btn-header-danger">
+                            Xóa hộ gia đình
+                        </button>
+                    </form>
+                }
+                else
+                {
+                    <!-- Nút Rời hộ gia đình (Dành cho các thành viên tham gia hộ) -->
+                    <form asp-controller="Household"
+                          asp-action="Leave"
+                          method="post"
+                          class="d-inline"
+                          onsubmit="return confirm('Bạn có chắc chắn muốn rời khỏi hộ gia đình @Model.HouseholdName? (Tài khoản, ví cá nhân và lịch sử giao dịch của bạn vẫn được bảo toàn).');">
+                        <button type="submit" class="btn-header-leave">
+                            Rời hộ gia đình
+                        </button>
+                    </form>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Messages -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="hh-alert hh-alert-success">
+            <div>
+                <strong>Thành công:</strong> @TempData["SuccessMessage"]
+                @if (TempData["GeneratedInviteCode"] != null)
+                {
+                    <div class="generated-code-banner">
+                        Mã tham gia dành cho thành viên:
+                        <span class="code-highlight">@TempData["GeneratedInviteCode"]</span>
+                        <small>(Thành viên cũng sẽ thấy mã này ở trang chờ của họ)</small>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="hh-alert hh-alert-error">
+            <strong>Thông báo:</strong> @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <div class="row g-4">
+
+        <!-- Left column: Invite Member (Visible to Manager, or Info box for Member) -->
+        <div class="col-lg-4">
+            @if (Model.IsManager)
+            {
+                <div class="hh-card">
+                    <div class="hh-card-header">
+                        <h5 class="mb-1">Mời thành viên mới</h5>
+                        <p class="text-muted small mb-0">
+                            Nhập email của tài khoản FEMS đã đăng ký để tạo mã mời tham gia hộ gia đình.
+                        </p>
+                    </div>
+
+                    <form asp-controller="Household"
+                          asp-action="Invite"
+                          method="post"
+                          class="mt-3">
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small text-secondary">
+                                Email người dùng FEMS <span class="text-danger">*</span>
+                            </label>
+                            <input type="email"
+                                   name="inviteEmail"
+                                   class="form-control hh-input-control"
+                                   placeholder="Nhập email (VD: lan@gmail.com)"
+                                   required />
+                        </div>
+
+                        <button type="submit" class="btn-hh-primary w-100">
+                            + Tạo lời mời &amp; Gửi mã
+                        </button>
+                    </form>
+
+                    <!-- Danh sách lời mời đang chờ xác nhận -->
+                    <div class="sent-invites-section mt-4 pt-3 border-top">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h6 class="mb-0 fw-bold" style="color: #134e4a; font-size: 14px;">
+                                Lời mời đang chờ xác nhận
+                            </h6>
+                            <span class="invite-count-badge">@Model.SentInvites.Count</span>
+                        </div>
+
+                        @if (Model.SentInvites != null && Model.SentInvites.Any())
+                        {
+                            <div class="sent-invites-list">
+                                @foreach (var inv in Model.SentInvites)
+                                {
+                                    <div class="sent-invite-card">
+                                        <div class="sent-invite-info">
+                                            <div class="fw-bold text-dark small">@inv.InvitedFullName</div>
+                                            <div class="text-muted" style="font-size: 12px;">@inv.InvitedEmail</div>
+                                            <div class="mt-1">
+                                                <span class="sent-code-tag">@inv.InviteCode</span>
+                                                <span class="text-muted" style="font-size: 11px; margin-left: 4px;">
+                                                    @inv.CreatedAt.ToString("dd/MM HH:mm")
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <form asp-controller="Household"
+                                              asp-action="CancelInvite"
+                                              method="post"
+                                              class="d-inline"
+                                              onsubmit="return confirm('Bạn có chắc chắn muốn hủy lời mời gửi tới @inv.InvitedFullName (@inv.InvitedEmail)?');">
+                                            <input type="hidden" name="notificationId" value="@inv.NotificationId" />
+                                            <button type="submit"
+                                                    class="btn-cancel-invite"
+                                                    title="Hủy lời mời này">
+                                                Hủy mời
+                                            </button>
+                                        </form>
+                                    </div>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="text-muted small fst-italic py-2">
+                                Hiện không có lời mời nào đang chờ.
+                            </div>
+                        }
+                    </div>
+
+                    <div class="hh-rule-note mt-3">
+                        <strong>Quy tắc quản lý:</strong>
+                        <ul class="mb-0 ps-3 mt-1">
+                            <li>Chỉ mời được tài khoản đã đăng ký FEMS và chưa thuộc hộ gia đình nào khác (BR-04, BR-06).</li>
+                            <li>Có thể thăng cấp <em>Member</em> lên <em>Manager</em> (BR-10).</li>
+                            @if (Model.IsCreator)
+                            {
+                                <li>Bạn là <strong>Chủ hộ (Người tạo hộ)</strong>: có quyền <em>Gỡ quyền</em> hoặc <em>Xóa</em> bất kỳ thành viên nào (kể cả Manager), hoặc <em>Xóa hộ gia đình</em>.</li>
+                            }
+                            <li>Khi xóa hoặc rời hộ, toàn bộ ví cá nhân và giao dịch của thành viên vẫn được giữ nguyên (BR-11).</li>
+                        </ul>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="hh-card">
+                    <div class="hh-card-header">
+                        <h5 class="mb-1">Quyền hạn Thành viên</h5>
+                        <p class="text-muted small mb-0">
+                            Bạn đang tham gia hộ gia đình với vai trò <strong>Thành viên (Member)</strong>.
+                        </p>
+                    </div>
+
+                    <div class="hh-rule-note mt-3">
+                        <strong>Thông tin dành cho bạn:</strong>
+                        <ul class="mb-0 ps-3 mt-1">
+                            <li>Bạn có toàn quyền tạo và quản lý các ví cá nhân, danh mục chi tiêu và giao dịch của riêng mình.</li>
+                            <li>Quản lý hộ gia đình có thể mời thêm thành viên mới hoặc phân bổ kế hoạch ngân sách hàng tháng.</li>
+                        </ul>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Right column: Household Members Table -->
+        <div class="col-lg-8">
+            <div class="hh-card">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <h5 class="mb-0 fw-bold" style="color: #134e4a;">
+                            Danh sách thành viên hộ gia đình
+                        </h5>
+                        <small class="text-muted">
+                            Hiển thị các thành viên hiện đang hoạt động trong hộ gia đình
+                        </small>
+                    </div>
+                    <span class="member-count-pill">@Model.Members.Count thành viên</span>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table align-middle hh-table mb-0">
+                        <thead>
+                            <tr>
+                                <th style="width: 6%;">#</th>
+                                <th style="width: 26%;">Họ và tên</th>
+                                <th style="width: 22%;">Liên hệ</th>
+                                <th style="width: 14%;">Vai trò</th>
+                                @if (Model.IsManager)
+                                {
+                                    <th style="width: 16%;" class="text-center">Ví &amp; Giao dịch</th>
+                                }
+                                <th style="width: @(Model.IsManager ? "16%" : "32%");" class="text-end">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                int index = 1;
+                            }
+                            @foreach (var item in Model.Members)
+                            {
+                                bool isCurrentUser = item.UserId == Model.CurrentUserId;
+                                bool isItemManager = string.Equals(item.Role, "Manager", StringComparison.OrdinalIgnoreCase);
+
+                                <tr>
+                                    <td class="text-muted fw-semibold">@index</td>
+                                    <td>
+                                        <div class="fw-bold text-dark">
+                                            @item.FullName
+                                            @if (isCurrentUser)
+                                            {
+                                                <span class="you-tag">(Bạn)</span>
+                                            }
+                                        </div>
+                                        <div class="text-muted small">
+                                            Tham gia: @item.JoinedAt.ToString("dd/MM/yyyy")
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="small fw-semibold text-dark">@item.Email</div>
+                                        <div class="text-muted small">@(string.IsNullOrWhiteSpace(item.Phone) ? "Chưa cập nhật SĐT" : item.Phone)</div>
+                                    </td>
+                                    <td>
+                                        @if (item.IsCreator)
+                                        {
+                                            <span class="badge-role badge-role-creator">Chủ hộ</span>
+                                        }
+                                        else if (isItemManager)
+                                        {
+                                            <span class="badge-role badge-role-manager">Manager</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge-role badge-role-member">Member</span>
+                                        }
+                                    </td>
+                                    @if (Model.IsManager)
+                                    {
+                                        <td class="text-center">
+                                            <!-- Nút Xem Ví, Giao dịch & Cấu hình Ngưỡng cảnh báo (UC-12, UC-16, UC-29) -->
+                                            <a asp-controller="Household"
+                                               asp-action="MemberDetails"
+                                               asp-route-id="@item.HouseholdMemberId"
+                                               class="btn-action btn-view-wallet"
+                                               title="Xem ví cá nhân, lịch sử giao dịch và đặt ngưỡng cảnh báo">
+                                                Ví &amp; Giao dịch
+                                            </a>
+                                        </td>
+                                    }
+                                    <td class="text-end">
+                                        @if (Model.IsManager && !item.IsCreator && !isCurrentUser)
+                                        {
+                                            <div class="d-inline-flex flex-wrap gap-2 justify-content-end">
+                                                @if (!isItemManager)
+                                                {
+                                                    <!-- Thành viên thường (Member): mọi Manager đều có thể Thăng cấp hoặc Xóa -->
+                                                    <form asp-controller="Household"
+                                                          asp-action="Promote"
+                                                          method="post"
+                                                          class="d-inline"
+                                                          onsubmit="return confirm('Bạn có chắc chắn muốn thăng cấp thành viên @item.FullName lên vai trò Quản lý (Manager)?');">
+                                                        <input type="hidden" name="memberId" value="@item.HouseholdMemberId" />
+                                                        <button type="submit"
+                                                                class="btn-action btn-promote"
+                                                                title="Thăng cấp lên Quản lý (Manager)">
+                                                            Thăng cấp
+                                                        </button>
+                                                    </form>
+
+                                                    <form asp-controller="Household"
+                                                          asp-action="Remove"
+                                                          method="post"
+                                                          class="d-inline"
+                                                          onsubmit="return confirm('Xác nhận xóa thành viên @item.FullName khỏi hộ gia đình? (Tài khoản, ví cá nhân và giao dịch của họ vẫn được bảo toàn)');">
+                                                        <input type="hidden" name="memberId" value="@item.HouseholdMemberId" />
+                                                        <button type="submit"
+                                                                class="btn-action btn-remove"
+                                                                title="Xóa thành viên khỏi hộ gia đình">
+                                                            Xóa
+                                                        </button>
+                                                    </form>
+                                                }
+                                                else if (Model.IsCreator)
+                                                {
+                                                    <!-- Thành viên đã được thăng cấp lên Manager: Chủ hộ (Người tạo hộ) có quyền Gỡ quyền hoặc Xóa -->
+                                                    <form asp-controller="Household"
+                                                          asp-action="Demote"
+                                                          method="post"
+                                                          class="d-inline"
+                                                          onsubmit="return confirm('Bạn có chắc chắn muốn gỡ quyền Quản lý của @item.FullName (chuyển về Thành viên)?');">
+                                                        <input type="hidden" name="memberId" value="@item.HouseholdMemberId" />
+                                                        <button type="submit"
+                                                                class="btn-action btn-demote"
+                                                                title="Gỡ quyền Quản lý về lại Thành viên">
+                                                            Gỡ quyền
+                                                        </button>
+                                                    </form>
+
+                                                    <form asp-controller="Household"
+                                                          asp-action="Remove"
+                                                          method="post"
+                                                          class="d-inline"
+                                                          onsubmit="return confirm('Xác nhận xóa Quản lý @item.FullName khỏi hộ gia đình? (Tài khoản, ví cá nhân và giao dịch của họ vẫn được bảo toàn)');">
+                                                        <input type="hidden" name="memberId" value="@item.HouseholdMemberId" />
+                                                        <button type="submit"
+                                                                class="btn-action btn-remove"
+                                                                title="Xóa khỏi hộ gia đình">
+                                                            Xóa
+                                                        </button>
+                                                    </form>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted small fst-italic">Quản lý hộ</span>
+                                                }
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted small fst-italic">
+                                                @(item.IsCreator ? "Người tạo hộ" : (isItemManager ? "Quản lý hộ" : "—"))
+                                            </span>
+                                        }
+                                    </td>
+                                </tr>
+                                index++;
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+

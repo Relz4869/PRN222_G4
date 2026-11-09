@@ -1,0 +1,209 @@
+/* =========================================
+   FEMS - CREATE HOUSEHOLD PAGE
+   Color Palette:
+   Primary:   #0D9488
+   Secondary: #F59E0B
+   Neutral:   #FAFAFA
+========================================= */
+
+.create-hh-container {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    width: 100%;
+    min-height: 100vh;
+    min-height: 100svh;
+    font-family: Arial, sans-serif;
+    color: #1f2937;
+}
+
+.create-hh-brand {
+    background-color: #0D9488;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px;
+}
+
+.create-hh-brand-content {
+    width: 100%;
+    max-width: 390px;
+}
+
+.create-hh-brand h1 {
+    color: #ffffff;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.4;
+    margin-bottom: 35px;
+}
+
+.create-hh-brand p {
+    color: #ecfdf5;
+    font-size: 14px;
+    line-height: 1.7;
+    margin-bottom: 40px;
+}
+
+.create-hh-logo {
+    display: inline-block;
+    background-color: #F59E0B;
+    color: #422006;
+    padding: 13px 38px;
+    border-radius: 7px;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.create-hh-form-section {
+    background-color: #FAFAFA;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+}
+
+.create-hh-form-card {
+    width: 100%;
+    max-width: 460px;
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 36px 32px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+.step-badge {
+    display: inline-block;
+    background-color: #ccfbf1;
+    color: #0D9488;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 5px 12px;
+    border-radius: 999px;
+    margin-bottom: 14px;
+}
+
+.create-hh-form-card h2 {
+    color: #134e4a;
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.form-subtitle {
+    color: #6b7280;
+    font-size: 13.5px;
+    line-height: 1.5;
+    margin-bottom: 26px;
+}
+
+.hh-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+.hh-group label {
+    color: #374151;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.hh-input {
+    width: 100%;
+    height: 46px;
+    padding: 0 14px;
+    color: #1f2937;
+    background-color: #ffffff;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hh-input:focus {
+    border-color: #0D9488;
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.12);
+}
+
+.hh-info-box {
+    background-color: #fffbeb;
+    border-left: 4px solid #F59E0B;
+    color: #92400e;
+    font-size: 13px;
+    line-height: 1.5;
+    padding: 12px 14px;
+    border-radius: 6px;
+    margin-bottom: 24px;
+}
+
+.hh-submit-btn {
+    width: 100%;
+    height: 48px;
+    background-color: #0D9488;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.hh-submit-btn:hover {
+    background-color: #0f766e;
+}
+
+.hh-back-row {
+    margin-top: 22px;
+    text-align: center;
+}
+
+.hh-back-row a,
+.hh-back-row a:link,
+.hh-back-row a:visited,
+::deep .hh-back-row a,
+::deep .hh-back-row a:link,
+::deep .hh-back-row a:visited {
+    color: #0D9488 !important;
+    font-size: 13.5px;
+    font-weight: 600;
+    text-decoration: none !important;
+}
+
+.hh-back-row a:hover,
+::deep .hh-back-row a:hover {
+    color: #F59E0B !important;
+    text-decoration: none !important;
+}
+
+.hh-validation {
+    color: #dc2626;
+    font-size: 13px;
+    margin-bottom: 14px;
+}
+
+.hh-field-error {
+    color: #dc2626;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+@media (max-width: 768px) {
+    .create-hh-container {
+        grid-template-columns: 1fr;
+    }
+
+    .create-hh-brand {
+        min-height: 220px;
+        padding: 28px 20px;
+    }
+
+    .create-hh-form-section {
+        padding: 28px 18px;
+    }
+}
+

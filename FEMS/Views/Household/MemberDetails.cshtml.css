@@ -1,0 +1,403 @@
+/* =========================================
+   FEMS - MEMBER WALLETS & TRANSACTIONS (READ-ONLY)
+   Color Palette:
+   Primary:   #0D9488 (Teal / Mint)
+   Secondary: #F59E0B (Honey Amber)
+   Neutral:   #FAFAFA (Soft Cream / Light Gray)
+========================================= */
+
+.member-detail-page {
+    background-color: #FAFAFA;
+    padding: 24px;
+    border-radius: 16px;
+    border: 1px solid #e5e7eb;
+}
+
+.btn-back-household,
+::deep .btn-back-household {
+    display: inline-block;
+    color: #0D9488 !important;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none !important;
+    padding: 6px 12px;
+    border-radius: 8px;
+    background-color: #ccfbf1;
+    transition: all 0.15s ease;
+}
+
+.btn-back-household:hover,
+::deep .btn-back-household:hover {
+    background-color: #0D9488;
+    color: #ffffff !important;
+    text-decoration: none !important;
+}
+
+.readonly-badge {
+    background-color: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fde68a;
+    font-size: 12.5px;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 999px;
+}
+
+.member-hero-card {
+    background: linear-gradient(135deg, #0D9488 0%, #0f766e 100%);
+    color: #ffffff;
+    border-radius: 14px;
+    padding: 24px 28px;
+    box-shadow: 0 4px 14px rgba(13, 148, 136, 0.18);
+}
+
+.member-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: #F59E0B;
+    color: #422006;
+    font-size: 24px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.member-name {
+    font-size: 22px;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.role-tag {
+    background-color: #F59E0B;
+    color: #422006;
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 999px;
+}
+
+.member-contact {
+    font-size: 13.5px;
+    color: #ccfbf1;
+}
+
+.member-joined {
+    font-size: 12px;
+    color: #99f6e4;
+    margin-top: 2px;
+}
+
+.summary-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.stat-box {
+    background-color: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.stat-label {
+    font-size: 12px;
+    color: #ccfbf1;
+}
+
+.stat-value {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.stat-income {
+    color: #a7f3d0;
+}
+
+.stat-expense {
+    color: #fde68a;
+}
+
+.detail-card {
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 22px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.detail-card-title {
+    color: #134e4a;
+    font-weight: 700;
+}
+
+.card-badge-amber {
+    display: inline-block;
+    background-color: #fef3c7;
+    color: #92400e;
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 999px;
+}
+
+.card-badge-teal {
+    display: inline-block;
+    background-color: #ccfbf1;
+    color: #0D9488;
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 999px;
+}
+
+.current-threshold-box {
+    background-color: #fffbeb;
+    border-left: 4px solid #F59E0B;
+    padding: 10px 14px;
+    border-radius: 8px;
+}
+
+.threshold-number {
+    color: #92400e;
+    font-size: 15px;
+}
+
+.detail-input {
+    height: 42px;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.detail-input:focus {
+    border-color: #0D9488;
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.12);
+}
+
+.btn-detail-primary {
+    height: 42px;
+    background-color: #0D9488;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.btn-detail-primary:hover {
+    background-color: #0f766e;
+}
+
+.wallet-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+}
+
+.wallet-item-card {
+    background-color: #FAFAFA;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 16px;
+    transition: all 0.2s ease;
+}
+
+.wallet-item-active {
+    border-color: #0D9488;
+    background-color: #f0fdfa;
+}
+
+.wallet-name {
+    color: #134e4a;
+    font-weight: 700;
+}
+
+.btn-filter-wallet,
+::deep .btn-filter-wallet {
+    background-color: #ccfbf1;
+    color: #0D9488 !important;
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 6px;
+    text-decoration: none !important;
+}
+
+.btn-filter-wallet:hover,
+::deep .btn-filter-wallet:hover {
+    background-color: #0D9488;
+    color: #ffffff !important;
+    text-decoration: none !important;
+}
+
+.btn-clear-wallet-filter,
+::deep .btn-clear-wallet-filter {
+    color: #0D9488 !important;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none !important;
+}
+
+.wallet-balance-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-top: 6px;
+}
+
+.wallet-balance-val {
+    font-size: 17px;
+    color: #0D9488;
+}
+
+.limit-progress-bar {
+    width: 100%;
+    height: 7px;
+    background-color: #e5e7eb;
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.limit-progress-fill {
+    height: 100%;
+    border-radius: 999px;
+}
+
+.fill-warning {
+    background-color: #F59E0B;
+}
+
+.fill-danger {
+    background-color: #dc2626;
+}
+
+.text-warning-dark {
+    color: #b45309;
+}
+
+.filter-control {
+    min-width: 155px;
+    border-radius: 7px;
+}
+
+.btn-filter-submit {
+    background-color: #0D9488;
+    color: #ffffff;
+    border: none;
+    border-radius: 7px;
+    padding: 5px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-filter-reset,
+::deep .btn-filter-reset {
+    color: #6b7280 !important;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none !important;
+    padding: 5px 10px;
+}
+
+.tx-table thead th {
+    background-color: #f9fafb;
+    color: #4b5563;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 12px 14px;
+}
+
+.tx-table tbody td {
+    padding: 13px 14px;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.tx-row-alert {
+    background-color: #fffbeb;
+}
+
+.tx-badge {
+    display: inline-block;
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 999px;
+}
+
+.tx-badge-income {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.tx-badge-expense {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+.tx-category-pill {
+    display: inline-block;
+    background-color: #f3f4f6;
+    color: #374151;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 6px;
+}
+
+.alert-threshold-tag {
+    display: inline-block;
+    background-color: #F59E0B;
+    color: #422006;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 4px;
+    margin-top: 3px;
+}
+
+.detail-alert {
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    font-size: 14px;
+}
+
+.detail-alert-success {
+    background-color: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    color: #065f46;
+}
+
+.detail-alert-error {
+    background-color: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #991b1b;
+}
+
+.empty-state-box {
+    background-color: #f9fafb;
+    border: 1px dashed #d1d5db;
+    border-radius: 10px;
+    padding: 24px;
+    text-align: center;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+@media (max-width: 768px) {
+    .summary-stats-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
