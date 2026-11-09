@@ -24,10 +24,12 @@ namespace FEMS
             // Repository Registration
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+            builder.Services.AddScoped<IHouseholdRepository, HouseholdRepository>();
 
             // Service Registration
             builder.Services.AddScoped<IAccountService, AccountService>();
             builder.Services.AddScoped<ICategoryService, CategoryService>();
+            builder.Services.AddScoped<IHouseholdService, HouseholdService>();
 
             // Authentication Configuration
             builder.Services

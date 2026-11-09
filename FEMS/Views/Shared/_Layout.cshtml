@@ -59,6 +59,15 @@
                             Quản lý Danh mục
                         </a>
                     </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Household" ? "text-white fw-semibold px-3 rounded-3" : "text-dark")"
+                           style="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Household" ? "background-color: #0D9488;" : "")"
+                           asp-controller="Household"
+                           asp-action="Index">
+                            Hộ gia đình
+                        </a>
+                    </li>
                 </ul>
 
                 <!-- User Authentication Section -->

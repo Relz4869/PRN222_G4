@@ -1,0 +1,364 @@
+@model FEMS.ViewModels.Household.MemberFinanceDetailViewModel
+
+@{
+    ViewData["Title"] = $"Ví & Giao dịch - {Model.FullName}";
+}
+
+<div class="member-detail-page">
+
+    <!-- Top Navigation & Member Banner -->
+    <div class="mb-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <a asp-controller="Household"
+           asp-action="Index"
+           class="btn-back-household">
+            &larr; Quay lại Quản lý Hộ gia đình (@Model.HouseholdName)
+        </a>
+
+        <span class="readonly-badge">
+            Chế độ Xem của Quản lý
+        </span>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="detail-alert detail-alert-success">
+            <strong>Thành công:</strong> @TempData["SuccessMessage"]
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="detail-alert detail-alert-error">
+            <strong>Thông báo:</strong> @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <!-- Header Summary Card -->
+    <div class="member-hero-card">
+        <div class="row g-4 align-items-center">
+            <div class="col-lg-5">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="member-avatar">
+                        @(string.IsNullOrWhiteSpace(Model.FullName) ? "U" : Model.FullName.Trim()[0].ToString().ToUpper())
+                    </div>
+                    <div>
+                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                            <h2 class="member-name mb-0">@Model.FullName</h2>
+                            <span class="role-tag">
+                                @(string.Equals(Model.Role, "Manager", StringComparison.OrdinalIgnoreCase) ? "Quản lý hộ" : "Thành viên")
+                            </span>
+                        </div>
+                        <div class="member-contact mt-1">
+                            <span>@Model.Email</span>
+                            @if (!string.IsNullOrWhiteSpace(Model.Phone))
+                            {
+                                <span>&bull; @Model.Phone</span>
+                            }
+                        </div>
+                        <div class="member-joined">
+                            Tham gia hộ: @Model.JoinedAt.ToString("dd/MM/yyyy")
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-7">
+                <div class="summary-stats-grid">
+                    <div class="stat-box">
+                        <span class="stat-label">Tổng số dư các ví</span>
+                        <span class="stat-value text-white">@Model.TotalWalletBalance.ToString("N0") <small>VNĐ</small></span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">Tổng thu nhập</span>
+                        <span class="stat-value stat-income">+@Model.TotalIncome.ToString("N0") <small>VNĐ</small></span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">Tổng chi tiêu</span>
+                        <span class="stat-value stat-expense">-@Model.TotalExpense.ToString("N0") <small>VNĐ</small></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Row 1: Set Transaction Alert Threshold (UC-29) & Personal Wallets (UC-12) -->
+    <div class="row g-4 mt-1">
+
+        <!-- Left: Alert Threshold Configuration (UC-29) -->
+        <div class="col-lg-4">
+            <div class="detail-card h-100">
+                <h5 class="detail-card-title mt-2">Ngưỡng cảnh báo giao dịch</h5>
+                <p class="text-muted small">
+                    Thiết lập số tiền tối thiểu cho một giao dịch của <strong>@Model.FullName</strong>
+                    để hệ thống gửi thông báo cảnh báo cho Quản lý.
+                </p>
+
+                <div class="current-threshold-box mb-3">
+                    <span class="small text-secondary d-block">Ngưỡng hiện tại:</span>
+                    @if (Model.AlertAmount.HasValue && Model.AlertAmount.Value > 0)
+                    {
+                        <strong class="threshold-number">@Model.AlertAmount.Value.ToString("N0") VNĐ / giao dịch</strong>
+                    }
+                    else
+                    {
+                        <strong class="text-muted">Chưa thiết lập (Tắt cảnh báo)</strong>
+                    }
+                </div>
+
+                <form asp-controller="Household"
+                      asp-action="SetAlertThreshold"
+                      method="post">
+                    <input type="hidden" name="memberId" value="@Model.MemberId" />
+                    <input type="hidden" name="returnTo" value="Details" />
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold text-secondary">
+                            Mức cảnh báo mới (VNĐ)
+                        </label>
+                        <input type="number"
+                               name="alertAmount"
+                               min="0"
+                               step="50000"
+                               value="@(Model.AlertAmount.HasValue ? ((long)Model.AlertAmount.Value).ToString() : "")"
+                               class="form-control detail-input"
+                               placeholder="VD: 1000000 (Để trống để tắt)" />
+                    </div>
+
+                    <button type="submit" class="btn-detail-primary w-100">
+                        Cập nhật ngưỡng cảnh báo
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Right: Member Personal Wallets List (UC-12) -->
+        <div class="col-lg-8">
+            <div class="detail-card h-100">
+                <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                    <div>
+                        <h5 class="detail-card-title mt-2 mb-0">Danh sách Ví cá nhân (@Model.Wallets.Count)</h5>
+                    </div>
+                    @if (Model.SelectedWalletId.HasValue)
+                    {
+                        <a asp-controller="Household"
+                           asp-action="MemberDetails"
+                           asp-route-id="@Model.MemberId"
+                           class="btn-clear-wallet-filter">
+                            Xem tất cả các ví
+                        </a>
+                    }
+                </div>
+
+                @if (Model.Wallets.Any())
+                {
+                    <div class="wallet-grid">
+                        @foreach (var w in Model.Wallets)
+                        {
+                            bool isSelected = Model.SelectedWalletId == w.WalletId;
+
+                            <div class="wallet-item-card @(isSelected ? "wallet-item-active" : "")">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <h6 class="wallet-name mb-0">@w.WalletName</h6>
+                                        <span class="text-muted" style="font-size: 12px;">
+                                            @w.TransactionCount giao dịch
+                                        </span>
+                                    </div>
+                                    <a asp-controller="Household"
+                                       asp-action="MemberDetails"
+                                       asp-route-id="@Model.MemberId"
+                                       asp-route-walletId="@w.WalletId"
+                                       class="btn-filter-wallet">
+                                        @(isSelected ? "Đang lọc ví này" : "Lịch sử ví")
+                                    </a>
+                                </div>
+
+                                <div class="wallet-balance-row">
+                                    <span class="small text-muted">Số dư hiện tại:</span>
+                                    <strong class="wallet-balance-val">@w.CurrentBalance.ToString("N0") VNĐ</strong>
+                                </div>
+
+                                <div class="wallet-limit-section mt-2 pt-2 border-top">
+                                    <div class="d-flex justify-content-between small mb-1">
+                                        <span class="text-muted">Hạn mức chi tiêu tháng:</span>
+                                        @if (w.LimitAmount.HasValue && w.LimitAmount.Value > 0)
+                                        {
+                                            <span class="fw-bold @(w.IsOverLimit ? "text-danger" : "text-dark")">
+                                                @w.LimitAmount.Value.ToString("N0") VNĐ
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted fst-italic">Không giới hạn</span>
+                                        }
+                                    </div>
+
+                                    @if (w.LimitAmount.HasValue && w.LimitAmount.Value > 0)
+                                    {
+                                        decimal pct = Math.Min(w.LimitUsagePercent ?? 0, 100);
+                                        <div class="limit-progress-bar">
+                                            <div class="limit-progress-fill @(w.IsOverLimit ? "fill-danger" : "fill-warning")"
+                                                 style="width: @pct.ToString(System.Globalization.CultureInfo.InvariantCulture)%;">
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-between mt-1" style="font-size: 11.5px;">
+                                            <span class="text-muted">Đã chi: @w.MonthlyExpense.ToString("N0") VNĐ</span>
+                                            <span class="fw-bold @(w.IsOverLimit ? "text-danger" : "text-warning-dark")">
+                                                @(w.LimitUsagePercent)% hạn mức
+                                            </span>
+                                        </div>
+                                    }
+                                </div>
+
+                                <div class="wallet-flow-row mt-2 pt-2 border-top d-flex justify-content-between small">
+                                    <span class="text-success fw-semibold">Thu: +@w.TotalIncome.ToString("N0")</span>
+                                    <span class="text-danger fw-semibold">Chi: -@w.TotalExpense.ToString("N0")</span>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="empty-state-box">
+                        Thành viên này hiện chưa tạo ví cá nhân nào.
+                    </div>
+                }
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Row 2: Member Transactions History (Read-Only) (UC-16 / BR-16 / BR-20) -->
+    <div class="detail-card mt-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
+            <div>
+                <h5 class="detail-card-title mt-2 mb-0">
+                    Giao dịch của @Model.FullName (@Model.Transactions.Count bản ghi)
+                </h5>
+            </div>
+
+            <!-- Filter form -->
+            <form asp-controller="Household"
+                  asp-action="MemberDetails"
+                  method="get"
+                  class="d-flex flex-wrap gap-2 align-items-center">
+                <input type="hidden" name="id" value="@Model.MemberId" />
+
+                <select name="walletId" class="form-select form-select-sm filter-control">
+                    <option value="">-- Tất cả các ví --</option>
+                    @foreach (var w in Model.Wallets)
+                    {
+                        <option value="@w.WalletId" selected="@(Model.SelectedWalletId == w.WalletId)">
+                            @w.WalletName
+                        </option>
+                    }
+                </select>
+
+                <select name="type" class="form-select form-select-sm filter-control">
+                    <option value="All" selected="@(string.IsNullOrEmpty(Model.SelectedType) || Model.SelectedType == "All")">
+                        -- Tất cả Thu &amp; Chi --
+                    </option>
+                    <option value="Income" selected="@(Model.SelectedType == "Income")">Khoản thu</option>
+                    <option value="Expense" selected="@(Model.SelectedType == "Expense")">Khoản chi</option>
+                </select>
+
+                <input type="text"
+                       name="search"
+                       value="@Model.SearchKeyword"
+                       class="form-control form-control-sm filter-control"
+                       placeholder="Tìm mô tả, danh mục..." />
+
+                <button type="submit" class="btn-filter-submit">
+                    Lọc
+                </button>
+
+                @if (Model.SelectedWalletId.HasValue || !string.IsNullOrEmpty(Model.SelectedType) || !string.IsNullOrEmpty(Model.SearchKeyword))
+                {
+                    <a asp-controller="Household"
+                       asp-action="MemberDetails"
+                       asp-route-id="@Model.MemberId"
+                       class="btn-filter-reset">
+                        Đặt lại
+                    </a>
+                }
+            </form>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table align-middle tx-table mb-0">
+                <thead>
+                    <tr>
+                        <th style="width: 6%;">#</th>
+                        <th style="width: 14%;">Ngày giao dịch</th>
+                        <th style="width: 13%;">Loại</th>
+                        <th style="width: 18%;">Ví cá nhân</th>
+                        <th style="width: 18%;">Danh mục</th>
+                        <th style="width: 17%;">Mô tả</th>
+                        <th style="width: 14%;" class="text-end">Số tiền (VNĐ)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Transactions.Any())
+                    {
+                        int stt = 1;
+                        foreach (var tx in Model.Transactions)
+                        {
+                            bool isIncome = string.Equals(tx.TransactionType, "Income", StringComparison.OrdinalIgnoreCase);
+
+                            <tr class="@(tx.IsOverAlertThreshold ? "tx-row-alert" : "")">
+                                <td class="text-muted fw-semibold">@stt</td>
+                                <td>
+                                    <span class="fw-semibold text-dark">@tx.TransactionDate.ToString("dd/MM/yyyy")</span>
+                                </td>
+                                <td>
+                                    @if (isIncome)
+                                    {
+                                        <span class="tx-badge tx-badge-income">Khoản thu</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="tx-badge tx-badge-expense">Khoản chi</span>
+                                    }
+                                </td>
+                                <td>
+                                    <span class="fw-semibold text-dark">@tx.WalletName</span>
+                                </td>
+                                <td>
+                                    <span class="tx-category-pill">@tx.CategoryName</span>
+                                </td>
+                                <td>
+                                    <span class="text-secondary small">
+                                        @(string.IsNullOrWhiteSpace(tx.Description) ? "—" : tx.Description)
+                                    </span>
+                                </td>
+                                <td class="text-end">
+                                    <div class="fw-bold @(isIncome ? "text-success" : "text-danger")">
+                                        @(isIncome ? "+" : "-")@tx.Amount.ToString("N0")
+                                    </div>
+                                    @if (tx.IsOverAlertThreshold)
+                                    {
+                                        <span class="alert-threshold-tag" title="Giao dịch này đạt hoặc vượt ngưỡng cảnh báo đã cấu hình">
+                                            &#9888; Vượt ngưỡng cảnh báo
+                                        </span>
+                                    }
+                                </td>
+                            </tr>
+                            stt++;
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center py-4 text-muted">
+                                Không có giao dịch nào phù hợp với bộ lọc hiện tại.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
