@@ -1,0 +1,372 @@
+/* =========================================
+   FEMS - WALLET MANAGEMENT (QUẢN LÝ VÍ CÁ NHÂN)
+   Color Palette:
+   - Primary (Xanh bạc hà / Xanh cổ vịt nhạt): #0D9488
+   - Secondary (Vàng mật ong / Cam đất):      #F59E0B
+   - Neutral (Trắng kem / Xám sáng):          #FAFAFA
+========================================= */
+
+.wallet-page {
+    background-color: #FAFAFA;
+    padding: 24px;
+    border-radius: 18px;
+    border: 1px solid #e5e7eb;
+}
+
+/* Thông báo */
+.wallet-alert {
+    border-radius: 12px;
+    padding: 12px 18px;
+    margin-bottom: 18px;
+    font-size: 14px;
+}
+
+.wallet-alert-success {
+    background-color: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    color: #065f46;
+}
+
+.wallet-alert-error {
+    background-color: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #991b1b;
+}
+
+/* =========================================
+   1. DANH SÁCH THẺ VÍ CÁ NHÂN (WALLET CARDS)
+========================================= */
+.wallet-cards-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+}
+
+.wallet-card,
+::deep .wallet-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 265px;
+    max-width: 340px;
+    flex: 1 1 265px;
+    padding: 18px 20px;
+    border-radius: 14px;
+    text-decoration: none !important;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    border: 2px solid transparent;
+    cursor: pointer;
+}
+
+.wallet-card:hover,
+::deep .wallet-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(13, 148, 136, 0.16);
+    text-decoration: none !important;
+}
+
+/* Thẻ ví đang chọn (Primary Teal #0D9488 + Viền đen đậm như ảnh mẫu) */
+.wallet-card-primary,
+::deep .wallet-card-primary {
+    background: linear-gradient(135deg, #0D9488 0%, #0f766e 100%);
+    color: #ffffff !important;
+}
+
+/* Thẻ ví bình thường (Xanh bạc hà dịu mắt) */
+.wallet-card-normal,
+::deep .wallet-card-normal {
+    background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+    color: #064e3b !important;
+}
+
+/* Thẻ ví cảnh báo: Số dư âm (BR-18) hoặc Vượt hạn mức chi tiêu (Highlight Đỏ) */
+.wallet-card-danger,
+::deep .wallet-card-danger {
+    background: linear-gradient(135deg, #fca5a5 0%, #f87171 100%);
+    color: #450a0a !important;
+}
+
+/* Viền nổi bật khi thẻ ví đang được chọn */
+.wallet-card-selected,
+::deep .wallet-card-selected {
+    border: 2.5px solid #111827 !important;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.wallet-card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14.5px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.wallet-card-icon {
+    font-size: 16px;
+}
+
+.wallet-status-suffix {
+    font-weight: 700;
+    margin-left: 2px;
+}
+
+.wallet-card-balance {
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.wallet-card-limit-info {
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px solid rgba(255, 255, 255, 0.28);
+    font-size: 11.5px;
+    font-weight: 600;
+    opacity: 0.92;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.wallet-empty-banner {
+    width: 100%;
+    background-color: #ffffff;
+    border: 1.5px dashed #cbd5e1;
+    border-radius: 14px;
+    padding: 20px;
+    text-align: center;
+    color: #64748b;
+    font-weight: 600;
+}
+
+/* =========================================
+   2. KHUNG FORM TẠO VÍ CÁ NHÂN & CẬP NHẬT HẠN MỨC
+========================================= */
+.wallet-panel {
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    padding: 22px 24px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+}
+
+.wallet-panel-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1e293b;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.plus-badge {
+    color: #0D9488;
+    font-size: 15px;
+}
+
+.text-teal-brand {
+    color: #0D9488;
+}
+
+.text-amber-brand {
+    color: #d97706;
+}
+
+/* Ô input liền nhãn theo đúng phong cách ảnh mẫu "Tên ví: ...", "Số dư ban đầu: ..." */
+.wallet-field-box {
+    display: flex;
+    align-items: center;
+    background-color: #FAFAFA;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 8px 12px;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.wallet-field-box:focus-within {
+    border-color: #0D9488;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.12);
+}
+
+.wallet-field-prefix {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #334155;
+    white-space: nowrap;
+    margin-right: 8px;
+}
+
+.wallet-inline-input {
+    border: none;
+    background: transparent;
+    width: 100%;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #0f172a;
+    outline: none;
+}
+
+.wallet-inline-input::placeholder {
+    color: #94a3b8;
+    font-weight: 500;
+}
+
+.btn-create-wallet {
+    height: 42px;
+    background-color: #0D9488;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.18s ease;
+}
+
+.btn-create-wallet:hover {
+    background-color: #0f766e;
+}
+
+/* Khu vực Thiết lập Hạn mức chi tiêu tháng */
+.limit-status-pill {
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 999px;
+}
+
+.pill-safe {
+    background-color: #ccfbf1;
+    color: #0f766e;
+}
+
+.pill-danger {
+    background-color: #fee2e2;
+    color: #b91c1c;
+}
+
+.spending-monitor-box {
+    background-color: #fffbeb;
+    border-left: 4px solid #F59E0B;
+    padding: 12px 14px;
+    border-radius: 10px;
+}
+
+.wallet-progress-track {
+    width: 100%;
+    height: 8px;
+    background-color: #e5e7eb;
+    border-radius: 999px;
+    overflow: hidden;
+    margin-top: 6px;
+}
+
+.wallet-progress-fill {
+    height: 100%;
+    border-radius: 999px;
+}
+
+.fill-amber {
+    background-color: #F59E0B;
+}
+
+.fill-red {
+    background-color: #ef4444;
+}
+
+.wallet-setting-input {
+    height: 40px;
+    border-radius: 8px;
+    font-size: 13.5px;
+    font-weight: 600;
+    background-color: #FAFAFA;
+}
+
+.wallet-setting-input:focus {
+    border-color: #0D9488;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.12);
+}
+
+.btn-update-limit {
+    height: 42px;
+    background-color: #F59E0B;
+    color: #422006;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.18s ease;
+}
+
+.btn-update-limit:hover {
+    background-color: #d97706;
+    color: #ffffff;
+}
+
+/* =========================================
+   3. BẢNG LỊCH SỬ BIẾN ĐỘNG VÍ (WALLET HISTORY)
+========================================= */
+.wallet-history-panel {
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 24px;
+    padding: 24px 28px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03);
+}
+
+.wallet-history-heading {
+    font-size: 17px;
+    font-weight: 800;
+    color: #1e293b;
+}
+
+.wallet-history-table {
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.wallet-history-table thead th {
+    background-color: #f8fafc;
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 12px 16px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.wallet-history-table tbody td {
+    padding: 14px 16px;
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 13.5px;
+}
+
+/* Màu chữ phân loại đúng như ảnh mẫu */
+.history-row-adjustment td {
+    color: #92400e; /* Nâu vàng ấm (Secondary #F59E0B tone) cho Điều chỉnh số dư */
+    background-color: #fffbeb;
+}
+
+.history-row-expense td {
+    color: #dc2626; /* Đỏ cho Chi tiêu (Expense) */
+}
+
+.history-row-transfer td {
+    color: #0284c7; /* Xanh dương cho Chuyển tiền (Transfer) */
+}
+
+.history-row-income td {
+    color: #0D9488; /* Xanh bạc hà / Xanh lá cho Thu nhập (Income) */
+}
+
+.text-income-row {
+    color: #0D9488;
+}
+
+.text-expense-row {
+    color: #dc2626;
+}
+

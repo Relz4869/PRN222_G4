@@ -44,9 +44,10 @@
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link text-dark"
-                           asp-controller="Home"
-                           asp-action="Privacy">
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Wallet" ? "text-white fw-semibold px-3 rounded-3" : "text-dark")"
+                           style="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Wallet" ? "background-color: #0D9488;" : "")"
+                           asp-controller="Wallet"
+                           asp-action="Index">
                             Ví cá nhân
                         </a>
                     </li>
