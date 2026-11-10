@@ -1,0 +1,348 @@
+@model FEMS.ViewModels.Wallet.WalletManagementViewModel
+
+@{
+    ViewData["Title"] = "Ví cá nhân (Wallet Management)";
+}
+
+<div class="wallet-page">
+
+    <!-- Thông báo Thành công / Lỗi -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="wallet-alert wallet-alert-success">
+            <span>&#10004; <strong>Thành công:</strong> @TempData["SuccessMessage"]</span>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="wallet-alert wallet-alert-error">
+            <span>&#9888; <strong>Thông báo:</strong> @TempData["ErrorMessage"]</span>
+        </div>
+    }
+
+    <!-- =================================================
+         1. HÀNG THẺ VÍ CÁ NHÂN (VIEW PERSONAL WALLETS)
+         Highlight màu đỏ khi Số dư âm (BR-18) hoặc Vượt hạn mức chi tiêu
+    ================================================== -->
+    <div class="wallet-cards-row mb-4">
+        @if (Model.Wallets.Any())
+        {
+            @foreach (var w in Model.Wallets)
+            {
+                bool isSelected = Model.SelectedWalletId == w.WalletId;
+
+                string cardStyleClass = w.IsAlertCard
+                    ? (isSelected ? "wallet-card wallet-card-danger wallet-card-selected" : "wallet-card wallet-card-danger")
+                    : (isSelected ? "wallet-card wallet-card-primary wallet-card-selected" : "wallet-card wallet-card-normal");
+
+                <a asp-controller="Wallet"
+                   asp-action="Index"
+                   asp-route-walletId="@w.WalletId"
+                   class="@cardStyleClass">
+
+                    <div class="wallet-card-header">
+                        <span class="wallet-card-icon">
+                            @if (w.IsNegativeBalance)
+                            {
+                                <span>&#9888;&#65039;</span>
+                            }
+                            else if (w.IsOverLimit)
+                            {
+                                <span>&#128680;</span>
+                            }
+                            else if (w.WalletName.Contains("Học", StringComparison.OrdinalIgnoreCase))
+                            {
+                                <span>&#127891;</span>
+                            }
+                            else if (w.WalletName.Contains("Du lịch", StringComparison.OrdinalIgnoreCase))
+                            {
+                                <span>&#9992;&#65039;</span>
+                            }
+                            else
+                            {
+                                <span>&#129689;</span>
+                            }
+                        </span>
+
+                        <span class="wallet-card-title">
+                            @w.WalletName
+                            @if (w.IsNegativeBalance)
+                            {
+                                <span class="wallet-status-suffix">(Số dư âm - BR-18)</span>
+                            }
+                            else if (w.IsOverLimit)
+                            {
+                                <span class="wallet-status-suffix">(Vượt hạn mức)</span>
+                            }
+                            else if (isSelected)
+                            {
+                                <span class="wallet-status-suffix">(Đang chọn)</span>
+                            }
+                        </span>
+                    </div>
+
+                    <div class="wallet-card-balance">
+                        Số dư: @w.CurrentBalance.ToString("N0") VNĐ
+                    </div>
+
+                    @if (w.LimitAmount.HasValue && w.LimitAmount.Value > 0)
+                    {
+                        <div class="wallet-card-limit-info">
+                            <span>Hạn mức tháng: @w.LimitAmount.Value.ToString("N0") VNĐ</span>
+                            <span>&bull; Đã chi: @w.MonthlyExpense.ToString("N0") VNĐ (@(w.LimitUsagePercent)%)</span>
+                        </div>
+                    }
+                </a>
+            }
+        }
+        else
+        {
+            <div class="wallet-empty-banner">
+                Bạn chưa có ví cá nhân nào. Hãy tạo ví cá nhân đầu tiên ở khung bên dưới!
+            </div>
+        }
+    </div>
+
+    <!-- =================================================
+         2. KHU VỰC TẠO VÍ CÁ NHÂN & THIẾT LẬP HẠN MỨC CHI TIÊU
+    ================================================== -->
+    <div class="row g-4 mb-4">
+
+        <!-- CỘT TRÁI: TẠO VÍ CÁ NHÂN (Create Personal Wallet - Đúng theo mẫu ảnh) -->
+        <div class="col-lg-5 col-md-6">
+            <div class="wallet-panel h-100">
+                <h6 class="wallet-panel-title mb-3">
+                    <span class="plus-badge">&#10133;</span> Tạo Ví cá nhân (Create Personal Wallet)
+                </h6>
+
+                <form asp-controller="Wallet" asp-action="Create" method="post">
+                    <input type="hidden" name="SelectedWalletId" value="@Model.SelectedWalletId" />
+
+                    <div class="mb-3">
+                        <div class="wallet-field-box">
+                            <span class="wallet-field-prefix">Tên ví:</span>
+                            <input type="text"
+                                   name="NewWalletName"
+                                   value="@Model.NewWalletName"
+                                   class="wallet-inline-input"
+                                   placeholder="Ví Giải trí cuối tuần"
+                                   required />
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="wallet-field-box">
+                            <span class="wallet-field-prefix">Số dư ban đầu:</span>
+                            <input type="number"
+                                   name="NewInitialBalance"
+                                   step="1000"
+                                   value="@(Model.NewInitialBalance == 0 ? "" : ((long)Model.NewInitialBalance).ToString())"
+                                   class="wallet-inline-input"
+                                   placeholder="2.000.000 VNĐ" />
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="wallet-field-box">
+                            <span class="wallet-field-prefix text-muted">Hạn mức chi tiêu:</span>
+                            <input type="number"
+                                   name="NewLimitAmount"
+                                   min="0"
+                                   step="50000"
+                                   value="@(Model.NewLimitAmount.HasValue ? ((long)Model.NewLimitAmount.Value).ToString() : "")"
+                                   class="wallet-inline-input"
+                                   placeholder="5.000.000" />
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-create-wallet w-100">
+                        Tạo Ví mới
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- CỘT PHẢI: THIẾT LẬP HẠN MỨC CHI TIÊU & ĐỐI SOÁT SỐ DƯ (Wallet Spending Limit) -->
+        <div class="col-lg-7 col-md-6">
+            <div class="wallet-panel h-100">
+                @if (Model.SelectedWallet != null)
+                {
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                        <h6 class="wallet-panel-title mb-0">
+                            &#9881;&#65039; Hạn mức chi tiêu &amp; Đối soát: <span class="text-teal-brand">@Model.SelectedWallet.WalletName</span>
+                        </h6>
+
+                        @if (Model.SelectedWallet.IsNegativeBalance)
+                        {
+                            <span class="limit-status-pill pill-danger">&#9888; Số dư âm (BR-18)</span>
+                        }
+                        else if (Model.SelectedWallet.IsOverLimit)
+                        {
+                            <span class="limit-status-pill pill-danger">&#9888; Đã vượt hạn mức tháng</span>
+                        }
+                        else
+                        {
+                            <span class="limit-status-pill pill-safe">&#10004; Ngân sách an toàn</span>
+                        }
+                    </div>
+
+                    <!-- Thanh theo dõi tiến độ Hạn mức chi tiêu tháng (Wallet Spending Limit Monitor) -->
+                    <div class="spending-monitor-box mb-3">
+                        <div class="d-flex justify-content-between align-items-center small mb-1">
+                            <span class="fw-semibold text-secondary">
+                                Tổng chi tiêu trong tháng: <strong class="text-dark">@Model.SelectedWallet.MonthlyExpense.ToString("N0") VNĐ</strong>
+                            </span>
+                            @if (Model.SelectedWallet.LimitAmount.HasValue && Model.SelectedWallet.LimitAmount.Value > 0)
+                            {
+                                <span class="fw-bold @(Model.SelectedWallet.IsOverLimit ? "text-danger" : "text-amber-brand")">
+                                    Hạn mức: @Model.SelectedWallet.LimitAmount.Value.ToString("N0") VNĐ (@(Model.SelectedWallet.LimitUsagePercent)%)
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="text-muted fst-italic">Chưa đặt hạn mức tháng</span>
+                            }
+                        </div>
+
+                        @if (Model.SelectedWallet.LimitAmount.HasValue && Model.SelectedWallet.LimitAmount.Value > 0)
+                        {
+                            decimal barPct = Math.Min(Model.SelectedWallet.LimitUsagePercent ?? 0, 100);
+                            <div class="wallet-progress-track">
+                                <div class="wallet-progress-fill @(Model.SelectedWallet.IsOverLimit ? "fill-red" : "fill-amber")"
+                                     style="width: @barPct.ToString(System.Globalization.CultureInfo.InvariantCulture)%;">
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <form asp-controller="Wallet" asp-action="UpdateSettings" method="post">
+                        <input type="hidden" name="EditWalletId" value="@Model.SelectedWallet.WalletId" />
+
+                        <div class="row g-2 mb-3">
+                            <div class="col-sm-4">
+                                <label class="form-label small fw-semibold text-secondary mb-1">Tên ví cá nhân</label>
+                                <input type="text"
+                                       name="EditWalletName"
+                                       value="@Model.EditWalletName"
+                                       class="form-control wallet-setting-input"
+                                       required />
+                            </div>
+
+                            <div class="col-sm-4">
+                                <label class="form-label small fw-semibold text-secondary mb-1">Số dư thực tế (VNĐ)</label>
+                                <input type="number"
+                                       name="EditCurrentBalance"
+                                       step="1000"
+                                       value="@((long)Model.EditCurrentBalance)"
+                                       class="form-control wallet-setting-input" />
+                            </div>
+
+                            <div class="col-sm-4">
+                                <label class="form-label small fw-semibold text-secondary mb-1">Hạn mức chi tiêu tháng (VNĐ)</label>
+                                <input type="number"
+                                       name="EditLimitAmount"
+                                       min="0"
+                                       step="50000"
+                                       value="@(Model.EditLimitAmount.HasValue ? ((long)Model.EditLimitAmount.Value).ToString() : "")"
+                                       class="form-control wallet-setting-input"
+                                       placeholder="Để trống = Không giới hạn" />
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-update-limit w-100">
+                            Lưu Hạn mức chi tiêu &amp; Cập nhật Ví
+                        </button>
+                    </form>
+                }
+                else
+                {
+                    <div class="text-muted small py-4 text-center">
+                        Hãy chọn hoặc tạo một ví cá nhân để thiết lập hạn mức chi tiêu tháng.
+                    </div>
+                }
+            </div>
+        </div>
+
+    </div>
+
+    <!-- =================================================
+         3. BẢNG LỊCH SỬ BIẾN ĐỘNG VÍ (WALLET HISTORY)
+    ================================================== -->
+    <div class="wallet-history-panel">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+            <h5 class="wallet-history-heading mb-0">
+                Lịch sử biến động Ví: @(Model.SelectedWallet != null ? Model.SelectedWallet.WalletName : "Chưa chọn ví")
+            </h5>
+
+            @if (Model.SelectedWallet != null)
+            {
+                <div class="d-flex gap-3 small fw-semibold">
+                    <span class="text-income-row">Tổng thu: +@Model.SelectedWallet.TotalIncome.ToString("N0") VNĐ</span>
+                    <span class="text-expense-row">Tổng chi: -@Model.SelectedWallet.TotalExpense.ToString("N0") VNĐ</span>
+                </div>
+            }
+        </div>
+
+        <div class="table-responsive">
+            <table class="table wallet-history-table mb-0">
+                <thead>
+                    <tr>
+                        <th style="width: 16%;">Thời gian</th>
+                        <th style="width: 20%;">Loại biến động</th>
+                        <th style="width: 34%;">Chi tiết / Mô tả</th>
+                        <th style="width: 15%;" class="text-end">Biến động</th>
+                        <th style="width: 15%;" class="text-end">Số dư sau GD</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.WalletHistories.Any())
+                    {
+                        @foreach (var item in Model.WalletHistories)
+                        {
+                            string rowClass = item.ChangeType switch
+                            {
+                                "Income" => "history-row-income",
+                                "Expense" => "history-row-expense",
+                                "Transfer" => "history-row-transfer",
+                                _ => "history-row-adjustment"
+                            };
+
+                            string iconSymbol = item.ChangeType switch
+                            {
+                                "Income" => "💰",
+                                "Expense" => "🍴",
+                                "Transfer" => "⇄",
+                                _ => "⚖️"
+                            };
+
+                            string signedText = item.SignedAmount >= 0
+                                ? $"+{item.SignedAmount:N0} VNĐ"
+                                : $"{item.SignedAmount:N0} VNĐ";
+
+                            <tr class="@rowClass">
+                                <td class="fw-semibold">@item.DisplayTime</td>
+                                <td class="fw-semibold">
+                                    <span class="me-1">@iconSymbol</span> @item.ChangeTypeLabel
+                                </td>
+                                <td>@item.DetailDescription</td>
+                                <td class="text-end fw-bold">@signedText</td>
+                                <td class="text-end fw-bold">@item.BalanceAfter.ToString("N0") VNĐ</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center text-muted py-4">
+                                Ví cá nhân này hiện chưa có biến động giao dịch nào.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
