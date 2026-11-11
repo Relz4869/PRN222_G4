@@ -1,0 +1,192 @@
+﻿@model FEMS.ViewModels.FinancialReport.FinancialSummaryViewModel
+@using System.Text.Json
+
+@{
+    ViewData["Title"] = "Financial Summary";
+}
+
+<div class="container mt-4">
+    <h2>Financial Summary</h2>
+    <p>View your income and expenses over time.</p>
+    <a asp-controller="FinancialReport"
+       asp-action="Details"
+       asp-route-months="@Model.Months"
+       class="btn btn-success mb-3">
+        View Detailed Report
+    </a>
+    <div class="mb-4">
+        <a asp-action="Index" asp-route-months="3"
+           class="btn @(Model.Months == 3 ? "btn-primary" : "btn-outline-primary")">
+            3 Months
+        </a>
+
+        <a asp-action="Index" asp-route-months="6"
+           class="btn @(Model.Months == 6 ? "btn-primary" : "btn-outline-primary")">
+            6 Months
+        </a>
+
+        <a asp-action="Index" asp-route-months="12"
+           class="btn @(Model.Months == 12 ? "btn-primary" : "btn-outline-primary")">
+            12 Months
+        </a>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-4 mb-3">
+            <div class="card p-3">
+                <h5>Total Income</h5>
+                <h3 class="text-success">
+                    @Model.TotalIncome.ToString("N0") VND
+                </h3>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card p-3">
+                <h5>Total Expenses</h5>
+                <h3 class="text-danger">
+                    @Model.TotalExpense.ToString("N0") VND
+                </h3>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card p-3">
+                <h5>Net Income</h5>
+                <h3>@Model.NetIncome.ToString("N0") VND</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="card p-4 mb-4">
+        <h4>Income & Expense Trends</h4>
+        <div style="height: 320px;">
+            <canvas id="monthlyChart"></canvas>
+        </div>
+    </div>
+
+    <div class="card p-4 mb-4">
+        <h4>Monthly Details</h4>
+
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Month</th>
+                    <th>Income</th>
+                    <th>Expense</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.MonthlyData)
+                {
+                    <tr>
+                        <td>@item.Month</td>
+                        <td>@item.Income.ToString("N0") VND</td>
+                        <td>@item.Expense.ToString("N0") VND</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (Model.MemberData.Any())
+    {
+        <div class="card p-4 mb-4">
+            <h4>Household Member Distribution</h4>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <h5>Income Share</h5>
+                    <div style="height: 300px;">
+                        <canvas id="incomePie"></canvas>
+                    </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <h5>Expense Share</h5>
+                    <div style="height: 300px;">
+                        <canvas id="expensePie"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+
+<script>
+    const monthlyData = @Html.Raw(JsonSerializer.Serialize(Model.MonthlyData));
+
+    new Chart(document.getElementById("monthlyChart"), {
+        type: "bar",
+        data: {
+            labels: monthlyData.map(x => x.Month),
+            datasets: [
+                {
+                    label: "Income",
+                    data: monthlyData.map(x => x.Income),
+                    backgroundColor: "#16a34a"
+                },
+                {
+                    label: "Expense",
+                    data: monthlyData.map(x => x.Expense),
+                    backgroundColor: "#dc2626"
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+
+    @if (Model.MemberData.Any())
+    {
+            <text>
+                const memberData = @Html.Raw(JsonSerializer.Serialize(Model.MemberData));
+
+                const memberNames = memberData.map(x => x.MemberName);
+                const colors = [
+                    "#2563eb", "#16a34a", "#f59e0b",
+                    "#9333ea", "#ec4899", "#0891b2"
+                ];
+
+                function createPieChart(elementId, values) {
+                    const total = values.reduce((sum, value) => sum + value, 0);
+
+                    if (total === 0) {
+                        document.getElementById(elementId).replaceWith(
+                            document.createTextNode("No data available.")
+                        );
+                        return;
+                    }
+
+                    new Chart(document.getElementById(elementId), {
+                        type: "pie",
+                        data: {
+                            labels: memberNames,
+                            datasets: [{
+                                data: values,
+                                backgroundColor: colors
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false
+                        }
+                    });
+                }
+
+                createPieChart(
+                    "incomePie",
+                    memberData.map(x => x.Income)
+                );
+
+                createPieChart(
+                    "expensePie",
+                    memberData.map(x => x.Expense)
+                );
+            </text>
+    }
+</script>

@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,7 +10,7 @@
     <link rel="stylesheet" href="~/FEMS.styles.css" asp-append-version="true" />
 </head>
 <body>
-    
+
 <header>
     <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
         <div class="container-fluid">
@@ -27,7 +28,6 @@
                     aria-controls="navbarSupportedContent"
                     aria-expanded="false"
                     aria-label="Toggle navigation">
-
                 <span class="navbar-toggler-icon"></span>
             </button>
 
@@ -35,6 +35,7 @@
 
                 <!-- Navigation Links -->
                 <ul class="navbar-nav flex-grow-1">
+
                     <li class="nav-item">
                         <a class="nav-link text-dark"
                            asp-controller="Home"
@@ -68,6 +69,34 @@
                             Hộ gia đình
                         </a>
                     </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "FinancialReport" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "text-white fw-semibold px-3 rounded-3" : "text-dark")"
+                           style="@(ViewContext.RouteData.Values["controller"]?.ToString() == "FinancialReport" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "background-color: #0d7a5f;" : "")"
+                           asp-controller="FinancialReport"
+                           asp-action="Index">
+                            Báo cáo tài chính
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "FinancialReport" && ViewContext.RouteData.Values["action"]?.ToString() == "Details" ? "text-white fw-semibold px-3 rounded-3" : "text-dark")"
+                           style="@(ViewContext.RouteData.Values["controller"]?.ToString() == "FinancialReport" && ViewContext.RouteData.Values["action"]?.ToString() == "Details" ? "background-color: #0d7a5f;" : "")"
+                           asp-controller="FinancialReport"
+                           asp-action="Details">
+                            Báo cáo chi tiết
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Notification" ? "text-white fw-semibold px-3 rounded-3" : "text-dark")"
+                           style="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Notification" ? "background-color: #0d7a5f;" : "")"
+                           asp-controller="Notification"
+                           asp-action="Index">
+                            Thông báo
+                        </a>
+                    </li>
+
                 </ul>
 
                 <!-- User Authentication Section -->
@@ -105,21 +134,23 @@
     </nav>
 </header>
 
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+<div class="container">
+    <main role="main" class="pb-3">
+        @RenderBody()
+    </main>
+</div>
 
-    @* <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - FEMS - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer> *@
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
-   
+@* <footer class="border-top footer text-muted">
+    <div class="container">
+        &copy; 2026 - FEMS - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    </div>
+</footer> *@
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+
+@await RenderSectionAsync("Scripts", required: false)
+
 </body>
 </html>
