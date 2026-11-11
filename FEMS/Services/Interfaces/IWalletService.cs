@@ -18,12 +18,11 @@ namespace FEMS.Services.Interfaces
             decimal initialBalance,
             decimal? limitAmount);
 
-        // UC: Wallet Spending Limit & Update Wallet (Thiết lập / Cập nhật hạn mức chi tiêu tháng & thông tin ví)
+        // UC: Wallet Spending Limit & Update Wallet (Thiết lập / Cập nhật tên ví & hạn mức chi tiêu tháng)
         Task<(bool Success, string Message)> UpdateWalletSettingsAsync(
             int userId,
             int walletId,
             string walletName,
-            decimal updatedBalance,
             decimal? limitAmount);
     }
 }

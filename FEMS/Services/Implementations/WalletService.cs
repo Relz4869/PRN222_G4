@@ -105,7 +105,6 @@ namespace FEMS.Services.Implementations
                 WalletHistories = histories,
                 EditWalletId = activeWallet?.WalletId ?? 0,
                 EditWalletName = activeWallet?.WalletName ?? string.Empty,
-                EditCurrentBalance = activeWallet?.CurrentBalance ?? 0,
                 EditLimitAmount = activeWallet?.LimitAmount
             };
         }
@@ -233,9 +232,14 @@ namespace FEMS.Services.Implementations
                 return (false, "Vui lòng nhập tên ví cá nhân.", null);
             }
 
-            if (limitAmount.HasValue && limitAmount.Value < 0)
+            if (initialBalance <= 0)
             {
-                return (false, "Hạn mức chi tiêu tháng không được nhỏ hơn 0.", null);
+                return (false, "Số dư ban đầu phải lớn hơn 0 VNĐ.", null);
+            }
+
+            if (limitAmount.HasValue && limitAmount.Value <= 0)
+            {
+                return (false, "Hạn mức chi tiêu tháng phải lớn hơn 0 VNĐ.", null);
             }
 
             var member = await _walletRepository.GetMemberByUserIdAsync(userId);
@@ -260,22 +264,10 @@ namespace FEMS.Services.Implementations
                 HouseholdMemberId = member.HouseholdMemberId,
                 WalletName = trimmedName,
                 Amount = initialBalance,
-                LimitAmount = (limitAmount.HasValue && limitAmount.Value > 0) ? limitAmount.Value : null
+                LimitAmount = limitAmount
             };
 
             var savedWallet = await _walletRepository.AddAsync(newWallet);
-
-            // Kiểm tra BR-18: Nếu tạo ví với số dư âm thì gửi thông báo cảnh báo ngay
-            if (savedWallet.Amount < 0)
-            {
-                await _walletRepository.AddNotificationAsync(new Notification
-                {
-                    UserId = userId,
-                    Message = $"[Cảnh báo Số dư âm - BR-18] Ví cá nhân \"{savedWallet.WalletName}\" vừa tạo đang có số dư âm ({savedWallet.Amount:N0} VNĐ).",
-                    IsRead = false,
-                    CreatedAt = DateTime.Now
-                });
-            }
 
             string limitInfo = savedWallet.LimitAmount.HasValue
                 ? $" (Hạn mức chi tiêu: {savedWallet.LimitAmount.Value:N0} VNĐ/tháng)"
@@ -295,7 +287,6 @@ namespace FEMS.Services.Implementations
             int userId,
             int walletId,
             string walletName,
-            decimal updatedBalance,
             decimal? limitAmount)
         {
             if (string.IsNullOrWhiteSpace(walletName))
@@ -303,9 +294,9 @@ namespace FEMS.Services.Implementations
                 return (false, "Tên ví cá nhân không được để trống.");
             }
 
-            if (limitAmount.HasValue && limitAmount.Value < 0)
+            if (limitAmount.HasValue && limitAmount.Value <= 0)
             {
-                return (false, "Hạn mức chi tiêu tháng không được nhỏ hơn 0.");
+                return (false, "Hạn mức chi tiêu tháng phải lớn hơn 0 VNĐ.");
             }
 
             var member = await _walletRepository.GetMemberByUserIdAsync(userId);
@@ -333,8 +324,7 @@ namespace FEMS.Services.Implementations
             }
 
             wallet.WalletName = trimmedName;
-            wallet.Amount = updatedBalance;
-            wallet.LimitAmount = (limitAmount.HasValue && limitAmount.Value > 0) ? limitAmount.Value : null;
+            wallet.LimitAmount = limitAmount;
 
             await _walletRepository.UpdateAsync(wallet);
 

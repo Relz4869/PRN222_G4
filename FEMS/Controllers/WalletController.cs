@@ -82,7 +82,6 @@ namespace FEMS.Controllers
                 userId,
                 formModel.EditWalletId,
                 formModel.EditWalletName,
-                formModel.EditCurrentBalance,
                 formModel.EditLimitAmount
             );
 
