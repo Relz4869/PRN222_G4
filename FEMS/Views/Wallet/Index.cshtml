@@ -136,10 +136,12 @@
                             <span class="wallet-field-prefix">Số dư ban đầu:</span>
                             <input type="number"
                                    name="NewInitialBalance"
-                                   step="1000"
+                                   min="0"
+                                   step="any"
                                    value="@(Model.NewInitialBalance == 0 ? "" : ((long)Model.NewInitialBalance).ToString())"
                                    class="wallet-inline-input"
-                                   placeholder="2.000.000 VNĐ" />
+                                   placeholder="2.000.000 VNĐ"
+                                   required />
                         </div>
                     </div>
 
@@ -148,8 +150,8 @@
                             <span class="wallet-field-prefix text-muted">Hạn mức chi tiêu:</span>
                             <input type="number"
                                    name="NewLimitAmount"
-                                   min="0"
-                                   step="50000"
+                                   min="1"
+                                   step="any"
                                    value="@(Model.NewLimitAmount.HasValue ? ((long)Model.NewLimitAmount.Value).ToString() : "")"
                                    class="wallet-inline-input"
                                    placeholder="5.000.000" />
@@ -163,14 +165,14 @@
             </div>
         </div>
 
-        <!-- CỘT PHẢI: THIẾT LẬP HẠN MỨC CHI TIÊU & ĐỐI SOÁT SỐ DƯ (Wallet Spending Limit) -->
+        <!-- CỘT PHẢI: THIẾT LẬP HẠN MỨC CHI TIÊU (Wallet Spending Limit) -->
         <div class="col-lg-7 col-md-6">
             <div class="wallet-panel h-100">
                 @if (Model.SelectedWallet != null)
                 {
                     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
                         <h6 class="wallet-panel-title mb-0">
-                            &#9881;&#65039; Hạn mức chi tiêu &amp; Đối soát: <span class="text-teal-brand">@Model.SelectedWallet.WalletName</span>
+                            &#9881;&#65039; Thông tin Ví: 
                         </h6>
 
                         @if (Model.SelectedWallet.IsNegativeBalance)
@@ -219,8 +221,8 @@
                     <form asp-controller="Wallet" asp-action="UpdateSettings" method="post">
                         <input type="hidden" name="EditWalletId" value="@Model.SelectedWallet.WalletId" />
 
-                        <div class="row g-2 mb-3">
-                            <div class="col-sm-4">
+                        <div class="row g-3 mb-3">
+                            <div class="col-sm-6">
                                 <label class="form-label small fw-semibold text-secondary mb-1">Tên ví cá nhân</label>
                                 <input type="text"
                                        name="EditWalletName"
@@ -229,21 +231,12 @@
                                        required />
                             </div>
 
-                            <div class="col-sm-4">
-                                <label class="form-label small fw-semibold text-secondary mb-1">Số dư thực tế (VNĐ)</label>
-                                <input type="number"
-                                       name="EditCurrentBalance"
-                                       step="1000"
-                                       value="@((long)Model.EditCurrentBalance)"
-                                       class="form-control wallet-setting-input" />
-                            </div>
-
-                            <div class="col-sm-4">
+                            <div class="col-sm-6">
                                 <label class="form-label small fw-semibold text-secondary mb-1">Hạn mức chi tiêu tháng (VNĐ)</label>
                                 <input type="number"
                                        name="EditLimitAmount"
                                        min="0"
-                                       step="50000"
+                                       step="any"
                                        value="@(Model.EditLimitAmount.HasValue ? ((long)Model.EditLimitAmount.Value).ToString() : "")"
                                        class="form-control wallet-setting-input"
                                        placeholder="Để trống = Không giới hạn" />
@@ -251,7 +244,7 @@
                         </div>
 
                         <button type="submit" class="btn-update-limit w-100">
-                            Lưu Hạn mức chi tiêu &amp; Cập nhật Ví
+                            Cập nhật Ví
                         </button>
                     </form>
                 }
@@ -272,7 +265,7 @@
     <div class="wallet-history-panel">
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
             <h5 class="wallet-history-heading mb-0">
-                Lịch sử biến động Ví:
+                Lịch sử biến động số dư:
             </h5>
 
             @if (Model.SelectedWallet != null)

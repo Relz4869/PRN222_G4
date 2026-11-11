@@ -62,22 +62,21 @@ namespace FEMS.ViewModels.Wallet
         [StringLength(100, ErrorMessage = "Tên ví không được vượt quá 100 ký tự.")]
         public string NewWalletName { get; set; } = string.Empty;
 
+        [Range(0.01, double.MaxValue, ErrorMessage = "Số dư ban đầu phải lớn hơn 0.")]
         public decimal NewInitialBalance { get; set; } = 0;
 
-        [Range(0, double.MaxValue, ErrorMessage = "Hạn mức chi tiêu không được nhỏ hơn 0.")]
+        [Range(0.01, double.MaxValue, ErrorMessage = "Hạn mức chi tiêu phải lớn hơn 0.")]
         public decimal? NewLimitAmount { get; set; }
 
         // =========================================
-        // 2. FORM CẬP NHẬT HẠN MỨC CHI TIÊU & ĐỐI SOÁT VÍ (Wallet Spending Limit)
+        // 2. FORM CẬP NHẬT HẠN MỨC CHI TIÊU VÍ (Wallet Spending Limit)
         // =========================================
         public int EditWalletId { get; set; }
 
         [StringLength(100, ErrorMessage = "Tên ví không được vượt quá 100 ký tự.")]
         public string EditWalletName { get; set; } = string.Empty;
 
-        public decimal EditCurrentBalance { get; set; }
-
-        [Range(0, double.MaxValue, ErrorMessage = "Hạn mức chi tiêu không được nhỏ hơn 0.")]
+        [Range(0.01, double.MaxValue, ErrorMessage = "Hạn mức chi tiêu phải lớn hơn 0.")]
         public decimal? EditLimitAmount { get; set; }
     }
 }
