@@ -1,0 +1,98 @@
+﻿
+@model List<FEMS.Models.Entities.Notification>
+
+@{
+    ViewData["Title"] = "Notifications";
+    int unreadCount = Model.Count(n => !n.IsRead);
+}
+
+<div class="container mt-4">
+    <h2>Notifications</h2>
+    <p>View your notifications and their status.</p>
+
+    <div class="alert alert-info">
+        Unread notifications: <strong>@unreadCount</strong>
+    </div>
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-secondary">
+            @TempData["Message"]
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-light border">
+            You have no notifications.
+        </div>
+    }
+    else
+    {
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Message</th>
+                    <th>Created At</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var notification in Model)
+                {
+                    bool isInvite = !notification.IsRead &&
+                        notification.Message.StartsWith("[INVITE:");
+
+                    <tr class="@(!notification.IsRead ? "table-warning" : "")">
+                        <td>@notification.Message</td>
+                        <td>
+                            @notification.CreatedAt.ToString("dd/MM/yyyy HH:mm")
+                        </td>
+                        <td>
+                            @if (notification.IsRead)
+                            {
+                                <span class="badge bg-success">
+                                    Read
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-warning text-dark">
+                                    Unread
+                                </span>
+                            }
+                        </td>
+                        <td>
+                            @if (isInvite)
+                            {
+                                <span class="text-muted">
+                                    Manage in Household
+                                </span>
+                            }
+                            else if (!notification.IsRead)
+                            {
+                                <form asp-controller="Notification"
+                                      asp-action="MarkAsRead"
+                                      asp-route-id="@notification.NotificationId"
+                                      method="post">
+                                    @Html.AntiForgeryToken()
+
+                                    <button type="submit"
+                                            class="btn btn-sm btn-primary">
+                                        Mark as Read
+                                    </button>
+                                </form>
+                            }
+                            else
+                            {
+                                <span class="text-muted">-</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
