@@ -26,12 +26,14 @@ namespace FEMS
             builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
             builder.Services.AddScoped<IHouseholdRepository, HouseholdRepository>();
             builder.Services.AddScoped<IWalletRepository, WalletRepository>();
+            builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 
             // Service Registration
             builder.Services.AddScoped<IAccountService, AccountService>();
             builder.Services.AddScoped<ICategoryService, CategoryService>();
             builder.Services.AddScoped<IHouseholdService, HouseholdService>();
             builder.Services.AddScoped<IWalletService, WalletService>();
+            builder.Services.AddScoped<ITransactionService, TransactionService>();
 
             // Authentication Configuration
             builder.Services
