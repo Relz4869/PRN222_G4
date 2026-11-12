@@ -227,15 +227,15 @@
                     <table class="table align-middle hh-table mb-0">
                         <thead>
                             <tr>
-                                <th style="width: 5%;">#</th>
+                                <th style="width: 4%;">#</th>
                                 <th style="width: @(Model.IsManager ? "22%" : "38%");">Họ và tên</th>
-                                <th style="width: @(Model.IsManager ? "19%" : "34%");">Liên hệ</th>
-                                <th style="width: @(Model.IsManager ? "13%" : "23%");">Vai trò</th>
+                                <th style="width: @(Model.IsManager ? "18%" : "34%");">Liên hệ</th>
+                                <th style="width: @(Model.IsManager ? "12%" : "23%");">Vai trò</th>
                                 @if (Model.IsManager)
                                 {
-                                    <th style="width: 10%;" class="text-center">Ví</th>
-                                    <th style="width: 13%;" class="text-center">Giao dịch</th>
-                                    <th style="width: 18%;" class="text-end">Thao tác</th>
+                                    <th style="width: 12%;" class="text-center text-nowrap">Ví</th>
+                                    <th style="width: 14%;" class="text-center text-nowrap">Giao dịch</th>
+                                    <th style="width: 18%;" class="text-end text-nowrap">Thao tác</th>
                                 }
                             </tr>
                         </thead>
@@ -283,7 +283,7 @@
                                     </td>
                                     @if (Model.IsManager)
                                     {
-                                        <td class="text-center">
+                                        <td class="text-center text-nowrap">
                                             @if (canViewFinance)
                                             {
                                                 <a asp-controller="Household"
@@ -300,7 +300,7 @@
                                                 <span class="text-muted small">—</span>
                                             }
                                         </td>
-                                        <td class="text-center">
+                                        <td class="text-center text-nowrap">
                                             @if (canViewFinance)
                                             {
                                                 <a asp-controller="Household"
@@ -317,7 +317,7 @@
                                                 <span class="text-muted small">—</span>
                                             }
                                         </td>
-                                        <td class="text-end">
+                                        <td class="text-end text-nowrap">
                                             @if (Model.IsCreator && !isCurrentUser)
                                             {
                                                 <div class="action-btn-row">
