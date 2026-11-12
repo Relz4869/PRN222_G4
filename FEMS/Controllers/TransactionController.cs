@@ -27,7 +27,7 @@ namespace FEMS.Controllers
         // GET: /Transaction/Index
         // =========================================
         [HttpGet]
-        public async Task<IActionResult> Index(int? filterWalletId = null, string? filterMonth = null)
+        public async Task<IActionResult> Index(int? filterWalletId = null, string? filterMonth = null, int page = 1)
         {
             int userId = GetCurrentUserId();
             var model = await _transactionService.GetTransactionManagementDataAsync(userId, filterWalletId, filterMonth);
@@ -38,6 +38,7 @@ namespace FEMS.Controllers
                 return RedirectToAction("Setup", "Household");
             }
 
+            ViewBag.CurrentPage = page;
             return View(model);
         }
 
