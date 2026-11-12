@@ -1,105 +1,108 @@
-﻿
 @model FEMS.ViewModels.Account.LoginViewModel
 
 @{
     Layout = "~/Views/Shared/_AuthLayout.cshtml";
-    ViewData["Title"] = "Login";
+    ViewData["Title"] = "Đăng nhập";
 }
 
-<div class="auth-container">
-
-    <!-- Left panel -->
-    <section class="auth-brand">
-        <div class="auth-brand-content">
-
-            <h1>
-                Tài chính hộ gia đình
-                <br />
-                ở một nơi duy nhất
-            </h1>
-
-            <p>
-                Quản lý ví cá nhân, đặt hạn mức chi tiêu,
-                <br />
-                theo dõi báo cáo và nhận cảnh báo tức thì.
-            </p>
-
-            <div class="auth-brand-logo">
-                FEMS Wallet
+<div class="auth-viewport-wrapper">
+    <div class="auth-card auth-card-login">
+        <!-- BÊN TRÁI: FORM ĐĂNG NHẬP -->
+        <section class="auth-form-column">
+            <!-- Thương hiệu FEMS tối giản góc trên bên trái -->
+            <div class="auth-brand-badge">
+                <span class="brand-badge-name">FEMS</span>
             </div>
 
-        </div>
-    </section>
-
-    <!-- Right panel -->
-    <section class="auth-form-section">
-        <div class="auth-form">
-
-            <h2>Đăng nhập</h2>
+            <div class="auth-form-header">
+                <h1 class="auth-title">Đăng nhập</h1>
+                <p class="auth-subtitle">Chào mừng bạn quay trở lại FEMS.</p>
+            </div>
 
             @if (TempData["SuccessMessage"] != null)
             {
-                <div class="auth-success">
-                    @TempData["SuccessMessage"]
+                <div class="auth-alert auth-alert-success">
+                    <span class="alert-icon">&#10003;</span>
+                    <span>@TempData["SuccessMessage"]</span>
+                </div>
+            }
+
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="auth-alert auth-alert-error">
+                    <span class="alert-icon">&#9888;</span>
+                    <span>@TempData["ErrorMessage"]</span>
                 </div>
             }
 
             <form asp-controller="Account"
                   asp-action="Login"
-                  method="post">
+                  method="post"
+                  class="auth-form-body">
 
-                <div asp-validation-summary="ModelOnly"
-                     class="auth-validation">
-                </div>
+                <div asp-validation-summary="ModelOnly" class="auth-validation-summary"></div>
 
-                <div class="auth-group">
-                    <label asp-for="Email">Email</label>
-
+                <!-- Email field (Không có placeholder) -->
+                <div class="auth-form-group">
+                    <label asp-for="Email" class="auth-label">Email</label>
                     <input asp-for="Email"
                            class="auth-input"
-                           placeholder="Nhập email"
                            autocomplete="username" />
-
-                    <span asp-validation-for="Email"
-                          class="auth-field-error">
-                    </span>
+                    <span asp-validation-for="Email" class="auth-field-error"></span>
                 </div>
 
-                <div class="auth-group">
-                    <label asp-for="Password">Mật khẩu</label>
-
+                <!-- Password field (Không có placeholder) -->
+                <div class="auth-form-group">
+                    <label asp-for="Password" class="auth-label">Mật khẩu</label>
                     <input asp-for="Password"
                            class="auth-input"
-                           placeholder="Nhập mật khẩu"
                            autocomplete="current-password" />
-
-                    <span asp-validation-for="Password"
-                          class="auth-field-error">
-                    </span>
+                    <span asp-validation-for="Password" class="auth-field-error"></span>
                 </div>
 
-                <a href="#" class="auth-link">
-                    Quên mật khẩu? 
-                </a>
+                <!-- Liên kết Quên mật khẩu -->
+                <div class="auth-forgot-row">
+                    <a href="#" class="auth-forgot-link">Quên mật khẩu?</a>
+                </div>
 
-                <button type="submit" class="auth-button">
+                <!-- Nút Đăng nhập chính -->
+                <button type="submit" class="auth-submit-btn">
                     Đăng nhập
                 </button>
+            </form>
+        </section>
 
-                <div class="auth-footer">
-                    <span>Chưa có tài khoản?</span>
+        <!-- BÊN PHẢI: KHU VỰC GIỚI THIỆU (VÀNG - NÂU) -->
+        <section class="auth-intro-column">
+            <!-- Họa tiết trang trí hình học sinh động -->
+            <div class="intro-decoration-circle circle-1"></div>
+            <div class="intro-decoration-circle circle-2"></div>
+            <div class="intro-decoration-ring"></div>
+            <div class="intro-decoration-grid"></div>
 
-                    <a asp-controller="Account"
-                       asp-action="Register">
-                        Đăng ký ngay
-                    </a>
+            <div class="intro-content">
+                <div class="intro-brand-tag">
+                    <span class="intro-brand-icon">&#128176;</span>
+                    <span class="intro-brand-title">FEMS</span>
                 </div>
 
-            </form>
+                <h2 class="intro-heading">Chào mừng bạn!</h2>
 
-        </div>
-    </section>
+                <p class="intro-description">
+                    Quản lý tài chính gia đình dễ dàng hơn. Theo dõi thu nhập, chi tiêu và kiểm soát dòng tiền trong một nền tảng duy nhất.
+                </p>
 
+                <!-- Pill Button điều hướng sang Register -->
+                <div class="intro-action">
+                    <a asp-controller="Account"
+                       asp-action="Register"
+                       class="intro-pill-btn">
+                        Đăng ký
+                    </a>
+                </div>
+            </div>
+        </section>
+    </div>
 </div>
 
 @section Scripts {
