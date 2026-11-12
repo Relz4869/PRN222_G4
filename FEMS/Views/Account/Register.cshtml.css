@@ -1,259 +1,445 @@
-/* CSS for Register view */
+/* ========================================================
+   FEMS - REGISTER PAGE (FORM XANH LÁ CÂY NHẠT & INTRO VÀNG - NÂU)
+   Palette:
+   - Viewport Background: #FAF8F3 (Trắng kem)
+   - Form Background:     #F0F7F1 (Xanh lá nhạt / Sage Green)
+   - Primary Green:       #86B89A (Xanh lá dịu)
+   - Button Green:        #72A887 (Xanh nút chính)
+   - Input Background:    #F7FBF7 (Xanh rất nhạt)
+   - Border:              #D5E6D8 (Viền mảnh xanh nhạt)
+   - Form Dark Text:      #35483A (Xanh đen đậm dễ đọc)
+   - Form Muted Text:     #5A7361 (Xanh xám trung tính)
+   - Intro Background:    Gradient Vàng - Nâu (#D9A441 -> #B88646 -> #8B5E3C)
+   ======================================================== */
 
-/* =========================================
-   FEMS - REGISTER PAGE
-========================================= */
-
-.auth-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    width: 100%;
+.auth-viewport-wrapper {
     min-height: 100vh;
-    min-height: 100svh;
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-    color: #1f2937;
+    min-height: 100dvh;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 36px 20px;
+    background-color: #FAF8F3;
+    background-image: 
+        radial-gradient(circle at 88% 18%, rgba(217, 164, 65, 0.12) 0%, transparent 38%),
+        radial-gradient(circle at 12% 82%, rgba(139, 94, 60, 0.10) 0%, transparent 40%),
+        radial-gradient(circle at 50% 50%, rgba(134, 184, 154, 0.08) 0%, transparent 60%);
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    color: #35483A;
+    box-sizing: border-box;
 }
 
-/* =========================================
-   LEFT PANEL
-========================================= */
+/* ========================================================
+   MAIN SPLIT-SCREEN CARD
+   ======================================================== */
 
-.auth-brand {
-    background-color: #0D9488;
+.auth-card {
     display: flex;
+    width: 100%;
+    max-width: 980px;
+    min-height: 640px;
+    background-color: #F0F7F1;
+    border: 1px solid #D5E6D8;
+    border-radius: 24px;
+    box-shadow: 
+        0 24px 48px -12px rgba(61, 48, 40, 0.12),
+        0 4px 16px rgba(53, 72, 58, 0.04);
+    overflow: hidden;
+    position: relative;
+    transition: box-shadow 0.3s ease;
+}
+
+.auth-card:hover {
+    box-shadow: 
+        0 28px 56px -10px rgba(61, 48, 40, 0.16),
+        0 6px 20px rgba(53, 72, 58, 0.06);
+}
+
+/* ========================================================
+   LEFT COLUMN - INTRO PANEL (VÀNG - NÂU)
+   ======================================================== */
+
+.auth-intro-column {
+    flex: 1 1 45%;
+    background: linear-gradient(140deg, #D9A441 0%, #B88646 45%, #8B5E3C 100%);
+    color: #FFFFFF;
+    padding: 52px 42px;
+    display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     text-align: center;
-    padding: 40px;
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
 }
 
-.auth-brand-content {
-    width: 100%;
-    max-width: 390px;
+/* Họa tiết trang trí */
+.intro-decoration-circle {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
 }
 
-.auth-brand h1 {
-    color: #ffffff;
-    font-size: 28px;
-    font-weight: 700;
-    line-height: 1.4;
-    margin-bottom: 45px;
+.circle-1 {
+    width: 280px;
+    height: 280px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0) 70%);
+    top: -70px;
+    left: -70px;
 }
 
-.auth-brand p {
-    color: #ecfdf5;
+.circle-2 {
+    width: 220px;
+    height: 220px;
+    background: radial-gradient(circle, rgba(61, 48, 40, 0.18) 0%, rgba(61, 48, 40, 0) 70%);
+    bottom: -60px;
+    right: -60px;
+}
+
+.intro-decoration-ring {
+    position: absolute;
+    width: 170px;
+    height: 170px;
+    border: 2px dashed rgba(255, 255, 255, 0.22);
+    border-radius: 50%;
+    top: 55%;
+    left: -50px;
+    pointer-events: none;
+}
+
+.intro-decoration-grid {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.10) 1px, transparent 1px);
+    background-size: 20px 20px;
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+/* Nội dung giới thiệu */
+.intro-content {
+    position: relative;
+    z-index: 2;
+    max-width: 320px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.intro-brand-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.16);
+    border: 1px solid rgba(255, 255, 255, 0.30);
+    backdrop-filter: blur(8px);
+    padding: 6px 16px;
+    border-radius: 20px;
+    margin-bottom: 26px;
+}
+
+.intro-brand-icon {
+    font-size: 16px;
+}
+
+.intro-brand-title {
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    color: #FFFFFF;
+}
+
+.intro-heading {
+    font-size: 32px;
+    font-weight: 800;
+    color: #FFFFFF;
+    margin: 0 0 16px 0;
+    line-height: 1.25;
+    letter-spacing: -0.5px;
+}
+
+.intro-description {
     font-size: 14px;
     line-height: 1.7;
-    margin-bottom: 45px;
+    color: rgba(255, 255, 255, 0.95);
+    margin: 0;
+    font-weight: 400;
 }
 
-.auth-brand-logo {
-    display: inline-block;
-    background-color: #F59E0B;
-    color: #422006;
-    padding: 13px 40px;
-    border-radius: 7px;
-    font-size: 16px;
-    font-weight: 700;
-}
-
-/* =========================================
-   RIGHT PANEL
-========================================= */
-
-.auth-form-section {
-    background-color: #FAFAFA;
+/* PILL BUTTON ĐĂNG NHẬP (YÊU CẦU 3: ĐẶT THẤP HƠN, CĂN GIỮA, BO TRÒN 999px) */
+.intro-action {
+    width: 100%;
     display: flex;
     justify-content: center;
+    margin-top: 48px;
+}
+
+a.intro-pill-btn,
+.intro-pill-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: 160px !important;
+    height: 46px !important;
+    padding: 0 36px !important;
+    background: transparent !important;
+    color: #FFFFFF !important;
+    border: 2px solid rgba(255, 255, 255, 0.88) !important;
+    border-radius: 999px !important;
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    text-decoration: none !important;
+    letter-spacing: 0.4px !important;
+    cursor: pointer !important;
+    transition: all 0.25s ease !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12) !important;
+    outline: none !important;
+}
+
+a.intro-pill-btn:hover,
+.intro-pill-btn:hover {
+    background: #FFFFFF !important;
+    color: #8B5E3C !important;
+    border-color: #FFFFFF !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 24px rgba(61, 48, 40, 0.25) !important;
+    text-decoration: none !important;
+}
+
+a.intro-pill-btn:active,
+.intro-pill-btn:active {
+    transform: translateY(0) !important;
+}
+
+/* ========================================================
+   RIGHT COLUMN - REGISTER FORM (XANH LÁ CÂY NHẠT)
+   ======================================================== */
+
+.auth-form-column {
+    flex: 1 1 55%;
+    padding: 42px 48px;
+    background-color: #F0F7F1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    box-sizing: border-box;
+}
+
+/* Thương hiệu FEMS tối giản */
+.auth-brand-badge {
+    display: inline-flex;
     align-items: center;
-    padding: 35px 40px;
+    margin-bottom: 18px;
 }
 
-.auth-form {
-    width: 100%;
-    max-width: 440px;
+.brand-badge-name {
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    color: #35483A;
+    background: #E2EFE5;
+    border: 1px solid #D5E6D8;
+    padding: 4px 12px;
+    border-radius: 6px;
+    display: inline-block;
 }
 
-    .auth-form h2 {
-        color: #134e4a;
-        text-align: center;
-        font-size: 25px;
-        font-weight: 700;
-        margin-bottom: 28px;
-    }
+/* Header typography */
+.auth-form-header {
+    margin-bottom: 22px;
+}
 
-    /* =========================================
-   FORM
-========================================= */
+.auth-title {
+    font-size: 26px;
+    font-weight: 800;
+    color: #35483A;
+    margin: 0 0 5px 0;
+    letter-spacing: -0.5px;
+}
 
-    .auth-form form {
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-    }
+.auth-subtitle {
+    font-size: 13.5px;
+    color: #5A7361;
+    margin: 0;
+    font-weight: 500;
+    line-height: 1.4;
+}
 
-.auth-group {
+/* Form layout */
+.auth-form-body {
     display: flex;
     flex-direction: column;
     width: 100%;
-    margin-bottom: 15px;
 }
 
-    .auth-group label {
-        display: block;
-        width: 100%;
-        color: #374151;
-        font-size: 14px;
-        font-weight: 600;
-        margin-bottom: 7px;
-    }
-
-.auth-input {
-    display: block;
-    width: 100%;
-    height: 43px;
-    padding: 0 14px;
-    color: #374151;
-    background-color: #ffffff;
-    border: 1px solid #e5e7eb;
-    border-radius: 7px;
-    font-size: 14px;
-    outline: none;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-    .auth-input::placeholder {
-        color: #b0b7c3;
-    }
-
-    .auth-input:focus {
-        border-color: #0D9488;
-        box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.10);
-    }
-
-/* =========================================
-   BUTTON
-========================================= */
-
-.auth-button {
-    width: 100%;
-    height: 46px;
-    background-color: #0D9488;
-    color: #ffffff;
-    border: none;
-    border-radius: 7px;
-    font-size: 15px;
-    font-weight: 700;
-    cursor: pointer;
-    margin-top: 8px;
-    transition: background-color 0.2s ease;
-}
-
-    .auth-button:hover {
-        background-color: #0f766e;
-    }
-
-/* =========================================
-   FOOTER
-========================================= */
-.auth-footer {
+.auth-form-group {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 6px;
+    flex-direction: column;
+    margin-bottom: 16px;
     width: 100%;
-    margin-top: 32px;
-    line-height: 1.6;
-    text-align: center;
-    color: #4b5563;
-    font-size: 13px;
 }
 
-    /* Navigation link */
-    .auth-footer a,
-    .auth-footer a:link,
-    .auth-footer a:visited {
-        display: inline-block;
-        color: #0D9488 !important;
-        text-decoration: none !important;
-        font-weight: 600;
-        cursor: pointer;
-        transition: color 0.2s ease;
-    }
-
-        /* Hover */
-        .auth-footer a:hover {
-            color: #F59E0B !important;
-            text-decoration: none !important;
-        }
-
-/* =========================================
-   VALIDATION
-========================================= */
-
-.auth-validation {
-    color: #dc2626;
-    font-size: 13px;
-    margin-bottom: 12px;
+.auth-label {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #35483A;
+    margin-bottom: 7px;
+    display: block;
 }
 
-    .auth-validation:empty {
-        display: none;
-    }
+/* Ô NHẬP LIỆU THIẾT KẾ LỚN, HIỆN ĐẠI (YÊU CẦU 1) */
+input.auth-input,
+.auth-input {
+    display: block !important;
+    width: 100% !important;
+    height: 46px !important;
+    min-height: 46px !important;
+    padding: 0 16px !important;
+    font-size: 14.5px !important;
+    line-height: 46px !important;
+    color: #35483A !important;
+    background-color: #F7FBF7 !important;
+    border: 1.5px solid #D5E6D8 !important;
+    border-radius: 12px !important;
+    outline: none !important;
+    box-sizing: border-box !important;
+    transition: all 0.25s ease-in-out !important;
+    font-family: inherit !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    box-shadow: 0 1px 3px rgba(53, 72, 58, 0.04) !important;
+}
+
+input.auth-input:focus,
+.auth-input:focus {
+    background-color: #FFFFFF !important;
+    border-color: #5E9975 !important;
+    box-shadow: 0 0 0 3.5px rgba(94, 153, 117, 0.22) !important;
+}
+
+/* Nút Đăng ký chính - Màu xanh lá cây */
+.auth-submit-btn {
+    width: 100% !important;
+    height: 48px !important;
+    min-height: 48px !important;
+    margin-top: 10px !important;
+    background: linear-gradient(135deg, #86B89A 0%, #72A887 100%) !important;
+    color: #FFFFFF !important;
+    border: none !important;
+    border-radius: 12px !important;
+    font-size: 15.5px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.3px !important;
+    cursor: pointer !important;
+    box-shadow: 0 4px 14px rgba(114, 168, 135, 0.30) !important;
+    transition: all 0.25s ease !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-family: inherit !important;
+}
+
+.auth-submit-btn:hover {
+    background: linear-gradient(135deg, #78A98C 0%, #639877 100%) !important;
+    box-shadow: 0 6px 18px rgba(114, 168, 135, 0.40) !important;
+    transform: translateY(-1px) !important;
+}
+
+.auth-submit-btn:active {
+    transform: translateY(0) !important;
+    box-shadow: 0 2px 8px rgba(114, 168, 135, 0.25) !important;
+}
+
+/* Validation styles */
+.auth-validation-summary {
+    color: #991B1B;
+    background-color: #FDF2F2;
+    border: 1px solid #FCA5A5;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 12.5px;
+    margin-bottom: 14px;
+}
+
+.auth-validation-summary:empty {
+    display: none;
+}
 
 .auth-field-error {
-    display: block;
-    color: #dc2626;
-    font-size: 12px;
+    color: #B91C1C;
+    font-size: 11.5px;
     margin-top: 4px;
+    font-weight: 500;
 }
 
-/* =========================================
-   RESPONSIVE
-========================================= */
+/* ========================================================
+   RESPONSIVE DESIGN
+   ======================================================== */
+
+@media (max-width: 900px) {
+    .auth-card {
+        max-width: 720px;
+        min-height: auto;
+    }
+
+    .auth-form-column {
+        padding: 36px 30px;
+    }
+
+    .auth-intro-column {
+        padding: 36px 26px;
+    }
+
+    .intro-heading {
+        font-size: 26px;
+    }
+
+    .intro-action {
+        margin-top: 36px;
+    }
+}
 
 @media (max-width: 768px) {
-
-    .auth-container {
-        grid-template-columns: 1fr;
+    .auth-viewport-wrapper {
+        padding: 16px 12px;
     }
 
-    .auth-brand {
-        min-height: 250px;
-        padding: 25px 20px;
+    .auth-card {
+        flex-direction: column;
+        border-radius: 18px;
+        max-width: 480px;
     }
 
-        .auth-brand h1 {
-            font-size: 23px;
-            margin-bottom: 20px;
-        }
-
-        .auth-brand p {
-            font-size: 13px;
-            margin-bottom: 20px;
-        }
-
-    .auth-form-section {
-        min-height: 650px;
-        padding: 35px 25px;
+    .auth-form-column {
+        order: 1;
+        padding: 32px 24px;
     }
 
-    .auth-form h2 {
-        font-size: 22px;
-    }
-}
-
-@media (max-width: 400px) {
-
-    .auth-brand {
+    .auth-intro-column {
+        order: 2;
+        padding: 32px 24px;
         min-height: 220px;
     }
 
-    .auth-form-section {
-        padding: 30px 18px;
+    .auth-title {
+        font-size: 23px;
+    }
+
+    .intro-heading {
+        font-size: 23px;
+        margin-bottom: 10px;
+    }
+
+    .intro-action {
+        margin-top: 28px;
+    }
+}
+
+@media (max-width: 420px) {
+    .auth-form-column {
+        padding: 26px 16px;
     }
 }
