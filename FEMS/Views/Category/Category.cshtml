@@ -58,12 +58,12 @@
                 </div>
 
                 <!-- Thông tin chủ sở hữu -->
-                <div class="owner-box d-flex justify-content-between align-items-center mb-3">
+                @* <div class="owner-box d-flex justify-content-between align-items-center mb-3">
                     <div>
                         <div class="fw-bold small">@User.Identity?.Name (Bạn)</div>
                     </div>
                     <span class="badge bg-fems">Chủ sở hữu</span>
-                </div>
+                </div> *@
 
                 <!-- Form Lưu Danh Mục -->
                 <form asp-controller="Category" asp-action="Save" method="post">
@@ -144,9 +144,9 @@
                             <tr>
                                 <th class="col-stt">STT</th>
                                 <th class="col-name">TÊN DANH MỤC</th>
-                                <th class="col-desc">MÔ TẢ (DESCRIPTION)</th>
+                                <th class="col-desc">MÔ TẢ</th>
                                 <th class="col-status text-center">TRẠNG THÁI</th>
-                                <th class="col-action text-end">THAO TÁC</th>
+                                <th class="col-action text-center">THAO TÁC</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -177,7 +177,7 @@
                                                 <span class="badge bg-warning text-dark rounded-pill px-3 py-1">• Inactive</span>
                                             }
                                         </td>
-                                        <td class="text-end">
+                                        <td class="text-center">
                                             @if (item.Status == "Active")
                                             {
                                                 <a asp-controller="Category"
@@ -230,12 +230,12 @@
                 </div>
 
                 <!-- Chân bảng & Phân trang (5 danh mục / trang) -->
-                <div class="d-flex flex-wrap justify-content-between align-items-center mt-2">
-                    <div class="small text-muted">
+                <div class="d-flex flex-wrap justify-content-end align-items-center mt-2">
+                    @* <div class="small text-muted">
                         Hiển thị <strong>@pagedCategories.Count</strong> trên tổng số <strong>@totalCount</strong> danh mục cá nhân (Trang @currentPage / @totalPages)
-                    </div>
+                    </div> *@
 
-                    <nav>
+                    <nav class="ms-auto">
                         <ul class="pagination pagination-sm mb-0">
                             <li class="page-item @(currentPage <= 1 ? "disabled" : "")">
                                 <a class="page-link"
