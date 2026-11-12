@@ -258,6 +258,34 @@
     border-color: #4b5563;
 }
 
+.btn-view-detail,
+::deep .btn-view-detail {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    height: 32px;
+    padding: 0 14px;
+    border-radius: 8px;
+    font-size: 12.5px;
+    font-weight: 600;
+    line-height: 1;
+    white-space: nowrap !important;
+    background-color: #f0fdfa;
+    color: #0f766e !important;
+    border: 1px solid #99f6e4;
+    text-decoration: none !important;
+    transition: all 0.15s ease;
+}
+
+.btn-view-detail:hover,
+::deep .btn-view-detail:hover {
+    background-color: #0D9488;
+    color: #ffffff !important;
+    border-color: #0D9488;
+    text-decoration: none !important;
+}
+
 .btn-view-wallet,
 ::deep .btn-view-wallet {
     display: inline-flex;

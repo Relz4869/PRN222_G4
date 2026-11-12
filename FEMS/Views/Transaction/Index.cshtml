@@ -85,7 +85,7 @@
                                 @foreach (var w in Model.Wallets)
                                 {
                                     <option value="@w.WalletId" selected="@(Model.WalletId == w.WalletId)">
-                                        @w.WalletName (@w.Amount.ToString("N0") VNĐ)
+                                        @w.WalletName (@Math.Abs(w.Amount).ToString("N0") VNĐ)
                                     </option>
                                 }
                             </select>
