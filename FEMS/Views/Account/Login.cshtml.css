@@ -1,321 +1,495 @@
-/* =========================================
-   FEMS - LOGIN PAGE
-   Color Palette:
-   Primary:   #0D9488
-   Secondary: #F59E0B
-   Neutral:   #FAFAFA
-========================================= */
+/* ========================================================
+   FEMS - LOGIN PAGE (FORM XANH LÁ CÂY NHẠT & INTRO VÀNG - NÂU)
+   Palette:
+   - Viewport Background: #FAF8F3 (Trắng kem)
+   - Form Background:     #F0F7F1 (Xanh lá nhạt / Sage Green)
+   - Primary Green:       #86B89A (Xanh lá dịu)
+   - Button Green:        #72A887 (Xanh nút chính)
+   - Input Background:    #F7FBF7 (Xanh rất nhạt)
+   - Border:              #D5E6D8 (Viền mảnh xanh nhạt)
+   - Form Dark Text:      #35483A (Xanh đen đậm dễ đọc)
+   - Form Muted Text:     #5A7361 (Xanh xám trung tính)
+   - Intro Background:    Gradient Vàng - Nâu (#D9A441 -> #B88646 -> #8B5E3C)
+   ======================================================== */
 
-.auth-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    width: 100%;
+.auth-viewport-wrapper {
     min-height: 100vh;
-    min-height: 100svh;
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-    color: #1f2937;
-}
-
-/* =========================================
-   LEFT PANEL - BRANDING
-========================================= */
-
-.auth-brand {
-    background-color: #0D9488;
+    min-height: 100dvh;
+    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    text-align: center;
-    padding: 40px;
+    padding: 36px 20px;
+    background-color: #FAF8F3;
+    background-image: 
+        radial-gradient(circle at 12% 18%, rgba(217, 164, 65, 0.12) 0%, transparent 38%),
+        radial-gradient(circle at 88% 82%, rgba(139, 94, 60, 0.10) 0%, transparent 40%),
+        radial-gradient(circle at 50% 50%, rgba(134, 184, 154, 0.08) 0%, transparent 60%);
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    color: #35483A;
+    box-sizing: border-box;
 }
 
-.auth-brand-content {
-    width: 100%;
-    max-width: 390px;
-}
+/* ========================================================
+   MAIN SPLIT-SCREEN CARD
+   ======================================================== */
 
-.auth-brand h1 {
-    color: #ffffff;
-    font-size: 28px;
-    font-weight: 700;
-    line-height: 1.4;
-    margin-bottom: 45px;
-}
-
-.auth-brand p {
-    color: #ecfdf5;
-    font-size: 14px;
-    line-height: 1.7;
-    margin-bottom: 45px;
-}
-
-.auth-brand-logo {
-    display: inline-block;
-    background-color: #F59E0B;
-    color: #422006;
-    padding: 13px 40px;
-    border-radius: 7px;
-    font-size: 16px;
-    font-weight: 700;
-}
-
-/* =========================================
-   RIGHT PANEL - LOGIN FORM
-========================================= */
-
-.auth-form-section {
-    background-color: #FAFAFA;
+.auth-card {
     display: flex;
+    width: 100%;
+    max-width: 960px;
+    min-height: 570px;
+    background-color: #F0F7F1;
+    border: 1px solid #D5E6D8;
+    border-radius: 24px;
+    box-shadow: 
+        0 24px 48px -12px rgba(61, 48, 40, 0.12),
+        0 4px 16px rgba(53, 72, 58, 0.04);
+    overflow: hidden;
+    position: relative;
+    transition: box-shadow 0.3s ease;
+}
+
+.auth-card:hover {
+    box-shadow: 
+        0 28px 56px -10px rgba(61, 48, 40, 0.16),
+        0 6px 20px rgba(53, 72, 58, 0.06);
+}
+
+/* ========================================================
+   LEFT COLUMN - LOGIN FORM (XANH LÁ CÂY NHẠT)
+   ======================================================== */
+
+.auth-form-column {
+    flex: 1 1 54%;
+    padding: 52px 48px;
+    background-color: #F0F7F1;
+    display: flex;
+    flex-direction: column;
     justify-content: center;
+    position: relative;
+    box-sizing: border-box;
+}
+
+/* Thương hiệu FEMS tối giản */
+.auth-brand-badge {
+    display: inline-flex;
     align-items: center;
-    padding: 40px;
+    margin-bottom: 24px;
 }
 
-.auth-form {
-    width: 100%;
-    max-width: 440px;
-}
-
-    .auth-form h2 {
-        color: #134e4a;
-        text-align: center;
-        font-size: 25px;
-        font-weight: 700;
-        margin-bottom: 35px;
-    }
-
-    /* =========================================
-   FORM
-========================================= */
-
-    .auth-form form {
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-    }
-
-.auth-group {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    margin-bottom: 22px;
-}
-
-    .auth-group label {
-        display: block;
-        width: 100%;
-        color: #374151;
-        font-size: 14px;
-        font-weight: 600;
-        margin-bottom: 9px;
-    }
-
-/* Input fields */
-
-/* Input fields */
-.auth-form .auth-group input.auth-input {
-    display: block;
-    width: 100%;
-    height: 46px;
-    padding: 0 14px;
-    color: #374151;
-    background-color: #ffffff;
-    border: 1px solid #e5e7eb;
-    border-radius: 7px;
-    font-size: 14px;
-    outline: none;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-    .auth-form .auth-group input.auth-input::placeholder {
-        color: #b0b7c3;
-    }
-
-    .auth-form .auth-group input.auth-input:focus {
-        border-color: #0D9488;
-        box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.10);
-    }
-.auth-form {
-    width: 100%;
-    max-width: 440px;
-}
-
-    .auth-form form {
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-    }
-
-.auth-group {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    margin-bottom: 22px;
-}
-
-    .auth-group label {
-        display: block;
-        margin-bottom: 9px;
-    }
-/* =========================================
-   FORGOT PASSWORD
-========================================= */
-
-.auth-link {
-    display: block;
-    width: 100%;
-    text-align: right;
-    color: #0D9488;
-    font-size: 13px;
-    margin-top: -8px;
-    margin-bottom: 25px;
-    text-decoration: none;
-}
-
-    .auth-link:hover {
-        color: #F59E0B;
-        text-decoration: underline;
-    }
-
-/* =========================================
-   LOGIN BUTTON
-========================================= */
-
-.auth-button {
-    display: block;
-    width: 100%;
-    height: 48px;
-    background-color: #0D9488;
-    color: #ffffff;
-    border: none;
-    border-radius: 7px;
+.brand-badge-name {
     font-size: 15px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    color: #35483A;
+    background: #E2EFE5;
+    border: 1px solid #D5E6D8;
+    padding: 4px 12px;
+    border-radius: 6px;
+    display: inline-block;
 }
 
-    .auth-button:hover {
-        background-color: #0f766e;
-    }
+/* Header typography */
+.auth-form-header {
+    margin-bottom: 28px;
+}
 
-    .auth-button:active {
-        transform: scale(0.99);
-    }
+.auth-title {
+    font-size: 28px;
+    font-weight: 800;
+    color: #35483A;
+    margin: 0 0 6px 0;
+    letter-spacing: -0.5px;
+}
 
-/* =========================================
-   REGISTER LINK
-========================================= */
+.auth-subtitle {
+    font-size: 14px;
+    color: #5A7361;
+    margin: 0;
+    font-weight: 500;
+    line-height: 1.5;
+}
 
-.auth-footer {
+/* Alerts */
+.auth-alert {
     display: flex;
-    justify-content: center;
     align-items: center;
-    flex-wrap: wrap;
-    gap: 6px;
-    width: 100%;
-    margin-top: 32px;
-    line-height: 1.6;
-    text-align: center;
-    color: #4b5563;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: 10px;
     font-size: 13px;
-}
-
-    /* Navigation link */
-    .auth-footer a,
-    .auth-footer a:link,
-    .auth-footer a:visited {
-        display: inline-block;
-        color: #0D9488 !important;
-        text-decoration: none !important;
-        font-weight: 600;
-        cursor: pointer;
-        transition: color 0.2s ease;
-    }
-
-        /* Hover */
-        .auth-footer a:hover {
-            color: #F59E0B !important;
-            text-decoration: none !important;
-        }
-
-/* Register success message */
-.auth-success {
-    background-color: #ecfdf5;
-    color: #047857;
-    border: 1px solid #a7f3d0;
-    border-radius: 7px;
-    padding: 12px;
     margin-bottom: 20px;
-    font-size: 13px;
+    line-height: 1.4;
 }
 
-/* =========================================
-   VALIDATION
-========================================= */
-
-.auth-validation {
-    color: #dc2626;
-    font-size: 13px;
-    margin-bottom: 15px;
+.auth-alert-success {
+    background-color: #E6F4EA;
+    color: #2D5A3A;
+    border: 1px solid #86B89A;
 }
 
-    .auth-validation:empty {
-        display: none;
-    }
+.auth-alert-error {
+    background-color: #FDF2F2;
+    color: #991B1B;
+    border: 1px solid #FCA5A5;
+}
+
+.alert-icon {
+    font-weight: 800;
+    font-size: 14px;
+}
+
+/* Form layout */
+.auth-form-body {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.auth-form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 22px;
+    width: 100%;
+}
+
+.auth-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #35483A;
+    margin-bottom: 8px;
+    display: block;
+}
+
+/* Ô NHẬP LIỆU THIẾT KẾ LỚN, HIỆN ĐẠI (YÊU CẦU 1) */
+input.auth-input,
+.auth-input {
+    display: block !important;
+    width: 100% !important;
+    height: 48px !important;
+    min-height: 48px !important;
+    padding: 0 18px !important;
+    font-size: 15px !important;
+    line-height: 48px !important;
+    color: #35483A !important;
+    background-color: #F7FBF7 !important;
+    border: 1.5px solid #D5E6D8 !important;
+    border-radius: 12px !important;
+    outline: none !important;
+    box-sizing: border-box !important;
+    transition: all 0.25s ease-in-out !important;
+    font-family: inherit !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    box-shadow: 0 1px 3px rgba(53, 72, 58, 0.04) !important;
+}
+
+input.auth-input:focus,
+.auth-input:focus {
+    background-color: #FFFFFF !important;
+    border-color: #5E9975 !important;
+    box-shadow: 0 0 0 3.5px rgba(94, 153, 117, 0.22) !important;
+}
+
+/* Hàng Quên mật khẩu căn phải */
+.auth-forgot-row {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: -6px;
+    margin-bottom: 26px;
+}
+
+.auth-forgot-link {
+    color: #5A7361;
+    text-decoration: none;
+    font-size: 13.5px;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+.auth-forgot-link:hover {
+    color: #35483A;
+    text-decoration: underline;
+}
+
+/* Nút Đăng nhập chính - Màu xanh lá cây */
+.auth-submit-btn {
+    width: 100% !important;
+    height: 48px !important;
+    min-height: 48px !important;
+    background: linear-gradient(135deg, #86B89A 0%, #72A887 100%) !important;
+    color: #FFFFFF !important;
+    border: none !important;
+    border-radius: 12px !important;
+    font-size: 15.5px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.3px !important;
+    cursor: pointer !important;
+    box-shadow: 0 4px 14px rgba(114, 168, 135, 0.30) !important;
+    transition: all 0.25s ease !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-family: inherit !important;
+}
+
+.auth-submit-btn:hover {
+    background: linear-gradient(135deg, #78A98C 0%, #639877 100%) !important;
+    box-shadow: 0 6px 18px rgba(114, 168, 135, 0.40) !important;
+    transform: translateY(-1px) !important;
+}
+
+.auth-submit-btn:active {
+    transform: translateY(0) !important;
+    box-shadow: 0 2px 8px rgba(114, 168, 135, 0.25) !important;
+}
+
+/* Validation styles */
+.auth-validation-summary {
+    color: #991B1B;
+    background-color: #FDF2F2;
+    border: 1px solid #FCA5A5;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 13px;
+    margin-bottom: 18px;
+}
+
+.auth-validation-summary:empty {
+    display: none;
+}
 
 .auth-field-error {
-    display: block;
-    color: #dc2626;
+    color: #B91C1C;
     font-size: 12px;
     margin-top: 5px;
+    font-weight: 500;
 }
 
-/* =========================================
-   RESPONSIVE
-========================================= */
+/* ========================================================
+   RIGHT COLUMN - BRANDING & INTRO PANEL (VÀNG - NÂU)
+   ======================================================== */
+
+.auth-intro-column {
+    flex: 1 1 46%;
+    background: linear-gradient(140deg, #D9A441 0%, #B88646 45%, #8B5E3C 100%);
+    color: #FFFFFF;
+    padding: 52px 42px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+/* Họa tiết trang trí */
+.intro-decoration-circle {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.circle-1 {
+    width: 280px;
+    height: 280px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0) 70%);
+    top: -70px;
+    right: -70px;
+}
+
+.circle-2 {
+    width: 220px;
+    height: 220px;
+    background: radial-gradient(circle, rgba(61, 48, 40, 0.18) 0%, rgba(61, 48, 40, 0) 70%);
+    bottom: -60px;
+    left: -60px;
+}
+
+.intro-decoration-ring {
+    position: absolute;
+    width: 170px;
+    height: 170px;
+    border: 2px dashed rgba(255, 255, 255, 0.22);
+    border-radius: 50%;
+    top: 55%;
+    right: -50px;
+    pointer-events: none;
+}
+
+.intro-decoration-grid {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.10) 1px, transparent 1px);
+    background-size: 20px 20px;
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+/* Nội dung giới thiệu */
+.intro-content {
+    position: relative;
+    z-index: 2;
+    max-width: 330px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.intro-brand-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.16);
+    border: 1px solid rgba(255, 255, 255, 0.30);
+    backdrop-filter: blur(8px);
+    padding: 6px 16px;
+    border-radius: 20px;
+    margin-bottom: 26px;
+}
+
+.intro-brand-icon {
+    font-size: 16px;
+}
+
+.intro-brand-title {
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    color: #FFFFFF;
+}
+
+.intro-heading {
+    font-size: 32px;
+    font-weight: 800;
+    color: #FFFFFF;
+    margin: 0 0 16px 0;
+    line-height: 1.25;
+    letter-spacing: -0.5px;
+}
+
+.intro-description {
+    font-size: 14px;
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.95);
+    margin: 0;
+    font-weight: 400;
+}
+
+/* PILL BUTTON ĐĂNG KÝ (YÊU CẦU 3: ĐẶT THẤP HƠN, CĂN GIỮA, BO TRÒN 999px) */
+.intro-action {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 48px;
+}
+
+a.intro-pill-btn,
+.intro-pill-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: 160px !important;
+    height: 46px !important;
+    padding: 0 36px !important;
+    background: transparent !important;
+    color: #FFFFFF !important;
+    border: 2px solid rgba(255, 255, 255, 0.88) !important;
+    border-radius: 999px !important;
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    text-decoration: none !important;
+    letter-spacing: 0.4px !important;
+    cursor: pointer !important;
+    transition: all 0.25s ease !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12) !important;
+    outline: none !important;
+}
+
+a.intro-pill-btn:hover,
+.intro-pill-btn:hover {
+    background: #FFFFFF !important;
+    color: #8B5E3C !important;
+    border-color: #FFFFFF !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 24px rgba(61, 48, 40, 0.25) !important;
+    text-decoration: none !important;
+}
+
+a.intro-pill-btn:active,
+.intro-pill-btn:active {
+    transform: translateY(0) !important;
+}
+
+/* ========================================================
+   RESPONSIVE DESIGN
+   ======================================================== */
+
+@media (max-width: 900px) {
+    .auth-card {
+        max-width: 720px;
+        min-height: auto;
+    }
+
+    .auth-form-column {
+        padding: 42px 34px;
+    }
+
+    .auth-intro-column {
+        padding: 42px 30px;
+    }
+
+    .intro-heading {
+        font-size: 26px;
+    }
+
+    .intro-action {
+        margin-top: 36px;
+    }
+}
 
 @media (max-width: 768px) {
-
-    .auth-container {
-        grid-template-columns: 1fr;
+    .auth-viewport-wrapper {
+        padding: 16px 12px;
     }
 
-    .auth-brand {
-        min-height: 280px;
-        padding: 30px 20px;
+    .auth-card {
+        flex-direction: column;
+        border-radius: 18px;
+        max-width: 480px;
     }
 
-        .auth-brand h1 {
-            font-size: 23px;
-            margin-bottom: 20px;
-        }
-
-        .auth-brand p {
-            font-size: 13px;
-            margin-bottom: 20px;
-        }
-
-    .auth-form-section {
-        min-height: 480px;
-        padding: 35px 25px;
+    .auth-form-column {
+        order: 1;
+        padding: 34px 24px;
     }
 
-    .auth-form h2 {
-        font-size: 22px;
+    .auth-intro-column {
+        order: 2;
+        padding: 34px 24px;
+        min-height: 220px;
+    }
+
+    .auth-title {
+        font-size: 24px;
+    }
+
+    .intro-heading {
+        font-size: 24px;
+        margin-bottom: 10px;
+    }
+
+    .intro-action {
+        margin-top: 28px;
     }
 }
 
-@media (max-width: 400px) {
-
-    .auth-brand {
-        min-height: 240px;
-    }
-
-    .auth-form-section {
-        padding: 30px 18px;
+@media (max-width: 420px) {
+    .auth-form-column {
+        padding: 28px 18px;
     }
 }
