@@ -80,12 +80,12 @@
                     <!-- Chọn Ví cá nhân -->
                     <div class="mb-3">
                         <div class="tx-field-box">
-                            <span class="tx-field-prefix">Chọn Ví cá nhân:</span>
+                            <span class="tx-field-prefix">Chọn Ví:</span>
                             <select name="WalletId" class="tx-inline-select" required>
                                 @foreach (var w in Model.Wallets)
                                 {
                                     <option value="@w.WalletId" selected="@(Model.WalletId == w.WalletId)">
-                                        @w.WalletName (@Math.Abs(w.Amount).ToString("N0") VNĐ)
+                                        @w.WalletName (@w.Amount.ToString("N0") VNĐ)
                                     </option>
                                 }
                             </select>
