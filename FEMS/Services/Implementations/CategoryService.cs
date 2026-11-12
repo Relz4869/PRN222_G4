@@ -30,13 +30,12 @@ namespace FEMS.Services.Implementations
                 list = list.Where(c => c.Status == status).ToList();
             }
 
-            // Tìm kiếm theo tên hoặc mô tả nếu có nhập
+            // Tìm kiếm theo tên nếu có nhập
             if (!string.IsNullOrEmpty(search))
             {
                 string keyword = search.Trim().ToLower();
                 list = list.Where(c =>
-                    c.CategoryName.ToLower().Contains(keyword) ||
-                    (c.Description != null && c.Description.ToLower().Contains(keyword))
+                    c.CategoryName.ToLower().Contains(keyword)
                 ).ToList();
             }
 

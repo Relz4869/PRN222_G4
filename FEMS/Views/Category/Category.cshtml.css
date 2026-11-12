@@ -191,3 +191,41 @@
 ::deep .long-word {
     word-break: break-all;
 }
+
+/* --- TRẠNG THÁI STATUS DOT DESIGN --- */
+
+/* Khung căn chỉnh badge trạng thái dạng inline */
+.status-badge-inline {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+}
+
+/* Chấm trạng thái chung (Kích thước hoàn hảo 8x8px) */
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+}
+
+/* Kiểu chữ trạng thái màu đen/xám đậm */
+.status-text {
+    color: #1e293b;
+    /* Màu đen chủ đạo */
+    font-size: 13.5px;
+}
+
+/* 1. Trạng thái Active: Dùng màu Teal chủ đạo (#0D9488) kèm vòng hào quang nhẹ */
+.dot-active {
+    background-color: #0D9488;
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15);
+}
+
+/* 2. Trạng thái Inactive / Vô hiệu hóa: Dùng màu xám trung tính hoặc vàng cam nhẹ */
+.dot-inactive {
+    background-color: #F59E0B;
+    box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.15);
+}

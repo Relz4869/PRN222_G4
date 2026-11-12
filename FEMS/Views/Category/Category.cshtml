@@ -34,10 +34,10 @@
                 📁 Tổng danh mục: <strong class="ms-1">@totalCount</strong>
             </span>
             <span class="stat-pill">
-                🟢 Đang hoạt động: <strong class="text-fems ms-1">@activeCount</strong>
+                <span class="status-dot dot-active me-1"></span> Đang hoạt động: <strong class="text-dark ms-1">@activeCount</strong>
             </span>
             <span class="stat-pill">
-                🟠 Đã vô hiệu hóa: <strong class="text-warning ms-1">@inactiveCount</strong>
+                <span class="status-dot dot-inactive me-1"></span> Đã vô hiệu hóa: <strong class="text-dark ms-1">@inactiveCount</strong>
             </span>
         </div>
     </div>
@@ -126,7 +126,7 @@
                                    value="@ViewBag.Search"
                                    class="form-control form-control-sm rounded-3"
                                    style="width: 190px;"
-                                   placeholder="Tìm tên, mô tả..." />
+                                   placeholder="Tìm tên..." />
 
                             <button type="submit" class="btn btn-sm btn-fems px-3" title="Tìm kiếm">🔍</button>
                         </form>
@@ -164,14 +164,20 @@
                                             <td class="text-muted small text-wrap-cell">
                                                 @(string.IsNullOrWhiteSpace(item.Description) ? "—" : item.Description)
                                             </td>
-                                            <td class="text-center">
+                                            <td class="text-center col-status">
                                                 @if (item.Status == "Active")
                                                 {
-                                                    <span class="fw-semibold text-fems small">🟢 Active</span>
+                                                    <span class="status-badge-inline">
+                                                        <span class="status-dot dot-active"></span> 
+                                                        <span class="status-text">Active</span>
+                                                    </span>
                                                 }
                                                 else
                                                 {
-                                                    <span class="fw-semibold text-warning small">🟠 Inactive</span>
+                                                    <span class="status-badge-inline">
+                                                        <span class="status-dot dot-inactive"></span> 
+                                                        <span class="status-text">Inactive</span>
+                                                    </span>
                                                 }
                                             </td>
                                             <td class="text-center">
