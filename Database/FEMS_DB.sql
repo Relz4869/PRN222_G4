@@ -16,7 +16,7 @@ GO
 CREATE TABLE [User] (
     UserID INT IDENTITY(1,1) PRIMARY KEY,
     Email VARCHAR(100) NOT NULL UNIQUE,
-    [Password] VARCHAR(255) NOT NULL,
+    PasswordHash VARCHAR(255) NOT NULL,
     FullName NVARCHAR(100) NOT NULL,
     Phone VARCHAR(15)
 );
@@ -181,13 +181,13 @@ GO
 -- =============================================
 -- 1. INSERT USERS
 -- =============================================
-INSERT INTO [User] (Email, [Password], FullName, Phone)
+INSERT INTO [User] (Email, PasswordHash, FullName, Phone)
 VALUES
-('minh@gmail.com', '123456', N'Nguyễn Văn Minh', '0901000001'),
-('lan@gmail.com',   '123456', N'Nguyễn Thị Lan', '0901000002'),
-('nam@gmail.com',   '123456', N'Nguyễn Văn Nam',  '0901000003'),
-('hoa@gmail.com',   '123456', N'Nguyễn Thị Hoa',  '0901000004'),
-('an@gmail.com',    '123456', N'Nguyễn Văn An',   '0901000005');
+('minh@gmail.com', '$2a$11$koWwbWHkVU7m4W6u/Bskuev1npp2zIGZ46dhtu2S2o32yv92A0XQ6', N'Nguyễn Văn Minh', '0901000001'),
+('lan@gmail.com',   '$2a$11$7dlDXJt2pKofB2PswDq1/.dkoWTlENTBVoJH6zNWn7NNMNBOd0vjy', N'Nguyễn Thị Lan', '0901000002'),
+('nam@gmail.com',   '$2a$11$u5CX/UDb1Tus0bfI0jWxXOXplaInHQ.A1o6U0blVQWhse5.8tH3Be', N'Nguyễn Văn Nam',  '0901000003'),
+('hoa@gmail.com',   '$2a$11$k680qopy9aDy0vxDE.pgA.jj5K7yOHmvqWrnr4Xv/X6aL.U8tLM7W', N'Nguyễn Thị Hoa',  '0901000004'),
+('an@gmail.com',    '$2a$11$gmJOetLYk8t.4hPWfcWJNuaq5PFRlSdYFV8SV1Ip7nOi8PFwBIT5C', N'Nguyễn Văn An',   '0901000005');
 GO
 
 -- =============================================

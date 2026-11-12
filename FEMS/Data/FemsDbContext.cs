@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using FEMS.Models.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -179,9 +179,10 @@ public partial class FemsDbContext : DbContext
                 .HasMaxLength(100)
                 .IsUnicode(false);
             entity.Property(e => e.FullName).HasMaxLength(100);
-            entity.Property(e => e.Password)
+            entity.Property(e => e.PasswordHash)
                 .HasMaxLength(255)
-                .IsUnicode(false);
+                .IsUnicode(false)
+                .HasColumnName("PasswordHash");
             entity.Property(e => e.Phone)
                 .HasMaxLength(15)
                 .IsUnicode(false);

@@ -164,6 +164,51 @@ namespace FEMS.Controllers
 
 
         // =========================================
+        // CHANGE PASSWORD
+        // =========================================
+
+        // GET: /Account/ChangePassword
+        [HttpGet]
+        [Authorize]
+        public IActionResult ChangePassword()
+        {
+            return View(new ChangePasswordViewModel());
+        }
+
+        // POST: /Account/ChangePassword
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            string? userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!int.TryParse(userIdStr, out int userId) || userId <= 0)
+            {
+                return RedirectToAction(nameof(Login));
+            }
+
+            var result = await _accountService.ChangePasswordAsync(
+                userId,
+                model.CurrentPassword,
+                model.NewPassword
+            );
+
+            if (!result.Success)
+            {
+                ModelState.AddModelError(string.Empty, result.Message);
+                return View(model);
+            }
+
+            TempData["SuccessMessage"] = "Đổi mật khẩu thành công!";
+            return RedirectToAction(nameof(ChangePassword));
+        }
+
+        // =========================================
         // LOGOUT
         // =========================================
 

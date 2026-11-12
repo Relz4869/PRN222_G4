@@ -245,7 +245,7 @@ body.dashboard-body {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 130px;
+    max-width: 105px;
 }
 
 .fems-role-badge {
@@ -270,17 +270,33 @@ body.dashboard-body {
     color: #3730A3;
 }
 
+.fems-user-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.fems-action-btn,
 .fems-logout-btn {
+    width: 32px;
+    height: 32px;
     background: transparent;
     border: none;
     color: rgba(255, 255, 255, 0.7);
-    padding: 6px;
+    padding: 0;
     border-radius: 8px;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s;
+    transition: all 0.2s ease;
     cursor: pointer;
+    text-decoration: none;
+}
+
+.fems-action-btn:hover {
+    background-color: #0D9488;
+    color: #FFFFFF;
 }
 
 .fems-logout-btn:hover {

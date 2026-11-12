@@ -1,4 +1,4 @@
-﻿using FEMS.Models.Entities;
+using FEMS.Models.Entities;
 
 namespace FEMS.Services.Interfaces
 {
@@ -12,6 +12,13 @@ namespace FEMS.Services.Interfaces
             string email,
             string password,
             string? phone
+        );
+
+        // Change password
+        Task<(bool Success, string Message)> ChangePasswordAsync(
+            int userId,
+            string currentPassword,
+            string newPassword
         );
     }
 }
