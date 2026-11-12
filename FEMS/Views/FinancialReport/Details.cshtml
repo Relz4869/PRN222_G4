@@ -3,7 +3,7 @@
 @using System.Text.Json
 
 @{
-    ViewData["Title"] = "Báo cáo tài chính chi tiết";
+    ViewData["Title"] = "Phân tích chi tiết";
 
     var categoryNames = Model.Categories
         .Select(c => c.CategoryName).ToList();
@@ -12,6 +12,22 @@
         .Select(c => c.TotalAmount).ToList();
 
     decimal netIncome = Model.TotalIncome - Model.TotalExpense;
+
+    int selectedYear = DateTime.Today.Year;
+    int selectedMonthNumber = DateTime.Today.Month;
+    var selectedParts = (Model.SelectedMonth ?? "").Split('-');
+
+    if (selectedParts.Length == 2 &&
+        int.TryParse(selectedParts[0], out int year) &&
+        int.TryParse(selectedParts[1], out int month) &&
+        year >= 1 && year <= 9999 &&
+        month >= 1 && month <= 12)
+    {
+        selectedYear = year;
+        selectedMonthNumber = month;
+    }
+
+    string selectedMonthValue = $"{selectedYear:D4}-{selectedMonthNumber:D2}";
 }
 
 <style>
@@ -195,7 +211,7 @@
 
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
         <div>
-            <h2 class="detail-title">Báo cáo tài chính chi tiết</h2>
+            <h2 class="detail-title">Phân tích chi tiết</h2>
             <p class="text-muted mb-0">
                 Theo dõi các khoản thu nhập và chi tiêu đã ghi nhận.
             </p>
@@ -206,12 +222,12 @@
            asp-route-months="@Model.Months"
            asp-route-selectedMonth="@Model.SelectedMonth"
            class="btn btn-outline-success">
-            Quay về tổng quan
+            Quay về Phân tích
         </a>
     </div>
 
     <div class="detail-card">
-        <h5 class="detail-title mb-3">Bộ lọc báo cáo</h5>
+        <h5 class="detail-title mb-3">Bộ lọc phân tích</h5>
 
         <form asp-controller="FinancialReport"
               asp-action="Details"
@@ -220,11 +236,29 @@
             <div class="detail-filter mb-3">
 
                 <div>
-                    <label>Chọn tháng</label>
-                    <input type="month"
-                           name="selectedMonth"
-                           value="@Model.SelectedMonth"
-                           class="form-control" />
+                    <label for="monthSelect">Chọn tháng</label>
+                    <div class="d-flex flex-wrap gap-2">
+                        <select id="monthSelect" class="form-select" style="width: 145px;">
+                            @for (int monthOption = 1; monthOption <= 12; monthOption++)
+                            {
+                                <option value="@monthOption" selected="@(monthOption == selectedMonthNumber)">
+                                    Tháng @monthOption
+                                </option>
+                            }
+                        </select>
+
+                        <select id="yearSelect" class="form-select" style="width: 145px;">
+                            @for (int yearOption = Math.Max(DateTime.Today.Year + 1, selectedYear);
+                                  yearOption >= Math.Min(2020, selectedYear);
+                                  yearOption--)
+                            {
+                                <option value="@yearOption" selected="@(yearOption == selectedYear)">
+                                    Năm @yearOption
+                                </option>
+                            }
+                        </select>
+                    </div>
+                    <input type="hidden" id="selectedMonth" name="selectedMonth" value="@selectedMonthValue" />
                 </div>
 
                 @if (Model.IsManager)
@@ -269,7 +303,7 @@
 
                 <button type="submit"
                         class="btn btn-success text-nowrap">
-                    Xem báo cáo
+                    Xem phân tích
                 </button>
 
             </div>
@@ -320,25 +354,29 @@
         </div>
     </div>
 
-    <div class="detail-card">
-        <h4 class="detail-title">Tỷ trọng chi tiêu theo danh mục</h4>
-        <p class="text-muted">
-            Tỷ lệ chi tiêu của từng danh mục trong khoảng thời gian đã chọn.
-        </p>
+    @if (!Model.IsManager)
+    {
+        <div class="detail-card">
+            <h4 class="detail-title">Tỷ trọng chi tiêu theo danh mục</h4>
+            <p class="text-muted">
+                Tỷ lệ chi tiêu của từng danh mục trong khoảng thời gian đã chọn.
+            </p>
 
-        @if (Model.Categories.Any() && Model.TotalExpense > 0)
-        {
-            <div class="detail-chart">
-                <canvas id="categoryChart"></canvas>
-            </div>
-        }
-        else
-        {
-            <div class="detail-empty">
-                Chưa có dữ liệu chi tiêu trong kỳ báo cáo.
-            </div>
-        }
-    </div>
+            @if (Model.Categories.Any() && Model.TotalExpense > 0)
+            {
+                <div class="detail-chart">
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            }
+            else
+            {
+                <div class="detail-empty">
+                    Chưa có dữ liệu chi tiêu trong kỳ phân tích.
+                </div>
+            }
+        </div>
+
+    }
 
     <div class="detail-card">
         <h4 class="detail-title mb-3">Lịch sử giao dịch thu nhập</h4>
@@ -461,6 +499,18 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
 
     <script>
+        const monthSelect = document.getElementById("monthSelect");
+        const yearSelect = document.getElementById("yearSelect");
+        const selectedMonthInput = document.getElementById("selectedMonth");
+
+        function updateSelectedMonth() {
+                selectedMonthInput.value = yearSelect.value + "-" + monthSelect.value.padStart(2, "0");
+        }
+
+        monthSelect.addEventListener("change", updateSelectedMonth);
+        yearSelect.addEventListener("change", updateSelectedMonth);
+        updateSelectedMonth();
+
         const categoryNames = @Html.Raw(JsonSerializer.Serialize(categoryNames));
         const categoryAmounts = @Html.Raw(JsonSerializer.Serialize(categoryAmounts));
 
