@@ -97,7 +97,7 @@
                     </div>
 
                     <div class="wallet-card-balance">
-                        Số dư: @Math.Abs(w.CurrentBalance).ToString("N0") VNĐ
+                        Số dư: @w.CurrentBalance.ToString("N0") VNĐ
                     </div>
 
                     @if (w.LimitAmount.HasValue && w.LimitAmount.Value > 0)
