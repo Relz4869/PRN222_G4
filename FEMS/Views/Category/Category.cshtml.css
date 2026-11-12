@@ -1,9 +1,9 @@
 /* CSS for Category view */
 
 .category-page {
-    background-color: #f5f8f7;
-    padding: 20px;
-    border-radius: 12px;
+    background-color: #f4f7f6;
+    padding: 28px;
+    border-radius: 18px;
 }
 
 .text-fems {
@@ -20,39 +20,92 @@
     color: #ffffff;
     font-weight: 600;
     border: none;
+    border-radius: 10px;
+    transition: all 0.2s ease;
 }
 
 .btn-fems:hover {
-    background-color: #095c47;
+    background-color: #0f766e;
     color: #ffffff;
 }
 
+/* Thẻ Card chính */
 .card-custom {
     background-color: #ffffff;
-    border: 1px solid #e4ece9;
+    border: 1px solid #e2ece9;
     border-radius: 16px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+    box-shadow: 0 4px 16px rgba(13, 148, 136, 0.05);
 }
 
-.owner-box {
-    background-color: #f3f7f9;
-    border-radius: 12px;
-    padding: 12px;
+/* Huy hiệu thống kê góc trên */
+.stat-pill {
+    background-color: #ffffff;
+    border: 1px solid #e2ece9;
+    border-radius: 50px;
+    padding: 8px 16px;
+    font-size: 13.5px;
+    color: #334155;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+}
+
+/* Ô nhập liệu bên trái */
+.input-custom {
+    border: 1px solid #d8e3e0;
+    background-color: #f9fbfb;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.input-custom:focus {
+    background-color: #ffffff;
+    border-color: #0D9488;
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.12);
 }
 
 /* Cố định kích thước khung bảng ở mức 5 danh mục */
 .table-fixed-7 {
-    min-height: 305px;
-}
-
-.table-fixed-7 tbody tr {
-    height: 52px;
+    min-height: 320px;
 }
 
 /* Cố định chiều rộng các cột trong bảng */
 .table-category {
     table-layout: fixed;
     width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.table-category thead th {
+    background-color: #f8fafc;
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    padding: 12px 10px;
+    border-top: 1px solid #eef2f6;
+    border-bottom: 1px solid #eef2f6;
+}
+
+.table-category tbody tr {
+    height: 56px;
+    transition: background-color 0.15s ease;
+}
+
+.table-category tbody tr:hover {
+    background-color: #f8fffe;
+}
+
+.table-category tbody td {
+    padding: 12px 10px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+/* Dòng bị vô hiệu hóa (Inactive) làm dịu màu để dễ phân biệt */
+.row-inactive {
+    background-color: #fafafa;
+    opacity: 0.78;
 }
 
 .col-stt {
@@ -64,7 +117,7 @@
 }
 
 .col-desc {
-    width: 34%;
+    width: 32%;
 }
 
 .col-status {
@@ -72,7 +125,59 @@
 }
 
 .col-action {
-    width: 20%;
+    width: 22%;
+}
+
+/* Nút thao tác nổi bật rõ nền và luôn nằm trên 1 hàng */
+.btn-action-edit,
+::deep .btn-action-edit {
+    background-color: #dbeafe;
+    color: #1d4ed8;
+    border: 1px solid #93c5fd;
+    border-radius: 8px;
+    font-weight: 600;
+    padding: 4px 10px;
+    white-space: nowrap;
+}
+
+.btn-action-edit:hover,
+::deep .btn-action-edit:hover {
+    background-color: #bfdbfe;
+    color: #1e3a8a;
+}
+
+.btn-action-disable,
+::deep .btn-action-disable {
+    background-color: #fee2e2;
+    color: #dc2626;
+    border: 1px solid #fca5a5;
+    border-radius: 8px;
+    font-weight: 600;
+    padding: 4px 10px;
+    white-space: nowrap;
+}
+
+.btn-action-disable:hover,
+::deep .btn-action-disable:hover {
+    background-color: #fecaca;
+    color: #991b1b;
+}
+
+.btn-action-restore,
+::deep .btn-action-restore {
+    background-color: #fef3c7;
+    color: #b45309;
+    border: 1px solid #fcd34d;
+    border-radius: 8px;
+    font-weight: 600;
+    padding: 4px 12px;
+    white-space: nowrap;
+}
+
+.btn-action-restore:hover,
+::deep .btn-action-restore:hover {
+    background-color: #fde68a;
+    color: #92400e;
 }
 
 /* Mặc định xuống dòng theo dấu cách; từ dài >= 8 ký tự xuống dòng tự do */
@@ -85,4 +190,42 @@
 .long-word,
 ::deep .long-word {
     word-break: break-all;
+}
+
+/* --- TRẠNG THÁI STATUS DOT DESIGN --- */
+
+/* Khung căn chỉnh badge trạng thái dạng inline */
+.status-badge-inline {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+}
+
+/* Chấm trạng thái chung (Kích thước hoàn hảo 8x8px) */
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+}
+
+/* Kiểu chữ trạng thái màu đen/xám đậm */
+.status-text {
+    color: #1e293b;
+    /* Màu đen chủ đạo */
+    font-size: 13.5px;
+}
+
+/* 1. Trạng thái Active: Dùng màu Teal chủ đạo (#0D9488) kèm vòng hào quang nhẹ */
+.dot-active {
+    background-color: #0D9488;
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15);
+}
+
+/* 2. Trạng thái Inactive / Vô hiệu hóa: Dùng màu xám trung tính hoặc vàng cam nhẹ */
+.dot-inactive {
+    background-color: #F59E0B;
+    box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.15);
 }
