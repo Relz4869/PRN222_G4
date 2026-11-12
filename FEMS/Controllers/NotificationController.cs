@@ -39,8 +39,8 @@ namespace FEMS.Controllers
                 .MarkAsReadAsync(userId, id);
 
             TempData["Message"] = success
-                ? "Notification marked as read."
-                : "Unable to mark this notification as read.";
+            ? "Đã đánh dấu thông báo là đã đọc."
+            : "Không thể đánh dấu thông báo này là đã đọc.";
 
             return RedirectToAction("Index");
         }

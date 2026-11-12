@@ -3,7 +3,8 @@ namespace FEMS.ViewModels.FinancialReport
 {
     public class FinancialSummaryViewModel
     {
-        public int Months { get; set; } = 3;
+        public int Months { get; set; } = 1;
+        public string SelectedMonth { get; set; } = "";
 
         public decimal TotalIncome { get; set; }
 

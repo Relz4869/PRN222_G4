@@ -6,8 +6,8 @@ namespace FEMS.Services.Interfaces
     public interface IFinancialReportService
     {
         Task<FinancialSummaryViewModel?> GetSummaryAsync(
-            int userId, int months);
+    int userId, int months, string? selectedMonth);
         Task<DetailedReportViewModel?> GetDetailedReportAsync(
-    int userId, int months);
+     int userId, int months, string? selectedMonth, int? selectedMemberId);
     }
 }
