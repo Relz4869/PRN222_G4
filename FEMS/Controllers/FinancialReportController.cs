@@ -17,8 +17,10 @@ namespace FEMS.Controllers
             _reportService = reportService;
         }
 
+
         [HttpGet]
-        public async Task<IActionResult> Index(int months = 3)
+        public async Task<IActionResult> Index(
+    int months = 1, string? selectedMonth = null)
         {
             string? userIdString =
                 User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -29,7 +31,7 @@ namespace FEMS.Controllers
             }
 
             var model = await _reportService.GetSummaryAsync(
-                userId, months);
+                userId, months, selectedMonth);
 
             if (model == null)
             {
@@ -39,9 +41,11 @@ namespace FEMS.Controllers
             return View(model);
         }
 
-
         [HttpGet]
-        public async Task<IActionResult> Details(int months = 3)
+        public async Task<IActionResult> Details(
+    int months = 1,
+    string? selectedMonth = null,
+    int? selectedMemberId = null)
         {
             string? userIdString =
                 User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -52,7 +56,7 @@ namespace FEMS.Controllers
             }
 
             var model = await _reportService.GetDetailedReportAsync(
-                userId, months);
+        userId, months, selectedMonth, selectedMemberId);
 
             if (model == null)
             {

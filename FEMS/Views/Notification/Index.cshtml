@@ -2,97 +2,228 @@
 @model List<FEMS.Models.Entities.Notification>
 
 @{
-    ViewData["Title"] = "Notifications";
+    ViewData["Title"] = "Thông báo";
     int unreadCount = Model.Count(n => !n.IsRead);
 }
 
-<div class="container mt-4">
-    <h2>Notifications</h2>
-    <p>View your notifications and their status.</p>
+<style>
+    .notification-page {
+        background: #f5f8f7;
+        padding: 25px;
+        border-radius: 18px;
+        margin-bottom: 30px;
+    }
 
-    <div class="alert alert-info">
-        Unread notifications: <strong>@unreadCount</strong>
+    .notification-title {
+        color: #173b36;
+        font-weight: 700;
+    }
+
+    .notification-card {
+        background: white;
+        border: 1px solid #e4ebe8;
+        border-radius: 15px;
+        padding: 28px;
+    }
+
+    .notification-count {
+        display: inline-block;
+        padding: 10px 16px;
+        border-radius: 20px;
+        background: #0D9488;
+        color: white;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .notification-count.has-unread {
+        background: #dc3545;
+    }
+
+    .notification-table {
+        width: 100%;
+        min-width: 700px;
+    }
+
+    .notification-table th {
+        background: #f0f6f3;
+        color: #415b51;
+        padding: 15px;
+        white-space: nowrap;
+    }
+
+    .notification-table td {
+        padding: 15px;
+        vertical-align: middle;
+    }
+
+    .notification-table .message-cell {
+        min-width: 280px;
+        overflow-wrap: anywhere;
+    }
+
+    .notification-unread {
+        background: #eefaf4;
+    }
+
+    .notification-status-read {
+        background: #0D9488;
+        color: white;
+        padding: 6px 11px;
+        border-radius: 7px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .notification-status-unread {
+        background: #fff3cd;
+        color: #856404;
+        padding: 6px 11px;
+        border-radius: 7px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .btn-notification {
+        background: #0D9488;
+        border: 1px solid #0D9488;
+        color: white;
+        border-radius: 9px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .btn-notification:hover {
+        background: #0b7f75;
+        border-color: #0b7f75;
+        color: white;
+    }
+
+    .notification-action {
+        white-space: nowrap;
+    }
+
+    @@media (max-width: 767px) {
+        .notification-page {
+            padding: 12px;
+        }
+
+        .notification-card {
+            padding: 12px;
+        }
+    }
+</style>
+
+<div class="notification-page">
+
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+        <div>
+            <h2 class="notification-title">Thông báo</h2>
+            <p class="text-muted mb-0">
+                Theo dõi các thông báo và cập nhật mới nhất của bạn.
+            </p>
+        </div>
+
+        <span class="notification-count @(unreadCount > 0 ? "has-unread" : "")">
+            @unreadCount thông báo chưa đọc
+        </span>
     </div>
 
     @if (TempData["Message"] != null)
     {
-        <div class="alert alert-secondary">
+        <div class="alert alert-info">
             @TempData["Message"]
         </div>
     }
 
-    @if (!Model.Any())
-    {
-        <div class="alert alert-light border">
-            You have no notifications.
-        </div>
-    }
-    else
-    {
-        <table class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th>Message</th>
-                    <th>Created At</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
+    <div class="notification-card">
 
-            <tbody>
-                @foreach (var notification in Model)
-                {
-                    bool isInvite = !notification.IsRead &&
-                        notification.Message.StartsWith("[INVITE:");
+        @if (!Model.Any())
+        {
+            <div class="text-center text-muted py-5">
+                Bạn chưa có thông báo nào.
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table notification-table">
+                    <thead>
+                        <tr>
+                            <th>Nội dung</th>
+                            <th>Thời gian</th>
+                            <th>Trạng thái</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
 
-                    <tr class="@(!notification.IsRead ? "table-warning" : "")">
-                        <td>@notification.Message</td>
-                        <td>
-                            @notification.CreatedAt.ToString("dd/MM/yyyy HH:mm")
-                        </td>
-                        <td>
-                            @if (notification.IsRead)
-                            {
-                                <span class="badge bg-success">
-                                    Read
-                                </span>
-                            }
-                            else
-                            {
-                                <span class="badge bg-warning text-dark">
-                                    Unread
-                                </span>
-                            }
-                        </td>
-                        <td>
-                            @if (isInvite)
-                            {
-                                <span class="text-muted">
-                                    Manage in Household
-                                </span>
-                            }
-                            else if (!notification.IsRead)
-                            {
-                                <form asp-controller="Notification"
-                                      asp-action="MarkAsRead"
-                                      asp-route-id="@notification.NotificationId"
-                                      method="post">
-                                    @Html.AntiForgeryToken()
+                    <tbody>
+                        @foreach (var notification in Model)
+                        {
+                            bool isInvite = !notification.IsRead &&
+                                notification.Message.StartsWith("[INVITE:");
 
-                                    <button type="submit"
-                                            class="btn btn-sm btn-primary">
-                                        Mark as Read
-                                    </button>
-                                </form>
-                            }
-                            else
-                            {
-                                <span class="text-muted">-</span>
-                            }
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    }
+                            <tr class="@(!notification.IsRead ? "notification-unread" : "")">
+
+                                <td class="message-cell">
+                                    @notification.Message
+                                </td>
+
+                                <td class="text-nowrap">
+                                    @notification.CreatedAt.ToString("dd/MM/yyyy HH:mm")
+                                </td>
+
+                                <td>
+                                    @if (notification.IsRead)
+                                    {
+                                        <span class="notification-status-read">
+                                            Đã đọc
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="notification-status-unread">
+                                            Chưa đọc
+                                        </span>
+                                    }
+                                </td>
+
+                                <td class="notification-action">
+
+                                    @if (isInvite)
+                                    {
+                                        <a asp-controller="Household"
+                                           asp-action="Index"
+                                           class="btn btn-notification btn-sm">
+                                            Xem lời mời
+                                        </a>
+                                    }
+                                    else if (!notification.IsRead)
+                                    {
+                                        <form asp-controller="Notification"
+                                              asp-action="MarkAsRead"
+                                              asp-route-id="@notification.NotificationId"
+                                              method="post">
+
+                                            @Html.AntiForgeryToken()
+
+                                            <button type="submit"
+                                                    class="btn btn-notification btn-sm">
+                                                Đánh dấu đã đọc
+                                            </button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">—</span>
+                                    }
+
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
 </div>
