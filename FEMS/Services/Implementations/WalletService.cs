@@ -237,7 +237,7 @@ namespace FEMS.Services.Implementations
                 return (false, "Số dư ban đầu phải lớn hơn 0 VNĐ.", null);
             }
 
-            if (limitAmount.HasValue && limitAmount.Value <= 0)
+            if (!limitAmount.HasValue || limitAmount.Value <= 0)
             {
                 return (false, "Hạn mức chi tiêu tháng phải lớn hơn 0 VNĐ.", null);
             }
@@ -294,7 +294,7 @@ namespace FEMS.Services.Implementations
                 return (false, "Tên ví cá nhân không được để trống.");
             }
 
-            if (limitAmount.HasValue && limitAmount.Value <= 0)
+            if (!limitAmount.HasValue || limitAmount.Value <= 0)
             {
                 return (false, "Hạn mức chi tiêu tháng phải lớn hơn 0 VNĐ.");
             }

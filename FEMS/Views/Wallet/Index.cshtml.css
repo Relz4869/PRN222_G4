@@ -346,20 +346,24 @@
 
 /* Màu chữ phân loại đúng như ảnh mẫu */
 .history-row-adjustment td {
-    color: #92400e; /* Nâu vàng ấm (Secondary #F59E0B tone) cho Điều chỉnh số dư */
+    color: #92400e;
+    /* Nâu vàng ấm (Secondary #F59E0B tone) cho Điều chỉnh số dư */
     background-color: #fffbeb;
 }
 
 .history-row-expense td {
-    color: #dc2626; /* Đỏ cho Chi tiêu (Expense) */
+    color: #dc2626;
+    /* Đỏ cho Chi tiêu (Expense) */
 }
 
 .history-row-transfer td {
-    color: #0284c7; /* Xanh dương cho Chuyển tiền (Transfer) */
+    color: #0284c7;
+    /* Xanh dương cho Chuyển tiền (Transfer) */
 }
 
 .history-row-income td {
-    color: #0D9488; /* Xanh bạc hà / Xanh lá cho Thu nhập (Income) */
+    color: #0D9488;
+    /* Xanh bạc hà / Xanh lá cho Thu nhập (Income) */
 }
 
 .text-income-row {
@@ -417,5 +421,3 @@
     background-color: #0D9488 !important;
     color: #ffffff !important;
 }
-
-

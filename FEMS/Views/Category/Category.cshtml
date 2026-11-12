@@ -68,6 +68,7 @@
                         </label>
                         <input asp-for="CategoryName"
                                class="form-control input-custom"
+                               maxlength="100"
                                placeholder="Ví dụ: Ăn uống, Sinh hoạt, Giải trí..." />
                         <span asp-validation-for="CategoryName" class="text-danger small d-block mt-1"></span>
                     </div>
@@ -79,6 +80,7 @@
                         <textarea asp-for="Description"
                                   rows="5"
                                   class="form-control input-custom"
+                                  maxlength="500"
                                   placeholder="Ví dụ: Chi phí ăn sáng trưa công sở, xăng xe đi làm..."></textarea>
                     </div>
 
