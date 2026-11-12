@@ -2,7 +2,7 @@
 @using System.Text.Json
 
 @{
-    ViewData["Title"] = "Phân tích chi tiết";
+    ViewData["Title"] = "Phân tích";
 
     var categoryNames = Model.Categories
         .Select(c => c.CategoryName).ToList();
@@ -229,7 +229,7 @@
 
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
         <div>
-            <h2 class="detail-title">Phân tích chi tiết</h2>
+            <h2 class="detail-title">Phân tích</h2>
             <p class="text-muted mb-0">
                 Theo dõi các khoản thu nhập và chi tiêu đã ghi nhận.
             </p>
@@ -240,7 +240,7 @@
            asp-route-months="@Model.Months"
            asp-route-selectedMonth="@Model.SelectedMonth"
            class="btn btn-outline-success">
-            Quay về Phân tích
+            Quay về Tổng quan
         </a>
     </div>
 

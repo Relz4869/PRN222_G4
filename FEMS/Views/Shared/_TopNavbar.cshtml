@@ -1,0 +1,67 @@
+@using System.Security.Claims
+@inject FEMS.Services.Interfaces.IHouseholdService HouseholdService
+@inject FEMS.Services.Interfaces.INotificationService NotificationService
+
+@{
+    int unreadCount = 0;
+    string householdName = "";
+
+    if (User.Identity?.IsAuthenticated == true &&
+        int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out int userId))
+    {
+        try
+        {
+            var notifs = await NotificationService.GetNotificationsAsync(userId);
+            unreadCount = notifs.Count(n => !n.IsRead);
+
+            var membership = await HouseholdService.GetActiveMembershipAsync(userId);
+            if (membership?.Household != null)
+            {
+                householdName = membership.Household.HouseholdName;
+            }
+        }
+        catch
+        {
+            // Fallback an toàn
+        }
+    }
+}
+
+<header class="fems-topbar">
+    <div class="fems-topbar-left">
+        <button type="button" class="fems-toggle-sidebar" id="sidebarToggleBtn" aria-label="Mở Menu">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+        </button>
+
+        <span class="fems-topbar-title">@ViewData["Title"]</span>
+    </div>
+
+    <div class="fems-topbar-right">
+        @if (!string.IsNullOrEmpty(householdName))
+        {
+            <div class="fems-hh-pill" title="Hộ gia đình hiện tại">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0D9488" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                <span>@householdName</span>
+            </div>
+        }
+
+        <a asp-controller="Notification" asp-action="Index" class="fems-notif-btn" title="Xem thông báo">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+            @if (unreadCount > 0)
+            {
+                <span class="fems-notif-badge">@unreadCount</span>
+            }
+        </a>
+    </div>
+</header>
+

@@ -1,6 +1,16 @@
 ﻿@{
-    ViewData["Title"] = "FEMS";
+    ViewData["Title"] = "FEMS - Hệ thống Quản lý Chi tiêu Gia đình";
 }
 
-<div style="min-height: 70vh; background: white;">
+<div class="fems-card text-center py-5">
+    <div class="fems-brand-logo mx-auto mb-3" style="width: 54px; height: 54px; font-size: 26px;">F</div>
+    <h3 class="fw-bold mb-2" style="color: #134E4A;">Hệ thống Quản lý Chi tiêu Gia đình FEMS</h3>
+    <p class="text-muted mb-4">Đang chuyển tiếp đến trang Tổng quan tài chính...</p>
+    <a asp-controller="FinancialReport" asp-action="Index" class="btn-fems-primary">
+        Đi đến Tổng quan →
+    </a>
 </div>
+
+<script>
+    window.location.href = '@Url.Action("Index", "FinancialReport")';
+</script>

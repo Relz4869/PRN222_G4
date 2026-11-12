@@ -17,7 +17,7 @@ namespace FEMS.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            return RedirectToAction("Index", "FinancialReport");
         }
 
         public IActionResult Privacy()
