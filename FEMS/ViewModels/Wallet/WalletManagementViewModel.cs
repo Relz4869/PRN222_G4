@@ -62,10 +62,12 @@ namespace FEMS.ViewModels.Wallet
         [StringLength(100, ErrorMessage = "Tên ví không được vượt quá 100 ký tự.")]
         public string NewWalletName { get; set; } = string.Empty;
 
-        [Range(0.01, double.MaxValue, ErrorMessage = "Số dư ban đầu phải lớn hơn 0.")]
+        [Required(ErrorMessage = "Vui lòng nhập số dư ban đầu.")]
+        [Range(1, double.MaxValue, ErrorMessage = "Số dư ban đầu phải lớn hơn 0.")]
         public decimal NewInitialBalance { get; set; } = 0;
 
-        [Range(0.01, double.MaxValue, ErrorMessage = "Hạn mức chi tiêu phải lớn hơn 0.")]
+        [Required(ErrorMessage = "Vui lòng nhập hạn mức chi tiêu.")]
+        [Range(1, double.MaxValue, ErrorMessage = "Hạn mức chi tiêu phải lớn hơn 0.")]
         public decimal? NewLimitAmount { get; set; }
 
         // =========================================
@@ -73,10 +75,12 @@ namespace FEMS.ViewModels.Wallet
         // =========================================
         public int EditWalletId { get; set; }
 
+        [Required(ErrorMessage = "Vui lòng nhập tên ví cá nhân.")]
         [StringLength(100, ErrorMessage = "Tên ví không được vượt quá 100 ký tự.")]
         public string EditWalletName { get; set; } = string.Empty;
 
-        [Range(0.01, double.MaxValue, ErrorMessage = "Hạn mức chi tiêu phải lớn hơn 0.")]
+        [Required(ErrorMessage = "Vui lòng nhập hạn mức chi tiêu tháng.")]
+        [Range(1, double.MaxValue, ErrorMessage = "Hạn mức chi tiêu phải lớn hơn 0.")]
         public decimal? EditLimitAmount { get; set; }
     }
 }

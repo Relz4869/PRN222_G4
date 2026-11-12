@@ -21,7 +21,7 @@
 <div class="wallet-page">
 
     <!-- Thông báo Thành công / Lỗi -->
-    @if (TempData["SuccessMessage"] != null)
+    @* @if (TempData["SuccessMessage"] != null)
     {
         <div class="wallet-alert wallet-alert-success">
             <span>&#10004; <strong>Thành công:</strong> @TempData["SuccessMessage"]</span>
@@ -33,7 +33,7 @@
         <div class="wallet-alert wallet-alert-error">
             <span>&#9888; <strong>Thông báo:</strong> @TempData["ErrorMessage"]</span>
         </div>
-    }
+    } *@
 
     <!-- =================================================
          1. HÀNG THẺ VÍ CÁ NHÂN (VIEW PERSONAL WALLETS)
@@ -127,7 +127,7 @@
         <div class="col-lg-5 col-md-6">
             <div class="wallet-panel h-100">
                 <h6 class="wallet-panel-title mb-3">
-                    <span class="plus-badge">&#10133;</span> Tạo ví cá nhân 
+                    <span class="plus-badge">&#10133;</span> Tạo ví cá nhân
                 </h6>
 
                 <form asp-controller="Wallet" asp-action="Create" method="post">
@@ -150,7 +150,7 @@
                             <span class="wallet-field-prefix">Số dư ban đầu:</span>
                             <input type="number"
                                    name="NewInitialBalance"
-                                   min="0"
+                                   min="1"
                                    step="any"
                                    value="@(Model.NewInitialBalance == 0 ? "" : ((long)Model.NewInitialBalance).ToString())"
                                    class="wallet-inline-input"
@@ -166,9 +166,10 @@
                                    name="NewLimitAmount"
                                    min="1"
                                    step="any"
-                                   value="@(Model.NewLimitAmount.HasValue ? ((long)Model.NewLimitAmount.Value).ToString() : "")"
+                                   value="@(Model.NewLimitAmount.HasValue ? ((long)Model.NewLimitAmount).ToString() : "")"
                                    class="wallet-inline-input"
-                                   placeholder="5.000.000" />
+                                   placeholder="5.000.000"
+                                   required />
                         </div>
                     </div>
 
@@ -246,14 +247,15 @@
                             </div>
 
                             <div class="col-sm-6">
-                                <label class="form-label small fw-semibold text-secondary mb-1">Hạn mức chi tiêu tháng (VNĐ)</label>
+                                <label class="form-label small fw-semibold text-secondary mb-1">Hạn mức chi tiêu tháng (VNĐ) <span class="text-danger">*</span></label>
                                 <input type="number"
                                        name="EditLimitAmount"
-                                       min="0"
+                                       min="1"
                                        step="any"
                                        value="@(Model.EditLimitAmount.HasValue ? ((long)Model.EditLimitAmount.Value).ToString() : "")"
                                        class="form-control wallet-setting-input"
-                                       placeholder="Để trống = Không giới hạn" />
+                                       placeholder="Ví dụ: 5.000.000"
+                                       required />
                             </div>
                         </div>
 
