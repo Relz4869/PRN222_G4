@@ -20,6 +20,9 @@ namespace FEMS.Repositories.Implementations
         {
             return await _context.Incomes
                 .AsNoTracking()
+                .Include(i => i.Wallet)
+                .Include(i => i.HouseholdMember)
+                    .ThenInclude(m => m.User)
                 .Where(i => memberIds.Contains(i.HouseholdMemberId)
                     && i.IncomeDate >= startDate
                     && i.IncomeDate < endDate)
@@ -32,6 +35,9 @@ namespace FEMS.Repositories.Implementations
             return await _context.Expenses
                 .AsNoTracking()
                 .Include(e => e.Category)
+                .Include(e => e.Wallet)
+                .Include(e => e.HouseholdMember)
+                    .ThenInclude(m => m.User)
                 .Where(e => memberIds.Contains(e.HouseholdMemberId)
                     && e.ExpenseDate >= startDate
                     && e.ExpenseDate < endDate)

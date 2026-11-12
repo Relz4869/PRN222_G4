@@ -83,6 +83,10 @@ namespace FEMS.Services.Implementations
             {
                 Months = months,
                 SelectedMonth = selectedDate.ToString("yyyy-MM"),
+                IsManager = isManager,
+                CurrentUserRole = currentMember.Role,
+                HouseholdName = currentMember.Household?.HouseholdName ?? string.Empty,
+                ActiveMemberCount = isManager ? members.Count : 1,
                 TotalIncome = incomes.Sum(i => i.Amount),
                 TotalExpense = expenses.Sum(e => e.Amount)
             };
@@ -123,6 +127,121 @@ namespace FEMS.Services.Implementations
                     });
                 }
             }
+
+            // Phân bổ chi tiêu theo danh mục (Category Distribution)
+            model.CategoryDistribution = expenses
+                .GroupBy(e => e.Category != null && e.Category.Status == "Active" ? e.Category.CategoryName : "Khác")
+                .Select(g => new CategoryExpenseViewModel
+                {
+                    CategoryName = g.Key,
+                    TotalAmount = g.Sum(e => e.Amount),
+                    TransactionCount = g.Count()
+                })
+                .OrderByDescending(c => c.TotalAmount)
+                .ToList();
+
+            // Danh sách ví: Manager xem tất cả ví của hộ (Read-only); Member xem ví cá nhân
+            DateOnly now = DateOnly.FromDateTime(today);
+            if (isManager)
+            {
+                foreach (var member in members)
+                {
+                    var memberWallets = await _householdRepository.GetWalletsByMemberIdAsync(member.HouseholdMemberId);
+                    foreach (var w in memberWallets)
+                    {
+                        decimal monthlySpent = expenses
+                            .Where(e => e.WalletId == w.WalletId && e.ExpenseDate.Year == now.Year && e.ExpenseDate.Month == now.Month)
+                            .Sum(e => e.Amount);
+
+                        model.Wallets.Add(new DashboardWalletItemViewModel
+                        {
+                            WalletId = w.WalletId,
+                            MemberName = member.User.FullName,
+                            WalletName = w.WalletName,
+                            CurrentBalance = w.Amount,
+                            LimitAmount = w.LimitAmount,
+                            MonthlyExpense = monthlySpent
+                        });
+                    }
+                }
+            }
+            else
+            {
+                var personalWallets = await _householdRepository.GetWalletsByMemberIdAsync(currentMember.HouseholdMemberId);
+                model.PersonalWalletCount = personalWallets.Count;
+                foreach (var w in personalWallets)
+                {
+                    decimal monthlySpent = expenses
+                        .Where(e => e.WalletId == w.WalletId && e.ExpenseDate.Year == now.Year && e.ExpenseDate.Month == now.Month)
+                        .Sum(e => e.Amount);
+
+                    model.Wallets.Add(new DashboardWalletItemViewModel
+                    {
+                        WalletId = w.WalletId,
+                        MemberName = currentMember.User.FullName,
+                        WalletName = w.WalletName,
+                        CurrentBalance = w.Amount,
+                        LimitAmount = w.LimitAmount,
+                        MonthlyExpense = monthlySpent
+                    });
+                }
+            }
+
+            // Giao dịch gần nhất (Recent Transactions: top 7)
+            var recentList = new List<DashboardTransactionItemViewModel>();
+            foreach (var inc in incomes)
+            {
+                recentList.Add(new DashboardTransactionItemViewModel
+                {
+                    TransactionId = inc.IncomeId,
+                    Date = inc.IncomeDate,
+                    MemberName = inc.HouseholdMember?.User?.FullName ?? "",
+                    Type = "Income",
+                    CategoryName = "Thu nhập",
+                    Amount = inc.Amount,
+                    WalletName = inc.Wallet?.WalletName ?? "Ví cá nhân",
+                    Description = inc.Description ?? "",
+                    IsOverAlertThreshold = currentMember.AlertAmount.HasValue && inc.Amount >= currentMember.AlertAmount.Value
+                });
+            }
+            foreach (var exp in expenses)
+            {
+                recentList.Add(new DashboardTransactionItemViewModel
+                {
+                    TransactionId = exp.ExpenseId,
+                    Date = exp.ExpenseDate,
+                    MemberName = exp.HouseholdMember?.User?.FullName ?? "",
+                    Type = "Expense",
+                    CategoryName = exp.Category?.CategoryName ?? "Chi tiêu",
+                    Amount = exp.Amount,
+                    WalletName = exp.Wallet?.WalletName ?? "Ví cá nhân",
+                    Description = exp.Description ?? "",
+                    IsOverAlertThreshold = currentMember.AlertAmount.HasValue && exp.Amount >= currentMember.AlertAmount.Value
+                });
+            }
+            model.RecentTransactions = recentList
+                .OrderByDescending(t => t.Date)
+                .ThenByDescending(t => t.TransactionId)
+                .Take(7)
+                .ToList();
+
+            // Thông báo & Cảnh báo (Alerts & Notifications)
+            var notifications = await _householdRepository.GetNotificationsByUserIdAsync(userId);
+            model.UnreadAlertCount = notifications.Count(n => !n.IsRead);
+            model.Alerts = notifications
+                .Take(5)
+                .Select(n => new DashboardAlertItemViewModel
+                {
+                    NotificationId = n.NotificationId,
+                    Message = n.Message,
+                    CreatedAt = n.CreatedAt,
+                    IsRead = n.IsRead,
+                    AlertType = (n.Message.Contains("Cảnh báo", StringComparison.OrdinalIgnoreCase) ||
+                                 n.Message.Contains("vượt", StringComparison.OrdinalIgnoreCase) ||
+                                 n.Message.Contains("âm", StringComparison.OrdinalIgnoreCase))
+                                ? "Warning" : "Info"
+                })
+                .ToList();
 
             return model;
         }

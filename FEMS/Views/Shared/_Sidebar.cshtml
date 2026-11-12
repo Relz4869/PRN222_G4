@@ -1,0 +1,190 @@
+@using System.Security.Claims
+@inject FEMS.Services.Interfaces.IHouseholdService HouseholdService
+@inject FEMS.Services.Interfaces.INotificationService NotificationService
+
+@{
+    string? currentCtrl = ViewContext.RouteData.Values["controller"]?.ToString();
+    string? currentAct = ViewContext.RouteData.Values["action"]?.ToString();
+
+    int unreadCount = 0;
+    string userRoleText = "Thành viên";
+    bool isManager = false;
+    string userName = User.Identity?.Name ?? "Người dùng";
+    string userInitial = !string.IsNullOrWhiteSpace(userName) ? userName.Substring(0, 1).ToUpper() : "U";
+
+    if (User.Identity?.IsAuthenticated == true &&
+        int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out int userId))
+    {
+        try
+        {
+            var notifs = await NotificationService.GetNotificationsAsync(userId);
+            unreadCount = notifs.Count(n => !n.IsRead);
+
+            var membership = await HouseholdService.GetActiveMembershipAsync(userId);
+            if (membership != null)
+            {
+                isManager = string.Equals(membership.Role, "Manager", StringComparison.OrdinalIgnoreCase);
+                userRoleText = isManager ? "Quản lý hộ" : "Thành viên";
+            }
+            else
+            {
+                userRoleText = "Chưa vào hộ";
+            }
+        }
+        catch
+        {
+            // Fallback an toàn
+        }
+    }
+
+    bool isOverviewActive = (currentCtrl == "FinancialReport" && currentAct == "Index") || currentCtrl == "Home";
+    bool isWalletActive = currentCtrl == "Wallet";
+    bool isTransactionActive = currentCtrl == "Transaction";
+    bool isCategoryActive = currentCtrl == "Category";
+    bool isDetailsActive = currentCtrl == "FinancialReport" && currentAct == "Details";
+    bool isHouseholdActive = currentCtrl == "Household";
+    bool isNotificationActive = currentCtrl == "Notification";
+}
+
+<aside class="fems-sidebar" id="femsSidebar">
+    <!-- 1. Header: Brand Logo & Title -->
+    <div class="fems-sidebar-header">
+        <a asp-controller="FinancialReport" asp-action="Index" class="fems-brand">
+            <div class="fems-brand-logo">F</div>
+            <div class="fems-brand-text">
+                <span class="fems-brand-name">FEMS</span>
+                <span class="fems-brand-tagline">Family Expense Management</span>
+            </div>
+        </a>
+    </div>
+
+    <!-- 2. Navigation Menu (7 Chức năng thống nhất) -->
+    <nav class="fems-sidebar-nav">
+        <!-- 1. Tổng quan -->
+        <a asp-controller="FinancialReport"
+           asp-action="Index"
+           class="fems-nav-item @(isOverviewActive ? "active" : "")">
+            <span class="fems-nav-icon">
+                <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+            </span>
+            <span class="fems-nav-label">Tổng quan</span>
+        </a>
+
+        <!-- 2. Ví cá nhân -->
+        <a asp-controller="Wallet"
+           asp-action="Index"
+           class="fems-nav-item @(isWalletActive ? "active" : "")">
+            <span class="fems-nav-icon">
+                <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path>
+                    <path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path>
+                    <path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path>
+                </svg>
+            </span>
+            <span class="fems-nav-label">Ví cá nhân</span>
+        </a>
+
+        <!-- 3. Giao dịch -->
+        <a asp-controller="Transaction"
+           asp-action="Index"
+           class="fems-nav-item @(isTransactionActive ? "active" : "")">
+            <span class="fems-nav-icon">
+                <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 3H7a2 2 0 0 0-2 2v16l4-2 3 2 3-2 4 2V5a2 2 0 0 0-2-2z"></path>
+                    <line x1="9" y1="9" x2="15" y2="9"></line>
+                    <line x1="9" y1="13" x2="15" y2="13"></line>
+                </svg>
+            </span>
+            <span class="fems-nav-label">Giao dịch</span>
+        </a>
+
+        <!-- 4. Danh mục -->
+        <a asp-controller="Category"
+           asp-action="Index"
+           class="fems-nav-item @(isCategoryActive ? "active" : "")">
+            <span class="fems-nav-icon">
+                <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                    <line x1="7" y1="7" x2="7.01" y2="7"></line>
+                </svg>
+            </span>
+            <span class="fems-nav-label">Danh mục</span>
+        </a>
+
+        <!-- 5. Phân tích -->
+        <a asp-controller="FinancialReport"
+           asp-action="Details"
+           class="fems-nav-item @(isDetailsActive ? "active" : "")">
+            <span class="fems-nav-icon">
+                <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+            </span>
+            <span class="fems-nav-label">Phân tích</span>
+        </a>
+
+        <!-- 6. Hộ gia đình -->
+        <a asp-controller="Household"
+           asp-action="Index"
+           class="fems-nav-item @(isHouseholdActive ? "active" : "")">
+            <span class="fems-nav-icon">
+                <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+            </span>
+            <span class="fems-nav-label">Hộ gia đình</span>
+        </a>
+
+        <!-- 7. Thông báo -->
+        <a asp-controller="Notification"
+           asp-action="Index"
+           class="fems-nav-item @(isNotificationActive ? "active" : "")">
+            <span class="fems-nav-icon">
+                <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                </svg>
+            </span>
+            <span class="fems-nav-label">Thông báo</span>
+            @if (unreadCount > 0)
+            {
+                <span class="fems-nav-badge">@unreadCount</span>
+            }
+        </a>
+    </nav>
+
+    <!-- 3. Footer: User Profile & Logout -->
+    <div class="fems-sidebar-footer">
+        <div class="fems-user-info">
+            <div class="fems-avatar">@userInitial</div>
+            <div class="fems-user-meta">
+                <span class="fems-user-name" title="@userName">@userName</span>
+                <span class="fems-role-badge @(isManager ? "fems-role-manager" : "fems-role-member")">
+                    @userRoleText
+                </span>
+            </div>
+        </div>
+
+        <form asp-controller="Account" asp-action="Logout" method="post" class="m-0">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="fems-logout-btn" title="Đăng xuất" aria-label="Đăng xuất">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+            </button>
+        </form>
+    </div>
+</aside>
+

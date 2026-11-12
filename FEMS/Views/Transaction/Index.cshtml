@@ -1,7 +1,7 @@
 @model FEMS.ViewModels.Transaction.TransactionManagementViewModel
 
 @{
-    ViewData["Title"] = "Giao dịch (Transaction Management)";
+    ViewData["Title"] = "Giao dịch";
 
     // Cấu hình phân trang: 10 lượt giao dịch / 1 trang
     int totalTransactionCount = Model.Transactions.Count;
@@ -110,7 +110,7 @@
                                 }
                                 else
                                 {
-                                    <option value="">-- Chưa có danh mục Active --</option>
+                                    <option value="">-- Chưa có danh mục hoạt động --</option>
                                 }
                             </select>
                         </div>
