@@ -1,5 +1,4 @@
-﻿
-@model FEMS.ViewModels.FinancialReport.DetailedReportViewModel
+﻿@model FEMS.ViewModels.FinancialReport.DetailedReportViewModel
 @using System.Text.Json
 
 @{
@@ -31,64 +30,64 @@
 }
 
 <style>
-    
-/* Mau xanh thong nhat FEMS */
-.detail-page .btn-success {
-    background-color: #0D9488 !important;
-    border-color: #0D9488 !important;
-    color: white !important;
-    font-weight: 600;
-    border-radius: 9px;
-    white-space: nowrap;
-}
 
-.detail-page .btn-success:hover,
-.detail-page .btn-success:focus {
-    background-color: #0b7f75 !important;
-    border-color: #0b7f75 !important;
-    color: white !important;
-}
+    /* Mau xanh thong nhat FEMS */
+    .detail-page .btn-success {
+        background-color: #0D9488 !important;
+        border-color: #0D9488 !important;
+        color: white !important;
+        font-weight: 600;
+        border-radius: 9px;
+        white-space: nowrap;
+    }
 
-/* Nut chua duoc chon */
-.detail-page .btn-outline-success {
-    background-color: white;
-    border-color: #0D9488 !important;
-    color: #0D9488 !important;
-    border-radius: 9px;
-    white-space: nowrap;
-}
+        .detail-page .btn-success:hover,
+        .detail-page .btn-success:focus {
+            background-color: #0b7f75 !important;
+            border-color: #0b7f75 !important;
+            color: white !important;
+        }
 
-.detail-page .btn-outline-success:hover,
-.detail-page .btn-outline-success:focus {
-    background-color: #0D9488 !important;
-    border-color: #0D9488 !important;
-    color: white !important;
-}
+    /* Nut chua duoc chon */
+    .detail-page .btn-outline-success {
+        background-color: white;
+        border-color: #0D9488 !important;
+        color: #0D9488 !important;
+        border-radius: 9px;
+        white-space: nowrap;
+    }
 
-/* Vien xanh khi chon thang, thanh vien */
-.detail-page .form-control:focus,
-.detail-page .form-select:focus {
-    border-color: #0D9488;
-    box-shadow: 0 0 0 0.2rem rgba(13, 148, 136, 0.15);
-}
+        .detail-page .btn-outline-success:hover,
+        .detail-page .btn-outline-success:focus {
+            background-color: #0D9488 !important;
+            border-color: #0D9488 !important;
+            color: white !important;
+        }
 
-/* Mau xanh cac thong ke */
-.detail-page .text-success {
-    color: #0D9488 !important;
-}
+    /* Vien xanh khi chon thang, thanh vien */
+    .detail-page .form-control:focus,
+    .detail-page .form-select:focus {
+        border-color: #0D9488;
+        box-shadow: 0 0 0 0.2rem rgba(13, 148, 136, 0.15);
+    }
 
-/* Giu cac nut nam cung hang */
-.detail-page .period-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-}
+    /* Mau xanh cac thong ke */
+    .detail-page .text-success {
+        color: #0D9488 !important;
+    }
 
-.detail-page .period-buttons a {
-    min-width: 90px;
-    text-align: center;
-    white-space: nowrap;
-}
+    /* Giu cac nut nam cung hang */
+    .detail-page .period-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+        .detail-page .period-buttons a {
+            min-width: 90px;
+            text-align: center;
+            white-space: nowrap;
+        }
 
     .detail-page {
         background: #f5f8f7;
@@ -116,16 +115,16 @@
         gap: 12px;
     }
 
-    .detail-filter label {
-        font-weight: 600;
-        color: #465a53;
-        margin-bottom: 5px;
-    }
+        .detail-filter label {
+            font-weight: 600;
+            color: #465a53;
+            margin-bottom: 5px;
+        }
 
-    .detail-filter .form-control,
-    .detail-filter .form-select {
-        min-width: 170px;
-    }
+        .detail-filter .form-control,
+        .detail-filter .form-select {
+            min-width: 170px;
+        }
 
     .period-buttons {
         display: flex;
@@ -133,10 +132,10 @@
         gap: 8px;
     }
 
-    .period-buttons a {
-        white-space: nowrap;
-        border-radius: 9px;
-    }
+        .period-buttons a {
+            white-space: nowrap;
+            border-radius: 9px;
+        }
 
     .detail-stat {
         border: 1px solid #e4ebe8;
@@ -170,31 +169,50 @@
         width: 100%;
     }
 
-    .detail-table th {
-        background: #f0f6f3;
-        color: #415b51;
-        padding: 13px;
-    }
+        .detail-table th {
+            background: #f0f6f3;
+            color: #415b51;
+            padding: 13px;
+        }
 
-    .detail-table td {
-        padding: 12px;
-        vertical-align: middle;
-    }
+        .detail-table td {
+            padding: 12px;
+            vertical-align: middle;
+        }
 
-    .detail-table .description-cell {
-        white-space: normal;
-        min-width: 180px;
-    }
+        .detail-table .description-cell {
+            white-space: normal;
+            min-width: 180px;
+        }
 
-    .detail-table tbody tr:hover {
-        background: #f5faf8;
-    }
+        .detail-table tbody tr:hover {
+            background: #f5faf8;
+        }
 
     .detail-empty {
         padding: 35px 10px;
         text-align: center;
         color: #7c8984;
     }
+
+    .report-pagination {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 14px;
+    }
+
+        .report-pagination .page-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .report-pagination .btn {
+            min-width: 38px;
+        }
 
     @@media (max-width: 767px) {
         .detail-page {
@@ -382,7 +400,7 @@
         <h4 class="detail-title mb-3">Lịch sử giao dịch thu nhập</h4>
 
         <div class="table-responsive">
-            <table class="table table-bordered detail-table">
+            <table id="incomeTable" class="table table-bordered detail-table">
                 <thead>
                     <tr>
                         <th>Ngày ghi nhận</th>
@@ -432,13 +450,14 @@
                 </tbody>
             </table>
         </div>
+        <div id="incomePagination" class="report-pagination" aria-label="Phân trang thu nhập"></div>
     </div>
 
     <div class="detail-card">
         <h4 class="detail-title mb-3">Lịch sử giao dịch chi tiêu</h4>
 
         <div class="table-responsive">
-            <table class="table table-bordered detail-table">
+            <table id="expenseTable" class="table table-bordered detail-table">
                 <thead>
                     <tr>
                         <th>Ngày ghi nhận</th>
@@ -491,6 +510,7 @@
                 </tbody>
             </table>
         </div>
+        <div id="expensePagination" class="report-pagination" aria-label="Phân trang chi tiêu"></div>
     </div>
 
 </div>
@@ -510,6 +530,67 @@
         monthSelect.addEventListener("change", updateSelectedMonth);
         yearSelect.addEventListener("change", updateSelectedMonth);
         updateSelectedMonth();
+
+        // Phân trang riêng từng bảng, 10 giao dịch mỗi trang.
+        function setupPagination(tableId, paginationId, pageSize = 10) {
+            const table = document.getElementById(tableId);
+            const container = document.getElementById(paginationId);
+            if (!table || !container) return;
+
+            const rows = Array.from(table.querySelectorAll("tbody tr"));
+            // Dòng thông báo "Không có..." không được tính là giao dịch.
+            const dataRows = rows.filter(row => row.querySelectorAll("td").length > 1);
+            const total = dataRows.length;
+            if (total <= pageSize) return;
+
+            const totalPages = Math.ceil(total / pageSize);
+            let currentPage = 1;
+
+            function showPage(page) {
+                currentPage = Math.max(1, Math.min(page, totalPages));
+                dataRows.forEach((row, index) => {
+                    row.hidden = index < (currentPage - 1) * pageSize || index >= currentPage * pageSize;
+                    row.style.display = row.hidden ? "none" : "";
+                });
+
+                const start = (currentPage - 1) * pageSize + 1;
+                const end = Math.min(currentPage * pageSize, total);
+                container.replaceChildren();
+
+                const info = document.createElement("span");
+                info.className = "text-muted small";
+                info.textContent = `Hiển thị ${start}–${end} / ${total} giao dịch`;
+                container.appendChild(info);
+
+                const buttons = document.createElement("div");
+                buttons.className = "page-buttons";
+                container.appendChild(buttons);
+
+                function addButton(label, page, disabled = false, active = false) {
+                    const button = document.createElement("button");
+                    button.type = "button";
+                    button.className = active ? "btn btn-success btn-sm" : "btn btn-outline-success btn-sm";
+                    button.textContent = label;
+                    button.disabled = disabled;
+                    if (active) button.setAttribute("aria-current", "page");
+                    button.addEventListener("click", () => showPage(page));
+                    buttons.appendChild(button);
+                }
+
+                addButton("Trước", currentPage - 1, currentPage === 1);
+                const fromPage = Math.max(1, Math.min(currentPage - 2, totalPages - 4));
+                const toPage = Math.min(totalPages, fromPage + 4);
+                for (let page = fromPage; page <= toPage; page++) {
+                    addButton(String(page), page, false, page === currentPage);
+                }
+                addButton("Sau", currentPage + 1, currentPage === totalPages);
+            }
+
+            showPage(1);
+        }
+
+        setupPagination("incomeTable", "incomePagination");
+        setupPagination("expenseTable", "expensePagination");
 
         const categoryNames = @Html.Raw(JsonSerializer.Serialize(categoryNames));
         const categoryAmounts = @Html.Raw(JsonSerializer.Serialize(categoryAmounts));
