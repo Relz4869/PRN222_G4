@@ -66,7 +66,7 @@
                 <div class="summary-stats-grid">
                     <div class="stat-box">
                         <span class="stat-label">Tổng số dư các ví</span>
-                        <span class="stat-value text-white">@Model.TotalWalletBalance.ToString("N0") <small>VNĐ</small></span>
+                        <span class="stat-value text-white">@Math.Abs(Model.TotalWalletBalance).ToString("N0") <small>VNĐ</small></span>
                     </div>
                     <div class="stat-box">
                         <span class="stat-label">Tổng thu nhập</span>
@@ -175,7 +175,7 @@
 
                                 <div class="wallet-balance-row">
                                     <span class="small text-muted">Số dư hiện tại:</span>
-                                    <strong class="wallet-balance-val">@w.CurrentBalance.ToString("N0") VNĐ</strong>
+                                    <strong class="wallet-balance-val">@Math.Abs(w.CurrentBalance).ToString("N0") VNĐ</strong>
                                 </div>
 
                                 <div class="wallet-limit-section mt-2 pt-2 border-top">
@@ -361,11 +361,7 @@
 
         @if (Model.TotalPages > 1)
         {
-            <div class="d-flex flex-wrap justify-content-between align-items-center mt-3 pt-3 border-top gap-2">
-                <div class="small text-muted">
-                    Hiển thị <strong>@Model.Transactions.Count</strong> trên tổng số <strong>@Model.TotalTransactions</strong> giao dịch (Trang @Model.CurrentPage / @Model.TotalPages)
-                </div>
-
+            <div class="d-flex justify-content-end align-items-center mt-3 pt-3 border-top">
                 <nav aria-label="Phân trang giao dịch">
                     <ul class="pagination pagination-sm mb-0">
                         <li class="page-item @(Model.CurrentPage <= 1 ? "disabled" : "")">
@@ -414,12 +410,6 @@
                         </li>
                     </ul>
                 </nav>
-            </div>
-        }
-        else if (Model.TotalTransactions > 0)
-        {
-            <div class="small text-muted mt-3 pt-3 border-top text-end">
-                Hiển thị toàn bộ <strong>@Model.TotalTransactions</strong> giao dịch
             </div>
         }
     </div>

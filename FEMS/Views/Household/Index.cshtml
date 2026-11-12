@@ -113,7 +113,7 @@
                         <div class="mb-3">
                             <input type="email"
                                    name="inviteEmail"
-                                   class="form-control hh-input-control text-center"
+                                   class="form-control hh-input-control"
                                    placeholder="Nhập email..."
                                    required />
                         </div>
@@ -228,14 +228,13 @@
                         <thead>
                             <tr>
                                 <th style="width: 4%;">#</th>
-                                <th style="width: @(Model.IsManager ? "22%" : "38%");">Họ và tên</th>
-                                <th style="width: @(Model.IsManager ? "18%" : "34%");">Liên hệ</th>
-                                <th style="width: @(Model.IsManager ? "12%" : "23%");">Vai trò</th>
+                                <th style="width: @(Model.IsManager ? "28%" : "38%");">Họ và tên</th>
+                                <th style="width: @(Model.IsManager ? "24%" : "34%");">Liên hệ</th>
+                                <th style="width: @(Model.IsManager ? "14%" : "28%");">Vai trò</th>
                                 @if (Model.IsManager)
                                 {
-                                    <th style="width: 12%;" class="text-center text-nowrap">Ví</th>
-                                    <th style="width: 14%;" class="text-center text-nowrap">Giao dịch</th>
-                                    <th style="width: 18%;" class="text-end text-nowrap">Thao tác</th>
+                                    <th style="width: 15%;" class="text-center"></th>
+                                    <th style="width: 15%;" class="text-end"></th>
                                 }
                             </tr>
                         </thead>
@@ -251,7 +250,7 @@
 
                                 <tr>
                                     <td class="text-muted fw-semibold">@index</td>
-                                    <td>
+                                    <td class="text-nowrap">
                                         <div class="fw-bold text-dark">
                                             @item.FullName
                                             @if (isCurrentUser)
@@ -259,11 +258,11 @@
                                                 <span class="you-tag">(Bạn)</span>
                                             }
                                         </div>
-                                        <div class="text-muted small">
+                                        <div class="text-muted small text-nowrap">
                                             Tham gia: @item.JoinedAt.ToString("dd/MM/yyyy")
                                         </div>
                                     </td>
-                                    <td>
+                                    <td class="text-nowrap">
                                         <div class="small fw-semibold text-dark">@item.Email</div>
                                         <div class="text-muted small">@(string.IsNullOrWhiteSpace(item.Phone) ? "Chưa cập nhật SĐT" : item.Phone)</div>
                                     </td>
@@ -289,32 +288,10 @@
                                                 <a asp-controller="Household"
                                                    asp-action="MemberDetails"
                                                    asp-route-id="@item.HouseholdMemberId"
-                                                   asp-fragment="wallets-section"
-                                                   class="btn-action btn-view-wallet"
-                                                   title="Xem danh sách ví cá nhân">
-                                                    Xem ví
+                                                   class="btn-action btn-view-detail"
+                                                   title="Xem ví cá nhân, lịch sử giao dịch và đặt ngưỡng cảnh báo">
+                                                    Xem chi tiết
                                                 </a>
-                                            }
-                                            else
-                                            {
-                                                <span class="text-muted small">—</span>
-                                            }
-                                        </td>
-                                        <td class="text-center text-nowrap">
-                                            @if (canViewFinance)
-                                            {
-                                                <a asp-controller="Household"
-                                                   asp-action="MemberDetails"
-                                                   asp-route-id="@item.HouseholdMemberId"
-                                                   asp-fragment="transactions-section"
-                                                   class="btn-action btn-view-tx"
-                                                   title="Xem lịch sử giao dịch">
-                                                    Giao dịch
-                                                </a>
-                                            }
-                                            else
-                                            {
-                                                <span class="text-muted small">—</span>
                                             }
                                         </td>
                                         <td class="text-end text-nowrap">
@@ -378,10 +355,6 @@
                                                         </form>
                                                     }
                                                 </div>
-                                            }
-                                            else
-                                            {
-                                                <span class="text-muted small">—</span>
                                             }
                                         </td>
                                     }
