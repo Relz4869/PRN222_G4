@@ -79,10 +79,11 @@
     display: inline-block;
     background-color: #ccfbf1;
     color: #0f766e;
-    font-size: 13px;
-    padding: 6px 14px;
+    font-size: 15px;
+    font-weight: 600;
+    padding: 8px 18px;
     border-radius: 999px;
-    margin-bottom: 12px;
+    margin-bottom: 14px;
 }
 
 .setup-header h2 {
@@ -247,11 +248,11 @@
     background: none;
     border: none;
     color: #6b7280;
-    font-size: 13px;
+    font-size: 15px;
     font-weight: 600;
     text-decoration: none !important;
     cursor: pointer;
-    padding: 6px 12px;
+    padding: 8px 16px;
     transition: color 0.2s ease;
 }
 

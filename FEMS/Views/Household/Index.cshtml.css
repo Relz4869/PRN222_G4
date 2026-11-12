@@ -149,11 +149,18 @@
 
 .action-btn-row {
     display: inline-flex;
+    flex-direction: row;
     flex-wrap: nowrap;
     align-items: center;
     justify-content: flex-end;
     gap: 6px;
     white-space: nowrap;
+}
+
+.action-btn-row form {
+    margin: 0;
+    padding: 0;
+    display: inline-flex;
 }
 
 .badge-role-manager {
@@ -243,7 +250,9 @@
 
 .btn-view-wallet,
 ::deep .btn-view-wallet {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     background-color: #ccfbf1;
     color: #0D9488 !important;
     border-color: #99f6e4;
@@ -253,6 +262,24 @@
 .btn-view-wallet:hover,
 ::deep .btn-view-wallet:hover {
     background-color: #0D9488;
+    color: #ffffff !important;
+    text-decoration: none !important;
+}
+
+.btn-view-tx,
+::deep .btn-view-tx {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f0fdf4;
+    color: #15803d !important;
+    border-color: #bbf7d0;
+    text-decoration: none !important;
+}
+
+.btn-view-tx:hover,
+::deep .btn-view-tx:hover {
+    background-color: #15803d;
     color: #ffffff !important;
     text-decoration: none !important;
 }
