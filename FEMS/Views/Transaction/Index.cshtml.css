@@ -286,3 +286,15 @@
     color: #334155; /* Xám đậm cho dòng Expense có danh mục đã bị vô hiệu hóa [Category Deleted] */
 }
 
+.tx-amount-cell {
+    white-space: nowrap;
+    min-width: 165px;
+}
+
+.bg-tx-page,
+::deep .bg-tx-page {
+    background-color: #0D9488 !important;
+    color: #ffffff !important;
+}
+
+

@@ -2,6 +2,20 @@
 
 @{
     ViewData["Title"] = "Giao dịch (Transaction Management)";
+
+    // Cấu hình phân trang: 10 lượt giao dịch / 1 trang
+    int totalTransactionCount = Model.Transactions.Count;
+    int pageSize = 10;
+    int currentPage = ViewBag.CurrentPage ?? 1;
+    int totalPages = (int)Math.Ceiling((double)totalTransactionCount / pageSize);
+    if (totalPages < 1) totalPages = 1;
+    if (currentPage < 1) currentPage = 1;
+    if (currentPage > totalPages) currentPage = totalPages;
+
+    var pagedTransactions = Model.Transactions
+        .Skip((currentPage - 1) * pageSize)
+        .Take(pageSize)
+        .ToList();
 }
 
 <div class="transaction-page">
@@ -82,7 +96,7 @@
                     <div class="mb-3" id="categoryFieldWrapper">
                         <div class="tx-field-box tx-field-category">
                             <span class="tx-field-prefix text-teal-label">
-                                Danh mục chi tiêu (Bắt buộc với Expense):
+                                Danh mục chi tiêu:
                             </span>
                             <select name="CategoryId" id="categoryIdSelect" class="tx-inline-select text-teal-label fw-bold">
                                 @if (Model.ActiveCategories.Any())
@@ -210,18 +224,18 @@
                     <table class="table tx-history-table mb-0">
                         <thead>
                             <tr>
-                                <th style="width: 14%;">Ngày</th>
+                                <th style="width: 13%;">Ngày</th>
                                 <th style="width: 18%;">Ví cá nhân</th>
                                 <th style="width: 12%;">Loại</th>
-                                <th style="width: 22%;">Danh mục</th>
-                                <th style="width: 18%;">Mô tả</th>
-                                <th style="width: 16%;" class="text-end">Số tiền</th>
+                                <th style="width: 16%;">Danh mục</th>
+                                <th style="width: 19%;">Mô tả</th>
+                                <th style="width: 22%;" class="text-end">Số tiền</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @if (Model.Transactions.Any())
+                            @if (pagedTransactions.Any())
                             {
-                                @foreach (var item in Model.Transactions)
+                                @foreach (var item in pagedTransactions)
                                 {
                                     bool isIncome = string.Equals(item.TransactionType, "Income", StringComparison.OrdinalIgnoreCase);
 
@@ -236,10 +250,10 @@
                                     <tr class="@rowColorClass">
                                         <td class="fw-semibold">@item.TransactionDate.ToString("dd/MM/yyyy")</td>
                                         <td class="fw-semibold">@item.WalletName</td>
-                                        <td class="fw-semibold">@(isIncome ? "Income" : "Expense")</td>
+                                        <td class="fw-semibold">@(isIncome ? "Thu nhập" : "Chi tiêu")</td>
                                         <td class="fw-semibold">@item.CategoryDisplay</td>
                                         <td>@(string.IsNullOrWhiteSpace(item.Description) ? "—" : item.Description)</td>
-                                        <td class="text-end fw-bold">@signedAmountText</td>
+                                        <td class="text-end fw-bold tx-amount-cell">@signedAmountText</td>
                                     </tr>
                                 }
                             }
@@ -253,6 +267,51 @@
                             }
                         </tbody>
                     </table>
+                </div>
+
+                <!-- Chân bảng & Phân trang (10 lượt giao dịch / 1 trang) -->
+                <div class="d-flex flex-wrap justify-content-between align-items-center mt-3">
+                   <div></div>
+
+                    <nav>
+                        <ul class="pagination pagination-sm mb-0">
+                            <li class="page-item @(currentPage <= 1 ? "disabled" : "")">
+                                <a class="page-link"
+                                   asp-controller="Transaction"
+                                   asp-action="Index"
+                                   asp-route-filterWalletId="@Model.FilterWalletId"
+                                   asp-route-filterMonth="@Model.FilterMonth"
+                                   asp-route-page="@(currentPage - 1)">
+                                    &lt;
+                                </a>
+                            </li>
+
+                            @for (int i = 1; i <= totalPages; i++)
+                            {
+                                <li class="page-item @(i == currentPage ? "active" : "")">
+                                    <a class="page-link @(i == currentPage ? "bg-tx-page border-0 text-white" : "text-dark")"
+                                       asp-controller="Transaction"
+                                       asp-action="Index"
+                                       asp-route-filterWalletId="@Model.FilterWalletId"
+                                       asp-route-filterMonth="@Model.FilterMonth"
+                                       asp-route-page="@i">
+                                        @i
+                                    </a>
+                                </li>
+                            }
+
+                            <li class="page-item @(currentPage >= totalPages ? "disabled" : "")">
+                                <a class="page-link"
+                                   asp-controller="Transaction"
+                                   asp-action="Index"
+                                   asp-route-filterWalletId="@Model.FilterWalletId"
+                                   asp-route-filterMonth="@Model.FilterMonth"
+                                   asp-route-page="@(currentPage + 1)">
+                                    &gt;
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
 
             </div>
