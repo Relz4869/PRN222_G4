@@ -1,192 +1,574 @@
-﻿@model FEMS.ViewModels.FinancialReport.FinancialSummaryViewModel
+﻿
+@model FEMS.ViewModels.FinancialReport.FinancialSummaryViewModel
 @using System.Text.Json
 
 @{
-    ViewData["Title"] = "Financial Summary";
+    ViewData["Title"] = "Phân tích";
+
+    var memberNames = Model.MemberData.Select(x => x.MemberName).ToList();
+    var memberIncomes = Model.MemberData.Select(x => x.Income).ToList();
+    var memberExpenses = Model.MemberData.Select(x => x.Expense).ToList();
+
+    int selectedYear = DateTime.Today.Year;
+    int selectedMonthNumber = DateTime.Today.Month;
+
+    var selectedParts = (Model.SelectedMonth ?? "").Split('-');
+
+    if (selectedParts.Length == 2 &&
+        int.TryParse(selectedParts[0], out int year) &&
+        int.TryParse(selectedParts[1], out int month) &&
+        month >= 1 && month <= 12 &&
+        year >= 1 && year <= 9999)
+    {
+        selectedYear = year;
+        selectedMonthNumber = month;
+    }
+
+    string selectedMonthValue =
+        $"{selectedYear:D4}-{selectedMonthNumber:D2}";
 }
 
-<div class="container mt-4">
-    <h2>Financial Summary</h2>
-    <p>View your income and expenses over time.</p>
-    <a asp-controller="FinancialReport"
-       asp-action="Details"
-       asp-route-months="@Model.Months"
-       class="btn btn-success mb-3">
-        View Detailed Report
-    </a>
-    <div class="mb-4">
-        <a asp-action="Index" asp-route-months="3"
-           class="btn @(Model.Months == 3 ? "btn-primary" : "btn-outline-primary")">
-            3 Months
-        </a>
 
-        <a asp-action="Index" asp-route-months="6"
-           class="btn @(Model.Months == 6 ? "btn-primary" : "btn-outline-primary")">
-            6 Months
-        </a>
+<style>
+    .financial-page {
+        background-color: #f5f8f7;
+        padding: 25px;
+        border-radius: 18px;
+        margin-bottom: 30px;
+    }
 
-        <a asp-action="Index" asp-route-months="12"
-           class="btn @(Model.Months == 12 ? "btn-primary" : "btn-outline-primary")">
-            12 Months
+    .financial-title {
+        color: #173b36;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .financial-subtitle {
+        color: #71817b;
+    }
+
+    .financial-card {
+        background: #ffffff;
+        border: 1px solid #e4ebe8;
+        border-radius: 15px;
+        padding: 22px;
+        height: 100%;
+    }
+
+    .financial-section {
+        background: #ffffff;
+        border: 1px solid #e4ebe8;
+        border-radius: 15px;
+        padding: 24px;
+        margin-bottom: 22px;
+    }
+
+    .financial-section-title {
+        color: #173b36;
+        font-size: 20px;
+        font-weight: 700;
+        margin-bottom: 15px;
+    }
+
+    .financial-stat-label {
+        color: #71817b;
+        font-size: 15px;
+        margin-bottom: 10px;
+    }
+
+    .financial-stat-value {
+        font-size: 27px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .financial-chart {
+        position: relative;
+        height: 330px;
+    }
+
+    .financial-pie {
+        position: relative;
+        height: 310px;
+    }
+
+    .btn-fems {
+        background-color: #0D9488;
+        border: 1px solid #0D9488;
+        color: white;
+        font-weight: 600;
+        border-radius: 9px;
+        white-space: nowrap;
+    }
+
+    .btn-fems:hover,
+    .btn-fems:focus {
+        background-color: #0b7f75;
+        border-color: #0b7f75;
+        color: white;
+    }
+
+    .btn-fems-outline {
+        background-color: white;
+        border: 1px solid #0D9488;
+        color: #0D9488;
+        border-radius: 9px;
+        white-space: nowrap;
+    }
+
+    .btn-fems-outline:hover,
+    .btn-fems-outline:focus {
+        background-color: #0D9488;
+        color: white;
+    }
+
+    .financial-filter {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .financial-table th {
+        background-color: #f0f6f3;
+        color: #415b51;
+        padding: 14px;
+        white-space: nowrap;
+    }
+
+    .financial-table td {
+        padding: 13px;
+        vertical-align: middle;
+        white-space: nowrap;
+    }
+
+    .financial-table tbody tr:hover {
+        background-color: #f5faf8;
+    }
+
+    @@media (max-width: 767px) {
+        .financial-page {
+            padding: 12px;
+        }
+
+        .financial-stat-value {
+            font-size: 22px;
+            white-space: normal;
+        }
+
+        .financial-chart {
+            height: 270px;
+        }
+    }
+</style>
+
+<div class="financial-page">
+
+    <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+        <div>
+            <h2 class="financial-title">Phân tích</h2>
+            <p class="financial-subtitle mb-0">
+                Theo dõi thu nhập và chi tiêu theo thời gian.
+            </p>
+        </div>
+
+        <a asp-controller="FinancialReport"
+           asp-action="Details"
+           asp-route-months="@Model.Months"
+           asp-route-selectedMonth="@Model.SelectedMonth"
+           class="btn btn-fems px-3 py-2">
+            Xem phân tích chi tiết
         </a>
     </div>
 
-    <div class="row mb-4">
-        <div class="col-md-4 mb-3">
-            <div class="card p-3">
-                <h5>Total Income</h5>
-                <h3 class="text-success">
-                    @Model.TotalIncome.ToString("N0") VND
-                </h3>
-            </div>
+    <div class="financial-section">
+
+        <form asp-controller="FinancialReport"
+              asp-action="Index"
+              method="get"
+              class="financial-filter mb-3">
+
+            <label for="monthSelect" class="fw-semibold text-nowrap">
+                Chọn tháng:
+            </label>
+
+            
+<div class="d-flex align-items-center gap-2">
+
+    <select id="monthSelect"
+            class="form-select"
+            style="width: 145px;">
+
+        @for (int month = 1; month <= 12; month++)
+        {
+            <option value="@month"
+                    selected="@(month == selectedMonthNumber)">
+                Tháng @month
+            </option>
+        }
+
+    </select>
+
+    <select id="yearSelect"
+            class="form-select"
+            style="width: 145px;">
+
+        @for (int yearOption = Math.Max(DateTime.Today.Year + 1, selectedYear);
+              yearOption >= Math.Min(2020, selectedYear);
+              yearOption--)
+        {
+            <option value="@yearOption"
+                    selected="@(yearOption == selectedYear)">
+                Năm @yearOption
+            </option>
+        }
+
+    </select>
+
+    <input type="hidden"
+           id="selectedMonth"
+           name="selectedMonth"
+           value="@selectedMonthValue" />
+
+</div>
+
+
+            <input type="hidden"
+                   name="months"
+                   value="@Model.Months" />
+
+            <button type="submit"
+                    class="btn btn-fems px-3">
+                Xem phân tích
+            </button>
+        </form>
+
+        <div class="financial-filter">
+            <a asp-action="Index"
+               asp-route-months="1"
+               asp-route-selectedMonth="@Model.SelectedMonth"
+               class="btn @(Model.Months == 1 ? "btn-fems" : "btn-fems-outline")">
+                1 tháng
+            </a>
+
+            <a asp-action="Index"
+               asp-route-months="3"
+               asp-route-selectedMonth="@Model.SelectedMonth"
+               class="btn @(Model.Months == 3 ? "btn-fems" : "btn-fems-outline")">
+                3 tháng
+            </a>
+
+            <a asp-action="Index"
+               asp-route-months="6"
+               asp-route-selectedMonth="@Model.SelectedMonth"
+               class="btn @(Model.Months == 6 ? "btn-fems" : "btn-fems-outline")">
+                6 tháng
+            </a>
+
+            <a asp-action="Index"
+               asp-route-months="12"
+               asp-route-selectedMonth="@Model.SelectedMonth"
+               class="btn @(Model.Months == 12 ? "btn-fems" : "btn-fems-outline")">
+                12 tháng
+            </a>
         </div>
 
-        <div class="col-md-4 mb-3">
-            <div class="card p-3">
-                <h5>Total Expenses</h5>
-                <h3 class="text-danger">
-                    @Model.TotalExpense.ToString("N0") VND
-                </h3>
-            </div>
-        </div>
-
-        <div class="col-md-4 mb-3">
-            <div class="card p-3">
-                <h5>Net Income</h5>
-                <h3>@Model.NetIncome.ToString("N0") VND</h3>
-            </div>
-        </div>
     </div>
 
-    <div class="card p-4 mb-4">
-        <h4>Income & Expense Trends</h4>
-        <div style="height: 320px;">
-            <canvas id="monthlyChart"></canvas>
+    <div class="row g-3 mb-4">
+
+        <div class="col-lg-4">
+            <div class="financial-card">
+                <div class="financial-stat-label">
+                    Tổng thu nhập
+                </div>
+                <div class="financial-stat-value" style="color:#0D9488;">
+                    @Model.TotalIncome.ToString("N0") VNĐ
+                </div>
+            </div>
         </div>
+
+        <div class="col-lg-4">
+            <div class="financial-card">
+                <div class="financial-stat-label">
+                    Tổng chi tiêu
+                </div>
+                <div class="financial-stat-value" style="color:#dc3545;">
+                    @Model.TotalExpense.ToString("N0") VNĐ
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="financial-card">
+                <div class="financial-stat-label">
+                    Chênh lệch thu chi
+                </div>
+                <div class="financial-stat-value"
+                     style="color:@(Model.NetIncome >= 0 ? "#173b36" : "#dc3545");">
+                    @Model.NetIncome.ToString("N0") VNĐ
+                </div>
+            </div>
+        </div>
+
     </div>
 
-    <div class="card p-4 mb-4">
-        <h4>Monthly Details</h4>
+    <div class="financial-section">
+        <h4 class="financial-section-title">
+            Biểu đồ thu nhập và chi tiêu
+        </h4>
 
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Month</th>
-                    <th>Income</th>
-                    <th>Expense</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model.MonthlyData)
-                {
+        @if (Model.TotalIncome == 0 && Model.TotalExpense == 0)
+        {
+            <div class="text-center text-muted py-5">
+                Chưa có giao dịch trong khoảng thời gian này.
+            </div>
+        }
+        else
+        {
+            <div class="financial-chart">
+                <canvas id="monthlyChart"></canvas>
+            </div>
+        }
+    </div>
+
+    <div class="financial-section">
+        <h4 class="financial-section-title">
+            Thống kê theo tháng
+        </h4>
+
+        <div class="table-responsive">
+            <table class="table table-bordered financial-table">
+                <thead>
                     <tr>
-                        <td>@item.Month</td>
-                        <td>@item.Income.ToString("N0") VND</td>
-                        <td>@item.Expense.ToString("N0") VND</td>
+                        <th>Tháng</th>
+                        <th>Thu nhập</th>
+                        <th>Chi tiêu</th>
+                        <th>Chênh lệch</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+
+                <tbody>
+                    @foreach (var item in Model.MonthlyData)
+                    {
+                        decimal balance = item.Income - item.Expense;
+
+                        <tr>
+                            <td class="fw-semibold">@item.Month</td>
+
+                            <td style="color:#0D9488;">
+                                @item.Income.ToString("N0") VNĐ
+                            </td>
+
+                            <td style="color:#dc3545;">
+                                @item.Expense.ToString("N0") VNĐ
+                            </td>
+
+                            <td class="fw-semibold"
+                                style="color:@(balance >= 0 ? "#173b36" : "#dc3545");">
+                                @balance.ToString("N0") VNĐ
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
 
     @if (Model.MemberData.Any())
     {
-        <div class="card p-4 mb-4">
-            <h4>Household Member Distribution</h4>
+        <div class="financial-section">
+            <h4 class="financial-section-title">
+                Tỷ trọng tài chính của các thành viên
+            </h4>
 
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <h5>Income Share</h5>
-                    <div style="height: 300px;">
-                        <canvas id="incomePie"></canvas>
-                    </div>
+            <div class="row g-4">
+
+                <div class="col-lg-6">
+                    <h5 class="text-center mb-3">
+                        Tỷ trọng thu nhập
+                    </h5>
+
+                    @if (memberIncomes.Sum() > 0)
+                    {
+                        <div class="financial-pie">
+                            <canvas id="incomePie"></canvas>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-center text-muted py-5">
+                            Chưa có dữ liệu thu nhập.
+                        </p>
+                    }
                 </div>
 
-                <div class="col-md-6 mb-3">
-                    <h5>Expense Share</h5>
-                    <div style="height: 300px;">
-                        <canvas id="expensePie"></canvas>
-                    </div>
+                <div class="col-lg-6">
+                    <h5 class="text-center mb-3">
+                        Tỷ trọng chi tiêu
+                    </h5>
+
+                    @if (memberExpenses.Sum() > 0)
+                    {
+                        <div class="financial-pie">
+                            <canvas id="expensePie"></canvas>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-center text-muted py-5">
+                            Chưa có dữ liệu chi tiêu.
+                        </p>
+                    }
                 </div>
+
             </div>
         </div>
     }
+
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
 
 <script>
+    const monthSelect = document.getElementById("monthSelect");
+    const yearSelect = document.getElementById("yearSelect");
+    const selectedMonthInput = document.getElementById("selectedMonth");
+
+    function updateSelectedMonth() {
+        selectedMonthInput.value = yearSelect.value + "-" + monthSelect.value.padStart(2, "0");
+    }
+
+    monthSelect.addEventListener("change", updateSelectedMonth);
+    yearSelect.addEventListener("change", updateSelectedMonth);
+    updateSelectedMonth();
+
     const monthlyData = @Html.Raw(JsonSerializer.Serialize(Model.MonthlyData));
 
-    new Chart(document.getElementById("monthlyChart"), {
-        type: "bar",
-        data: {
-            labels: monthlyData.map(x => x.Month),
-            datasets: [
-                {
-                    label: "Income",
-                    data: monthlyData.map(x => x.Income),
-                    backgroundColor: "#16a34a"
-                },
-                {
-                    label: "Expense",
-                    data: monthlyData.map(x => x.Expense),
-                    backgroundColor: "#dc2626"
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false
-        }
-    });
+    const memberNames = @Html.Raw(JsonSerializer.Serialize(memberNames));
+    const memberIncomes = @Html.Raw(JsonSerializer.Serialize(memberIncomes));
+    const memberExpenses = @Html.Raw(JsonSerializer.Serialize(memberExpenses));
 
-    @if (Model.MemberData.Any())
-    {
-            <text>
-                const memberData = @Html.Raw(JsonSerializer.Serialize(Model.MemberData));
+    const moneyFormat = value =>
+        Number(value).toLocaleString("vi-VN") + " VNĐ";
 
-                const memberNames = memberData.map(x => x.MemberName);
-                const colors = [
-                    "#2563eb", "#16a34a", "#f59e0b",
-                    "#9333ea", "#ec4899", "#0891b2"
-                ];
+    const monthlyCanvas = document.getElementById("monthlyChart");
 
-                function createPieChart(elementId, values) {
-                    const total = values.reduce((sum, value) => sum + value, 0);
-
-                    if (total === 0) {
-                        document.getElementById(elementId).replaceWith(
-                            document.createTextNode("No data available.")
-                        );
-                        return;
+    if (monthlyCanvas && typeof Chart !== "undefined") {
+        new Chart(monthlyCanvas, {
+            type: "bar",
+            data: {
+                labels: monthlyData.map(x => x.Month),
+                datasets: [
+                    {
+                        label: "Thu nhập",
+                        data: monthlyData.map(x => x.Income),
+                        backgroundColor: "#0D9488",
+                        borderRadius: 7,
+                        maxBarThickness: 50
+                    },
+                    {
+                        label: "Chi tiêu",
+                        data: monthlyData.map(x => x.Expense),
+                        backgroundColor: "#dc3545",
+                        borderRadius: 7,
+                        maxBarThickness: 50
                     }
-
-                    new Chart(document.getElementById(elementId), {
-                        type: "pie",
-                        data: {
-                            labels: memberNames,
-                            datasets: [{
-                                data: values,
-                                backgroundColor: colors
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: item =>
+                                item.dataset.label + ": " + moneyFormat(item.raw)
                         }
-                    });
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: value =>
+                                Number(value).toLocaleString("vi-VN")
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
                 }
-
-                createPieChart(
-                    "incomePie",
-                    memberData.map(x => x.Income)
-                );
-
-                createPieChart(
-                    "expensePie",
-                    memberData.map(x => x.Expense)
-                );
-            </text>
+            }
+        });
     }
+
+    const colors = [
+        "#0D9488",
+        "#3b82f6",
+        "#f59e0b",
+        "#8b5cf6",
+        "#ec4899",
+        "#64748b",
+        "#14b8a6"
+    ];
+
+    function createPieChart(elementId, values) {
+        const canvas = document.getElementById(elementId);
+
+        if (!canvas || typeof Chart === "undefined") {
+            return;
+        }
+
+        new Chart(canvas, {
+            type: "doughnut",
+            data: {
+                labels: memberNames,
+                datasets: [{
+                    data: values,
+                    backgroundColor: memberNames.map(
+                        (_, index) => colors[index % colors.length]
+                    ),
+                    borderColor: "#ffffff",
+                    borderWidth: 3,
+                    hoverOffset: 7
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: "60%",
+                plugins: {
+                    legend: {
+                        position: "bottom",
+                        labels: {
+                            padding: 15,
+                            usePointStyle: true
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: item => {
+                                const total = item.dataset.data
+                                    .reduce((sum, value) => sum + Number(value), 0);
+
+                                const percentage = total > 0
+                                    ? (Number(item.raw) / total * 100).toFixed(1)
+                                    : "0";
+
+                                return item.label + ": " +
+                                    moneyFormat(item.raw) +
+                                    " (" + percentage + "%)";
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    createPieChart("incomePie", memberIncomes);
+    createPieChart("expensePie", memberExpenses);
 </script>

@@ -24,10 +24,10 @@ namespace FEMS.Controllers
 
         // =========================================
         // 1. XEM DANH SÁCH VÍ CÁ NHÂN & LỊCH SỬ BIẾN ĐỘNG VÍ (View Personal Wallets)
-        // GET: /Wallet/Index?walletId={id}
+        // GET: /Wallet/Index?walletId={id}&page={page}
         // =========================================
         [HttpGet]
-        public async Task<IActionResult> Index(int? walletId = null)
+        public async Task<IActionResult> Index(int? walletId = null, int page = 1)
         {
             int userId = GetCurrentUserId();
             var model = await _walletService.GetWalletManagementDataAsync(userId, walletId);
@@ -38,6 +38,7 @@ namespace FEMS.Controllers
                 return RedirectToAction("Setup", "Household");
             }
 
+            ViewBag.CurrentPage = page;
             return View(model);
         }
 

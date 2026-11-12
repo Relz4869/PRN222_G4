@@ -306,10 +306,11 @@ namespace FEMS.Controllers
             int id,
             int? walletId = null,
             string? type = null,
-            string? search = null)
+            string? search = null,
+            int page = 1)
         {
             int userId = GetCurrentUserId();
-            var result = await _householdService.GetMemberFinanceDetailAsync(userId, id, walletId, type, search);
+            var result = await _householdService.GetMemberFinanceDetailAsync(userId, id, walletId, type, search, page, 7);
 
             if (!result.Success || result.Data == null)
             {

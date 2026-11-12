@@ -224,7 +224,7 @@ namespace FEMS.Services.Implementations
 
             return (
                 true,
-                $"Đã gửi lời mời đến {invitedUser.FullName} ({invitedUser.Email}). Mã tham gia hộ là: {inviteCode}",
+                $"Đã gửi lời mời đến {invitedUser.FullName} ({invitedUser.Email}).",
                 inviteCode
             );
         }
@@ -411,6 +411,13 @@ namespace FEMS.Services.Implementations
                 return (false, "Chỉ Quản lý hộ mới có quyền thăng cấp thành viên.");
             }
 
+            var activeMembers = await _householdRepository.GetActiveMembersByHouseholdIdAsync(manager.HouseholdId);
+            var creator = FindCreatorMember(activeMembers);
+            if (creator == null || creator.UserId != managerUserId)
+            {
+                return (false, "Chỉ Chủ hộ mới có quyền thăng cấp thành viên lên Quản lý hộ.");
+            }
+
             var targetMember = await _householdRepository.GetMemberByIdAsync(targetHouseholdMemberId);
             if (targetMember == null ||
                 targetMember.HouseholdId != manager.HouseholdId ||
@@ -512,6 +519,11 @@ namespace FEMS.Services.Implementations
                 return (false, "Không tìm thấy thành viên hợp lệ trong hộ gia đình.");
             }
 
+            if (!isCreator)
+            {
+                return (false, "Chỉ Chủ hộ mới có quyền xóa thành viên khỏi hộ gia đình.");
+            }
+
             if (targetMember.UserId == managerUserId)
             {
                 return (false, "Bạn không thể tự xóa chính mình bằng nút này.");
@@ -520,12 +532,6 @@ namespace FEMS.Services.Implementations
             if (creator != null && targetMember.UserId == creator.UserId)
             {
                 return (false, "Không thể xóa Người tạo hộ gia đình (Chủ hộ).");
-            }
-
-            // Nếu đối tượng bị xóa là Manager: chỉ Người tạo hộ (Chủ hộ) mới được phép xóa
-            if (string.Equals(targetMember.Role, "Manager", StringComparison.OrdinalIgnoreCase) && !isCreator)
-            {
-                return (false, "Chỉ Người tạo hộ gia đình (Chủ hộ) mới có quyền xóa một Quản lý hộ khác.");
             }
 
             // Chuyển trạng thái sang Inactive để bảo toàn tài khoản, ví cá nhân, số dư và lịch sử giao dịch
@@ -674,6 +680,18 @@ namespace FEMS.Services.Implementations
                 return (false, "Không tìm thấy thành viên hợp lệ trong hộ gia đình.");
             }
 
+            var activeMembers = await _householdRepository.GetActiveMembersByHouseholdIdAsync(manager.HouseholdId);
+            var creator = FindCreatorMember(activeMembers);
+            bool isCreator = creator != null && creator.UserId == managerUserId;
+
+            if (!isCreator && targetMember.UserId != managerUserId)
+            {
+                if (targetMember.UserId == creator?.UserId || string.Equals(targetMember.Role, "Manager", StringComparison.OrdinalIgnoreCase))
+                {
+                    return (false, "Quản lý hộ chỉ có quyền thiết lập ngưỡng cảnh báo cho các Thành viên.");
+                }
+            }
+
             targetMember.AlertAmount = alertAmount;
             await _householdRepository.UpdateMemberAsync(targetMember);
 
@@ -716,7 +734,9 @@ namespace FEMS.Services.Implementations
             int targetHouseholdMemberId,
             int? walletId = null,
             string? transactionType = null,
-            string? search = null)
+            string? search = null,
+            int page = 1,
+            int pageSize = 7)
         {
             var manager = await _householdRepository.GetActiveMemberByUserIdAsync(managerUserId);
             if (manager == null || !string.Equals(manager.Role, "Manager", StringComparison.OrdinalIgnoreCase))
@@ -730,6 +750,18 @@ namespace FEMS.Services.Implementations
                 targetMember.Status != "Active")
             {
                 return (false, "Thành viên này không tồn tại hoặc không còn thuộc hộ gia đình của bạn.", null);
+            }
+
+            var activeMembers = await _householdRepository.GetActiveMembersByHouseholdIdAsync(manager.HouseholdId);
+            var creator = FindCreatorMember(activeMembers);
+            bool isCreator = creator != null && creator.UserId == managerUserId;
+
+            if (!isCreator && targetMember.UserId != managerUserId)
+            {
+                if (targetMember.UserId == creator?.UserId || string.Equals(targetMember.Role, "Manager", StringComparison.OrdinalIgnoreCase))
+                {
+                    return (false, "Quản lý hộ chỉ có quyền xem ví và giao dịch của các Thành viên trong hộ.", null);
+                }
             }
 
             var wallets = await _householdRepository.GetWalletsByMemberIdAsync(targetMember.HouseholdMemberId);
@@ -845,6 +877,15 @@ namespace FEMS.Services.Implementations
                 .ThenByDescending(t => t.TransactionId)
                 .ToList();
 
+            int totalTransactions = sortedTransactions.Count;
+            if (page < 1) page = 1;
+            if (pageSize <= 0) pageSize = 7;
+
+            var pagedTransactions = sortedTransactions
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
             var detailVm = new MemberFinanceDetailViewModel
             {
                 HouseholdId = targetMember.HouseholdId,
@@ -864,7 +905,10 @@ namespace FEMS.Services.Implementations
                 SelectedType = transactionType,
                 SearchKeyword = search,
                 Wallets = walletItems,
-                Transactions = sortedTransactions
+                Transactions = pagedTransactions,
+                CurrentPage = page,
+                PageSize = pageSize,
+                TotalTransactions = totalTransactions
             };
 
             return (true, string.Empty, detailVm);

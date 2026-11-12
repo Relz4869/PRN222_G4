@@ -2,6 +2,20 @@
 
 @{
     ViewData["Title"] = "Ví cá nhân (Wallet Management)";
+
+    // Cấu hình phân trang: 5 lịch sử biến động / 1 trang
+    int totalHistoryCount = Model.WalletHistories.Count;
+    int pageSize = 5;
+    int currentPage = ViewBag.CurrentPage ?? 1;
+    int totalPages = (int)Math.Ceiling((double)totalHistoryCount / pageSize);
+    if (totalPages < 1) totalPages = 1;
+    if (currentPage < 1) currentPage = 1;
+    if (currentPage > totalPages) currentPage = totalPages;
+
+    var pagedHistories = Model.WalletHistories
+        .Skip((currentPage - 1) * pageSize)
+        .Take(pageSize)
+        .ToList();
 }
 
 <div class="wallet-page">
@@ -69,15 +83,15 @@
                             @w.WalletName
                             @if (w.IsNegativeBalance)
                             {
-                                <span class="wallet-status-suffix">(Số dư âm)</span>
+                                <span class="wallet-status-suffix"></span>
                             }
                             else if (w.IsOverLimit)
                             {
-                                <span class="wallet-status-suffix">(Vượt hạn mức)</span>
+                                <span class="wallet-status-suffix"></span>
                             }
                             else if (isSelected)
                             {
-                                <span class="wallet-status-suffix">(Đang chọn)</span>
+                                <span class="wallet-status-suffix"></span>
                             }
                         </span>
                     </div>
@@ -90,7 +104,7 @@
                     {
                         <div class="wallet-card-limit-info">
                             <span>Hạn mức tháng: @w.LimitAmount.Value.ToString("N0") VNĐ</span>
-                            <span>&bull; Đã chi: @w.MonthlyExpense.ToString("N0") VNĐ (@(w.LimitUsagePercent)%)</span>
+                            <span>&bull; Đã chi: @w.MonthlyExpense.ToString("N0") VNĐ</span>
                         </div>
                     }
                 </a>
@@ -113,7 +127,7 @@
         <div class="col-lg-5 col-md-6">
             <div class="wallet-panel h-100">
                 <h6 class="wallet-panel-title mb-3">
-                    <span class="plus-badge">&#10133;</span> Tạo Ví cá nhân (Create Personal Wallet)
+                    <span class="plus-badge">&#10133;</span> Tạo ví cá nhân 
                 </h6>
 
                 <form asp-controller="Wallet" asp-action="Create" method="post">
@@ -198,7 +212,7 @@
                             @if (Model.SelectedWallet.LimitAmount.HasValue && Model.SelectedWallet.LimitAmount.Value > 0)
                             {
                                 <span class="fw-bold @(Model.SelectedWallet.IsOverLimit ? "text-danger" : "text-amber-brand")">
-                                    Hạn mức: @Model.SelectedWallet.LimitAmount.Value.ToString("N0") VNĐ (@(Model.SelectedWallet.LimitUsagePercent)%)
+                                    Hạn mức: @Model.SelectedWallet.LimitAmount.Value.ToString("N0") VNĐ 
                                 </span>
                             }
                             else
@@ -270,9 +284,15 @@
 
             @if (Model.SelectedWallet != null)
             {
-                <div class="d-flex gap-3 small fw-semibold">
-                    <span class="text-income-row">Tổng thu: +@Model.SelectedWallet.TotalIncome.ToString("N0") VNĐ</span>
-                    <span class="text-expense-row">Tổng chi: -@Model.SelectedWallet.TotalExpense.ToString("N0") VNĐ</span>
+                <div class="d-flex flex-wrap gap-2">
+                    <div class="wallet-flow-badge flow-badge-income">
+                        <span class="flow-badge-label">Tổng thu:</span>
+                        <span class="flow-badge-amount">+@Model.SelectedWallet.TotalIncome.ToString("N0") VNĐ</span>
+                    </div>
+                    <div class="wallet-flow-badge flow-badge-expense">
+                        <span class="flow-badge-label">Tổng chi:</span>
+                        <span class="flow-badge-amount">-@Model.SelectedWallet.TotalExpense.ToString("N0") VNĐ</span>
+                    </div>
                 </div>
             }
         </div>
@@ -289,9 +309,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if (Model.WalletHistories.Any())
+                    @if (pagedHistories.Any())
                     {
-                        @foreach (var item in Model.WalletHistories)
+                        @foreach (var item in pagedHistories)
                         {
                             string rowClass = item.ChangeType switch
                             {
@@ -319,13 +339,55 @@
                     else
                     {
                         <tr>
-                            <td colspan="5" class="text-center text-muted py-4">
+                            <td colspan="4" class="text-center text-muted py-4">
                                 Ví cá nhân này hiện chưa có biến động giao dịch nào.
                             </td>
                         </tr>
                     }
                 </tbody>
             </table>
+        </div>
+
+        <!-- Chân bảng & Phân trang (5 lịch sử biến động / 1 trang) -->
+        <div class="d-flex flex-wrap justify-content-between align-items-center mt-3">
+            <div></div>
+
+            <nav>
+                <ul class="pagination pagination-sm mb-0">
+                    <li class="page-item @(currentPage <= 1 ? "disabled" : "")">
+                        <a class="page-link"
+                           asp-controller="Wallet"
+                           asp-action="Index"
+                           asp-route-walletId="@Model.SelectedWalletId"
+                           asp-route-page="@(currentPage - 1)">
+                            &lt;
+                        </a>
+                    </li>
+
+                    @for (int i = 1; i <= totalPages; i++)
+                    {
+                        <li class="page-item @(i == currentPage ? "active" : "")">
+                            <a class="page-link @(i == currentPage ? "bg-wallet-page border-0 text-white" : "text-dark")"
+                               asp-controller="Wallet"
+                               asp-action="Index"
+                               asp-route-walletId="@Model.SelectedWalletId"
+                               asp-route-page="@i">
+                                @i
+                            </a>
+                        </li>
+                    }
+
+                    <li class="page-item @(currentPage >= totalPages ? "disabled" : "")">
+                        <a class="page-link"
+                           asp-controller="Wallet"
+                           asp-action="Index"
+                           asp-route-walletId="@Model.SelectedWalletId"
+                           asp-route-page="@(currentPage + 1)">
+                            &gt;
+                        </a>
+                    </li>
+                </ul>
+            </nav>
         </div>
     </div>
 

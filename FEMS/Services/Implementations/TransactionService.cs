@@ -48,7 +48,7 @@ namespace FEMS.Services.Implementations
                     TransactionDate = inc.IncomeDate,
                     WalletId = inc.WalletId,
                     WalletName = inc.Wallet?.WalletName ?? "Ví cá nhân",
-                    CategoryDisplay = "— (Không áp dụng)",
+                    CategoryDisplay = "—",
                     IsCategoryDeleted = false,
                     Description = inc.Description,
                     Amount = inc.Amount

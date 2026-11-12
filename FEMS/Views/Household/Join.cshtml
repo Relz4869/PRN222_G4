@@ -39,7 +39,7 @@
 
             <h2>Tham gia hộ gia đình</h2>
             <p class="form-subtitle">
-                Nhập mã tham gia (ví dụ: <strong>FEMS-123456</strong>) từ lời mời của Quản lý để vào hộ.
+                Nhập mã tham gia từ lời mời của Quản lý để vào hộ.
             </p>
 
             @if (Model.PendingInvites != null && Model.PendingInvites.Any())
@@ -69,8 +69,7 @@
             {
                 <div class="empty-invite-notice">
                     Hiện chưa có lời mời tự động nào trong hộp thư thông báo của bạn.
-                    Bạn vẫn có thể nhập trực tiếp mã từ Quản lý hoặc bấm
-                    <a asp-controller="Household" asp-action="Join">Làm mới trang</a>.
+                    Bạn vẫn có thể nhập trực tiếp mã từ Quản lý hoặc làm mới trang.
                 </div>
             }
 
@@ -87,7 +86,7 @@
                     <input asp-for="InviteCode"
                            id="InviteCodeInput"
                            class="hh-code-input"
-                           placeholder="Nhập mã (VD: FEMS-123456)"
+                           placeholder="Nhập mã tham gia"
                            autocomplete="off" />
                     <span asp-validation-for="InviteCode"
                           class="hh-field-error">
@@ -95,7 +94,7 @@
                 </div>
 
                 <button type="submit" class="hh-join-btn">
-                    Xác nhận &amp; Vào hộ gia đình
+                    Tham gia hộ gia đình
                 </button>
 
                 <div class="hh-back-row">

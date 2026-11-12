@@ -370,3 +370,52 @@
     color: #dc2626;
 }
 
+/* Ô highlight Tổng thu / Tổng chi trên bảng Lịch sử biến động số dư */
+.wallet-flow-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border-radius: 10px;
+    font-size: 13.5px;
+}
+
+.flow-badge-income {
+    background-color: #ecfdf5;
+    border: 1.5px solid #6ee7b7;
+    color: #065f46;
+}
+
+.flow-badge-income .flow-badge-amount {
+    background-color: #0D9488;
+    color: #ffffff;
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: 6px;
+}
+
+.flow-badge-expense {
+    background-color: #fef2f2;
+    border: 1.5px solid #fca5a5;
+    color: #991b1b;
+}
+
+.flow-badge-expense .flow-badge-amount {
+    background-color: #dc2626;
+    color: #ffffff;
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: 6px;
+}
+
+.flow-badge-label {
+    font-weight: 700;
+}
+
+.bg-wallet-page,
+::deep .bg-wallet-page {
+    background-color: #0D9488 !important;
+    color: #ffffff !important;
+}
+
+

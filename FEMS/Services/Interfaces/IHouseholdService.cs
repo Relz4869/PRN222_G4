@@ -53,7 +53,9 @@ namespace FEMS.Services.Interfaces
             int targetHouseholdMemberId,
             int? walletId = null,
             string? transactionType = null,
-            string? search = null);
+            string? search = null,
+            int page = 1,
+            int pageSize = 7);
     }
 }
 

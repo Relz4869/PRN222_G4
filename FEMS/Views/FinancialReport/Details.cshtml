@@ -1,134 +1,657 @@
 ﻿@model FEMS.ViewModels.FinancialReport.DetailedReportViewModel
+@using System.Text.Json
 
 @{
-    ViewData["Title"] = "Detailed Financial Report";
+    ViewData["Title"] = "Phân tích chi tiết";
+
+    var categoryNames = Model.Categories
+        .Select(c => c.CategoryName).ToList();
+
+    var categoryAmounts = Model.Categories
+        .Select(c => c.TotalAmount).ToList();
+
+    decimal netIncome = Model.TotalIncome - Model.TotalExpense;
+
+    int selectedYear = DateTime.Today.Year;
+    int selectedMonthNumber = DateTime.Today.Month;
+    var selectedParts = (Model.SelectedMonth ?? "").Split('-');
+
+    if (selectedParts.Length == 2 &&
+        int.TryParse(selectedParts[0], out int year) &&
+        int.TryParse(selectedParts[1], out int month) &&
+        year >= 1 && year <= 9999 &&
+        month >= 1 && month <= 12)
+    {
+        selectedYear = year;
+        selectedMonthNumber = month;
+    }
+
+    string selectedMonthValue = $"{selectedYear:D4}-{selectedMonthNumber:D2}";
 }
 
-<div class="container mt-4">
-    <h2>Detailed Financial Report</h2>
-    <p>View your income and expenses by category.</p>
+<style>
 
-    <div class="mb-4">
-        <a asp-action="Details" asp-route-months="3"
-           class="btn @(Model.Months == 3 ? "btn-primary" : "btn-outline-primary")">
-            3 Months
-        </a>
+    /* Mau xanh thong nhat FEMS */
+    .detail-page .btn-success {
+        background-color: #0D9488 !important;
+        border-color: #0D9488 !important;
+        color: white !important;
+        font-weight: 600;
+        border-radius: 9px;
+        white-space: nowrap;
+    }
 
-        <a asp-action="Details" asp-route-months="6"
-           class="btn @(Model.Months == 6 ? "btn-primary" : "btn-outline-primary")">
-            6 Months
-        </a>
+        .detail-page .btn-success:hover,
+        .detail-page .btn-success:focus {
+            background-color: #0b7f75 !important;
+            border-color: #0b7f75 !important;
+            color: white !important;
+        }
 
-        <a asp-action="Details" asp-route-months="12"
-           class="btn @(Model.Months == 12 ? "btn-primary" : "btn-outline-primary")">
-            12 Months
-        </a>
+    /* Nut chua duoc chon */
+    .detail-page .btn-outline-success {
+        background-color: white;
+        border-color: #0D9488 !important;
+        color: #0D9488 !important;
+        border-radius: 9px;
+        white-space: nowrap;
+    }
 
-        <a asp-action="Index"
+        .detail-page .btn-outline-success:hover,
+        .detail-page .btn-outline-success:focus {
+            background-color: #0D9488 !important;
+            border-color: #0D9488 !important;
+            color: white !important;
+        }
+
+    /* Vien xanh khi chon thang, thanh vien */
+    .detail-page .form-control:focus,
+    .detail-page .form-select:focus {
+        border-color: #0D9488;
+        box-shadow: 0 0 0 0.2rem rgba(13, 148, 136, 0.15);
+    }
+
+    /* Mau xanh cac thong ke */
+    .detail-page .text-success {
+        color: #0D9488 !important;
+    }
+
+    /* Giu cac nut nam cung hang */
+    .detail-page .period-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+        .detail-page .period-buttons a {
+            min-width: 90px;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+    .detail-page {
+        background: #f5f8f7;
+        padding: 25px;
+        border-radius: 18px;
+    }
+
+    .detail-card {
+        background: white;
+        border: 1px solid #e4ebe8;
+        border-radius: 14px;
+        padding: 22px;
+        margin-bottom: 22px;
+    }
+
+    .detail-title {
+        color: #173b36;
+        font-weight: 700;
+    }
+
+    .detail-filter {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: end;
+        gap: 12px;
+    }
+
+        .detail-filter label {
+            font-weight: 600;
+            color: #465a53;
+            margin-bottom: 5px;
+        }
+
+        .detail-filter .form-control,
+        .detail-filter .form-select {
+            min-width: 170px;
+        }
+
+    .period-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+        .period-buttons a {
+            white-space: nowrap;
+            border-radius: 9px;
+        }
+
+    .detail-stat {
+        border: 1px solid #e4ebe8;
+        border-radius: 14px;
+        padding: 20px;
+        background: white;
+        height: 100%;
+    }
+
+    .detail-stat-label {
+        font-size: 14px;
+        color: #71817b;
+        margin-bottom: 10px;
+    }
+
+    .detail-stat-value {
+        font-size: 25px;
+        font-weight: 700;
+        overflow-wrap: anywhere;
+    }
+
+    .detail-chart {
+        position: relative;
+        height: 340px;
+        max-width: 650px;
+        margin: 0 auto;
+    }
+
+    .detail-table {
+        white-space: nowrap;
+        width: 100%;
+    }
+
+        .detail-table th {
+            background: #f0f6f3;
+            color: #415b51;
+            padding: 13px;
+        }
+
+        .detail-table td {
+            padding: 12px;
+            vertical-align: middle;
+        }
+
+        .detail-table .description-cell {
+            white-space: normal;
+            min-width: 180px;
+        }
+
+        .detail-table tbody tr:hover {
+            background: #f5faf8;
+        }
+
+    .detail-empty {
+        padding: 35px 10px;
+        text-align: center;
+        color: #7c8984;
+    }
+
+    .report-pagination {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 14px;
+    }
+
+        .report-pagination .page-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .report-pagination .btn {
+            min-width: 38px;
+        }
+
+    @@media (max-width: 767px) {
+        .detail-page {
+            padding: 12px;
+        }
+
+        .detail-stat-value {
+            font-size: 21px;
+        }
+    }
+</style>
+
+<div class="detail-page">
+
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+        <div>
+            <h2 class="detail-title">Phân tích chi tiết</h2>
+            <p class="text-muted mb-0">
+                Theo dõi các khoản thu nhập và chi tiêu đã ghi nhận.
+            </p>
+        </div>
+
+        <a asp-controller="FinancialReport"
+           asp-action="Index"
            asp-route-months="@Model.Months"
-           class="btn btn-secondary">
-            Back to Summary
+           asp-route-selectedMonth="@Model.SelectedMonth"
+           class="btn btn-outline-success">
+            Quay về Phân tích
         </a>
     </div>
 
-    <div class="row mb-4">
-        <div class="col-md-6 mb-3">
-            <div class="card p-3">
-                <h5>Total Income</h5>
-                <h3 class="text-success">
-                    @Model.TotalIncome.ToString("N0") VND
-                </h3>
+    <div class="detail-card">
+        <h5 class="detail-title mb-3">Bộ lọc phân tích</h5>
+
+        <form asp-controller="FinancialReport"
+              asp-action="Details"
+              method="get">
+
+            <div class="detail-filter mb-3">
+
+                <div>
+                    <label for="monthSelect">Chọn tháng</label>
+                    <div class="d-flex flex-wrap gap-2">
+                        <select id="monthSelect" class="form-select" style="width: 145px;">
+                            @for (int monthOption = 1; monthOption <= 12; monthOption++)
+                            {
+                                <option value="@monthOption" selected="@(monthOption == selectedMonthNumber)">
+                                    Tháng @monthOption
+                                </option>
+                            }
+                        </select>
+
+                        <select id="yearSelect" class="form-select" style="width: 145px;">
+                            @for (int yearOption = Math.Max(DateTime.Today.Year + 1, selectedYear);
+                                  yearOption >= Math.Min(2020, selectedYear);
+                                  yearOption--)
+                            {
+                                <option value="@yearOption" selected="@(yearOption == selectedYear)">
+                                    Năm @yearOption
+                                </option>
+                            }
+                        </select>
+                    </div>
+                    <input type="hidden" id="selectedMonth" name="selectedMonth" value="@selectedMonthValue" />
+                </div>
+
+                @if (Model.IsManager)
+                {
+                    <div>
+                        <label>Thành viên</label>
+                        <select name="selectedMemberId"
+                                class="form-select">
+
+                            <option value="">Tất cả thành viên</option>
+
+                            @foreach (var member in Model.Members)
+                            {
+                                if (Model.SelectedMemberId ==
+                                    member.HouseholdMemberId)
+                                {
+                                    <option value="@member.HouseholdMemberId"
+                                            selected>
+                                        @member.MemberName
+                                        @(member.Status == "Active"
+                                            ? ""
+                                            : "(Đã rời hộ)")
+                                    </option>
+                                }
+                                else
+                                {
+                                    <option value="@member.HouseholdMemberId">
+                                        @member.MemberName
+                                        @(member.Status == "Active"
+                                            ? ""
+                                            : "(Đã rời hộ)")
+                                    </option>
+                                }
+                            }
+                        </select>
+                    </div>
+                }
+
+                <input type="hidden"
+                       name="months"
+                       value="@Model.Months" />
+
+                <button type="submit"
+                        class="btn btn-success text-nowrap">
+                    Xem phân tích
+                </button>
+
+            </div>
+        </form>
+
+        <div class="period-buttons">
+            @foreach (int period in new[] { 1, 3, 6, 12 })
+            {
+                <a asp-controller="FinancialReport"
+                   asp-action="Details"
+                   asp-route-months="@period"
+                   asp-route-selectedMonth="@Model.SelectedMonth"
+                   asp-route-selectedMemberId="@Model.SelectedMemberId"
+                   class="btn @(Model.Months == period ? "btn-success" : "btn-outline-success")">
+                    @period tháng
+                </a>
+            }
+        </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="detail-stat">
+                <div class="detail-stat-label">Tổng thu nhập</div>
+                <div class="detail-stat-value text-success">
+                    @Model.TotalIncome.ToString("N0") VNĐ
+                </div>
             </div>
         </div>
 
-        <div class="col-md-6 mb-3">
-            <div class="card p-3">
-                <h5>Total Expenses</h5>
-                <h3 class="text-danger">
-                    @Model.TotalExpense.ToString("N0") VND
-                </h3>
+        <div class="col-md-4">
+            <div class="detail-stat">
+                <div class="detail-stat-label">Tổng chi tiêu</div>
+                <div class="detail-stat-value text-danger">
+                    @Model.TotalExpense.ToString("N0") VNĐ
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="detail-stat">
+                <div class="detail-stat-label">Chênh lệch thu chi</div>
+                <div class="detail-stat-value"
+                     style="color:@(netIncome >= 0 ? "#0d7a5f" : "#dc3545");">
+                    @netIncome.ToString("N0") VNĐ
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="card p-4 mb-4">
-        <h4>Expense Breakdown by Category</h4>
+    @if (!Model.IsManager)
+    {
+        <div class="detail-card">
+            <h4 class="detail-title">Tỷ trọng chi tiêu theo danh mục</h4>
+            <p class="text-muted">
+                Tỷ lệ chi tiêu của từng danh mục trong khoảng thời gian đã chọn.
+            </p>
 
-        <table class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th>Category</th>
-                    <th>Transactions</th>
-                    <th>Total Expense</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var category in Model.Categories)
-                {
+            @if (Model.Categories.Any() && Model.TotalExpense > 0)
+            {
+                <div class="detail-chart">
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            }
+            else
+            {
+                <div class="detail-empty">
+                    Chưa có dữ liệu chi tiêu trong kỳ phân tích.
+                </div>
+            }
+        </div>
+
+    }
+
+    <div class="detail-card">
+        <h4 class="detail-title mb-3">Lịch sử giao dịch thu nhập</h4>
+
+        <div class="table-responsive">
+            <table id="incomeTable" class="table table-bordered detail-table">
+                <thead>
                     <tr>
-                        <td>@category.CategoryName</td>
-                        <td>@category.TransactionCount</td>
-                        <td>@category.TotalAmount.ToString("N0") VND</td>
-                    </tr>
-                }
-
-                @if (!Model.Categories.Any())
-                {
-                    <tr>
-                        <td colspan="3" class="text-center">
-                            No expense data available.
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-
-    <div class="card p-4 mb-4">
-        <h4>Income Transactions</h4>
-
-        <table class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th>Date</th>
-
-                    @if (Model.IsManager)
-                    {
-                        <th>Member</th>
-                    }
-
-                    <th>Description</th>
-                    <th>Amount</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var income in Model.Incomes)
-                {
-                    <tr>
-                        <td>@income.Date.ToString("dd/MM/yyyy")</td>
+                        <th>Ngày ghi nhận</th>
 
                         @if (Model.IsManager)
                         {
-                            <td>@income.MemberName</td>
+                            <th>Thành viên</th>
                         }
 
-                        <td>@income.Description</td>
-                        <td class="text-success">
-                            @income.Amount.ToString("N0") VND
-                        </td>
+                        <th>Nội dung</th>
+                        <th class="text-end">Số tiền</th>
                     </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var income in Model.Incomes)
+                    {
+                        <tr>
+                            <td>@income.Date.ToString("dd/MM/yyyy")</td>
+
+                            @if (Model.IsManager)
+                            {
+                                <td>@income.MemberName</td>
+                            }
+
+                            <td class="description-cell">
+                                @(string.IsNullOrEmpty(income.Description)
+                                    ? "Không có ghi chú"
+                                    : income.Description)
+                            </td>
+
+                            <td class="text-end text-success fw-semibold">
+                                @income.Amount.ToString("N0") VNĐ
+                            </td>
+                        </tr>
+                    }
+
+                    @if (!Model.Incomes.Any())
+                    {
+                        <tr>
+                            <td colspan="@(Model.IsManager ? 4 : 3)"
+                                class="text-center text-muted">
+                                Không có khoản thu nhập nào.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div id="incomePagination" class="report-pagination" aria-label="Phân trang thu nhập"></div>
+    </div>
+
+    <div class="detail-card">
+        <h4 class="detail-title mb-3">Lịch sử giao dịch chi tiêu</h4>
+
+        <div class="table-responsive">
+            <table id="expenseTable" class="table table-bordered detail-table">
+                <thead>
+                    <tr>
+                        <th>Ngày ghi nhận</th>
+
+                        @if (Model.IsManager)
+                        {
+                            <th>Thành viên</th>
+                        }
+
+                        <th>Danh mục</th>
+                        <th>Nội dung</th>
+                        <th class="text-end">Số tiền</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var expense in Model.Expenses)
+                    {
+                        <tr>
+                            <td>@expense.Date.ToString("dd/MM/yyyy")</td>
+
+                            @if (Model.IsManager)
+                            {
+                                <td>@expense.MemberName</td>
+                            }
+
+                            <td>@expense.CategoryName</td>
+
+                            <td class="description-cell">
+                                @(string.IsNullOrEmpty(expense.Description)
+                                    ? "Không có ghi chú"
+                                    : expense.Description)
+                            </td>
+
+                            <td class="text-end text-danger fw-semibold">
+                                @expense.Amount.ToString("N0") VNĐ
+                            </td>
+                        </tr>
+                    }
+
+                    @if (!Model.Expenses.Any())
+                    {
+                        <tr>
+                            <td colspan="@(Model.IsManager ? 5 : 4)"
+                                class="text-center text-muted">
+                                Không có khoản chi tiêu nào.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div id="expensePagination" class="report-pagination" aria-label="Phân trang chi tiêu"></div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+
+    <script>
+        const monthSelect = document.getElementById("monthSelect");
+        const yearSelect = document.getElementById("yearSelect");
+        const selectedMonthInput = document.getElementById("selectedMonth");
+
+        function updateSelectedMonth() {
+                selectedMonthInput.value = yearSelect.value + "-" + monthSelect.value.padStart(2, "0");
+        }
+
+        monthSelect.addEventListener("change", updateSelectedMonth);
+        yearSelect.addEventListener("change", updateSelectedMonth);
+        updateSelectedMonth();
+
+        // Phân trang riêng từng bảng, 10 giao dịch mỗi trang.
+        function setupPagination(tableId, paginationId, pageSize = 10) {
+            const table = document.getElementById(tableId);
+            const container = document.getElementById(paginationId);
+            if (!table || !container) return;
+
+            const rows = Array.from(table.querySelectorAll("tbody tr"));
+            // Dòng thông báo "Không có..." không được tính là giao dịch.
+            const dataRows = rows.filter(row => row.querySelectorAll("td").length > 1);
+            const total = dataRows.length;
+            if (total <= pageSize) return;
+
+            const totalPages = Math.ceil(total / pageSize);
+            let currentPage = 1;
+
+            function showPage(page) {
+                currentPage = Math.max(1, Math.min(page, totalPages));
+                dataRows.forEach((row, index) => {
+                    row.hidden = index < (currentPage - 1) * pageSize || index >= currentPage * pageSize;
+                    row.style.display = row.hidden ? "none" : "";
+                });
+
+                const start = (currentPage - 1) * pageSize + 1;
+                const end = Math.min(currentPage * pageSize, total);
+                container.replaceChildren();
+
+                const info = document.createElement("span");
+                info.className = "text-muted small";
+                info.textContent = `Hiển thị ${start}–${end} / ${total} giao dịch`;
+                container.appendChild(info);
+
+                const buttons = document.createElement("div");
+                buttons.className = "page-buttons";
+                container.appendChild(buttons);
+
+                function addButton(label, page, disabled = false, active = false) {
+                    const button = document.createElement("button");
+                    button.type = "button";
+                    button.className = active ? "btn btn-success btn-sm" : "btn btn-outline-success btn-sm";
+                    button.textContent = label;
+                    button.disabled = disabled;
+                    if (active) button.setAttribute("aria-current", "page");
+                    button.addEventListener("click", () => showPage(page));
+                    buttons.appendChild(button);
                 }
 
-                @if (!Model.Incomes.Any())
-                {
-                    <tr>
-                        <td colspan="@(Model.IsManager ? 4 : 3)"
-                            class="text-center">
-                            No income data available.
-                        </td>
-                    </tr>
+                addButton("Trước", currentPage - 1, currentPage === 1);
+                const fromPage = Math.max(1, Math.min(currentPage - 2, totalPages - 4));
+                const toPage = Math.min(totalPages, fromPage + 4);
+                for (let page = fromPage; page <= toPage; page++) {
+                    addButton(String(page), page, false, page === currentPage);
                 }
-            </tbody>
-        </table>
-    </div>
-</div>
+                addButton("Sau", currentPage + 1, currentPage === totalPages);
+            }
+
+            showPage(1);
+        }
+
+        setupPagination("incomeTable", "incomePagination");
+        setupPagination("expenseTable", "expensePagination");
+
+        const categoryNames = @Html.Raw(JsonSerializer.Serialize(categoryNames));
+        const categoryAmounts = @Html.Raw(JsonSerializer.Serialize(categoryAmounts));
+
+        const chartCanvas = document.getElementById('categoryChart');
+
+        if (chartCanvas && typeof Chart !== 'undefined') {
+            new Chart(chartCanvas, {
+                type: 'doughnut',
+                data: {
+                    labels: categoryNames,
+                    datasets: [{
+                        data: categoryAmounts,
+                        backgroundColor: [
+                            '#0d9488',
+                            '#3b82f6',
+                            '#f59e0b',
+                            '#8b5cf6',
+                            '#ec4899',
+                            '#64748b',
+                            '#14b8a6',
+                            '#f97316'
+                        ],
+                        borderColor: '#ffffff',
+                        borderWidth: 3,
+                        hoverOffset: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '60%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 16,
+                                usePointStyle: true
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const total = context.dataset.data
+                                        .reduce((a, b) => a + Number(b), 0);
+
+                                    const amount = Number(context.raw);
+
+                                    const percentage = total > 0
+                                        ? (amount / total * 100).toFixed(1)
+                                        : '0';
+
+                                    return context.label + ': ' +
+                                        amount.toLocaleString('vi-VN') +
+                                        ' VNĐ (' + percentage + '%)';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+}

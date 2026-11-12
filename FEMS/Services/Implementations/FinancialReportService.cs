@@ -19,11 +19,12 @@ namespace FEMS.Services.Implementations
         }
 
         public async Task<FinancialSummaryViewModel?> GetSummaryAsync(
-            int userId, int months)
+    int userId, int months, string? selectedMonth)
         {
-            if (months != 3 && months != 6 && months != 12)
+            if (months != 1 && months != 3 &&
+                months != 6 && months != 12)
             {
-                months = 3;
+                months = 1;
             }
 
             var currentMember = await _householdRepository
@@ -35,8 +36,8 @@ namespace FEMS.Services.Implementations
             }
 
             var members = await _householdRepository
-                .GetActiveMembersByHouseholdIdAsync(
-                    currentMember.HouseholdId);
+     .GetMembersByHouseholdIdAsync(
+         currentMember.HouseholdId);
 
             bool isManager = currentMember.Role == "Manager";
 
@@ -51,15 +52,25 @@ namespace FEMS.Services.Implementations
                 .Select(m => m.HouseholdMemberId)
                 .ToList();
 
+
             DateTime today = DateTime.Today;
 
-            var startDate = new DateOnly(
-                today.Year, today.Month, 1)
-                .AddMonths(-(months - 1));
+            var selectedDate = new DateOnly(today.Year, today.Month, 1);
 
-            var endDate = new DateOnly(
-                today.Year, today.Month, 1)
-                .AddMonths(1);
+            if (!string.IsNullOrWhiteSpace(selectedMonth) &&
+                DateOnly.TryParseExact(
+                    selectedMonth,
+                    "yyyy-MM",
+                    System.Globalization.CultureInfo.InvariantCulture,
+                    System.Globalization.DateTimeStyles.None,
+                    out var parsedMonth))
+            {
+                selectedDate = new DateOnly(parsedMonth.Year, parsedMonth.Month, 1);
+            }
+
+            var startDate = selectedDate.AddMonths(-(months - 1));
+            var endDate = selectedDate.AddMonths(1);
+
 
             var incomes = await _reportRepository
                 .GetIncomesAsync(memberIds, startDate, endDate);
@@ -67,9 +78,11 @@ namespace FEMS.Services.Implementations
             var expenses = await _reportRepository
                 .GetExpensesAsync(memberIds, startDate, endDate);
 
+           
             var model = new FinancialSummaryViewModel
             {
                 Months = months,
+                SelectedMonth = selectedDate.ToString("yyyy-MM"),
                 TotalIncome = incomes.Sum(i => i.Amount),
                 TotalExpense = expenses.Sum(e => e.Amount)
             };
@@ -115,12 +128,14 @@ namespace FEMS.Services.Implementations
         }
 
 
+
         public async Task<DetailedReportViewModel?> GetDetailedReportAsync(
-            int userId, int months)
+            int userId, int months, string? selectedMonth, int? selectedMemberId)
         {
-            if (months != 3 && months != 6 && months != 12)
+            if (months != 1 && months != 3 &&
+                months != 6 && months != 12)
             {
-                months = 3;
+                months = 1;
             }
 
             var currentMember = await _householdRepository
@@ -131,18 +146,19 @@ namespace FEMS.Services.Implementations
                 return null;
             }
 
-            bool isManager = string.Equals(
-                currentMember.Role,
-                "Manager",
-                StringComparison.OrdinalIgnoreCase);
+            bool isManager = currentMember.Role == "Manager";
 
-            var members = await _householdRepository
-                .GetActiveMembersByHouseholdIdAsync(currentMember.HouseholdId);
+            var allMembers = await _householdRepository
+                .GetMembersByHouseholdIdAsync(currentMember.HouseholdId);
 
-            if (!isManager)
+            var members = isManager
+                ? allMembers
+                : allMembers.Where(m => m.UserId == userId).ToList();
+
+            if (isManager && selectedMemberId.HasValue)
             {
                 members = members
-                    .Where(m => m.UserId == userId)
+                    .Where(m => m.HouseholdMemberId == selectedMemberId.Value)
                     .ToList();
             }
 
@@ -151,14 +167,22 @@ namespace FEMS.Services.Implementations
                 .ToList();
 
             var today = DateTime.Today;
+            var selectedDate = new DateOnly(today.Year, today.Month, 1);
 
-            var startDate = new DateOnly(
-                today.Year, today.Month, 1)
-                .AddMonths(-(months - 1));
+            if (!string.IsNullOrWhiteSpace(selectedMonth) &&
+                DateOnly.TryParseExact(
+                    selectedMonth,
+                    "yyyy-MM",
+                    System.Globalization.CultureInfo.InvariantCulture,
+                    System.Globalization.DateTimeStyles.None,
+                    out var parsedMonth))
+            {
+                selectedDate = new DateOnly(
+                    parsedMonth.Year, parsedMonth.Month, 1);
+            }
 
-            var endDate = new DateOnly(
-                today.Year, today.Month, 1)
-                .AddMonths(1);
+            var startDate = selectedDate.AddMonths(-(months - 1));
+            var endDate = selectedDate.AddMonths(1);
 
             var incomes = await _reportRepository
                 .GetIncomesAsync(memberIds, startDate, endDate);
@@ -169,10 +193,24 @@ namespace FEMS.Services.Implementations
             var model = new DetailedReportViewModel
             {
                 Months = months,
+                SelectedMonth = selectedDate.ToString("yyyy-MM"),
+                SelectedMemberId = isManager ? selectedMemberId : null,
                 IsManager = isManager,
                 TotalIncome = incomes.Sum(i => i.Amount),
                 TotalExpense = expenses.Sum(e => e.Amount)
             };
+
+            if (isManager)
+            {
+                model.Members = allMembers
+                    .Select(m => new MemberOptionViewModel
+                    {
+                        HouseholdMemberId = m.HouseholdMemberId,
+                        MemberName = m.User.FullName,
+                        Status = m.Status
+                    })
+                    .ToList();
+            }
 
             foreach (var income in incomes.OrderByDescending(i => i.IncomeDate))
             {
@@ -188,18 +226,30 @@ namespace FEMS.Services.Implementations
                 });
             }
 
+            foreach (var expense in expenses.OrderByDescending(e => e.ExpenseDate))
+            {
+                var member = members.First(m =>
+                    m.HouseholdMemberId == expense.HouseholdMemberId);
+
+                model.Expenses.Add(new ExpenseDetailViewModel
+                {
+                    Date = expense.ExpenseDate,
+                    MemberName = member.User.FullName,
+                    CategoryName = expense.Category.CategoryName,
+                    Description = expense.Description ?? "",
+                    Amount = expense.Amount
+                });
+            }
+
             model.Categories = expenses
                 .GroupBy(e => new
                 {
                     e.CategoryId,
-                    e.Category.CategoryName,
-                    e.Category.Status
+                    e.Category.CategoryName
                 })
                 .Select(g => new CategoryExpenseViewModel
                 {
-                    CategoryName = g.Key.Status == "Active"
-                        ? g.Key.CategoryName
-                        : "Category Deleted",
+                    CategoryName = g.Key.CategoryName,
                     TotalAmount = g.Sum(e => e.Amount),
                     TransactionCount = g.Count()
                 })
@@ -208,6 +258,7 @@ namespace FEMS.Services.Implementations
 
             return model;
         }
+
 
     }
 }

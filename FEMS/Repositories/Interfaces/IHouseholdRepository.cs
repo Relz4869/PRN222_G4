@@ -19,6 +19,8 @@ namespace FEMS.Repositories.Interfaces
         // Lấy danh sách thành viên đang Active trong một hộ gia đình (kèm thông tin User)
         Task<List<HouseholdMember>> GetActiveMembersByHouseholdIdAsync(int householdId);
 
+        Task<List<HouseholdMember>> GetMembersByHouseholdIdAsync(int householdId);
+
         // Tạo mới một Household
         Task<Household> AddHouseholdAsync(Household household);
 

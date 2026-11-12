@@ -109,7 +109,7 @@ namespace FEMS.Services.Implementations
             };
         }
 
-        // Xây dựng danh sách Lịch sử biến động Ví kèm tính toán "Số dư sau GD" (BalanceAfter)
+        // Xây dựng danh sách Lịch sử biến động Ví kèm tính toán 
         private static List<WalletHistoryItemViewModel> BuildWalletHistory(
             WalletCardItemViewModel wallet,
             List<Income> walletIncomes,
@@ -129,7 +129,7 @@ namespace FEMS.Services.Implementations
                     TransactionDate = inc.IncomeDate,
                     DisplayTime = $"{inc.IncomeDate:dd/MM/yyyy} 08:00",
                     ChangeType = isTransfer ? "Transfer" : "Income",
-                    ChangeTypeLabel = isTransfer ? "Chuyển tiền (Transfer)" : "Thu nhập (Income)",
+                    ChangeTypeLabel = isTransfer ? "Chuyển tiền" : "Thu nhập",
                     CategoryOrTitle = isTransfer ? "Nhận chuyển khoản" : "Khoản thu",
                     DetailDescription = string.IsNullOrWhiteSpace(inc.Description)
                         ? "Ghi nhận khoản thu nhập"
@@ -160,7 +160,7 @@ namespace FEMS.Services.Implementations
                     TransactionDate = exp.ExpenseDate,
                     DisplayTime = $"{exp.ExpenseDate:dd/MM/yyyy} 15:42",
                     ChangeType = isTransfer ? "Transfer" : "Expense",
-                    ChangeTypeLabel = isTransfer ? "Chuyển tiền (Transfer)" : "Chi tiêu (Expense)",
+                    ChangeTypeLabel = isTransfer ? "Chuyển tiền" : "Chi tiêu",
                     CategoryOrTitle = catName,
                     DetailDescription = descText,
                     SignedAmount = -exp.Amount

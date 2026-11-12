@@ -55,6 +55,15 @@ namespace FEMS.Repositories.Implementations
                 .ToListAsync();
         }
 
+        public async Task<List<HouseholdMember>> GetMembersByHouseholdIdAsync(int householdId)
+        {
+            return await _context.HouseholdMembers
+                .Include(m => m.User)
+                .Where(m => m.HouseholdId == householdId)
+                .OrderBy(m => m.HouseholdMemberId)
+                .ToListAsync();
+        }
+
         public async Task<Household> AddHouseholdAsync(Household household)
         {
             await _context.Households.AddAsync(household);

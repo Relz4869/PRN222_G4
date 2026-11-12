@@ -57,3 +57,48 @@ body {
             margin: 0;
             padding: 0;
         }
+/* ===== FEMS button style ===== */
+.btn-fems {
+    background-color: #0D9488;
+    border-color: #0D9488;
+    color: #fff;
+    font-weight: 600;
+}
+
+    .btn-fems:hover,
+    .btn-fems:focus,
+    .btn-fems:active {
+        background-color: #0b7f75;
+        border-color: #0b7f75;
+        color: #fff;
+    }
+
+.btn-fems-outline {
+    background-color: #fff;
+    border: 1px solid #0D9488;
+    color: #0D9488;
+    font-weight: 500;
+}
+
+    .btn-fems-outline:hover,
+    .btn-fems-outline:focus,
+    .btn-fems-outline:active {
+        background-color: #0D9488;
+        border-color: #0D9488;
+        color: #fff;
+    }
+
+.btn-fems-active {
+    background-color: #0D9488;
+    border: 1px solid #0D9488;
+    color: #fff;
+    font-weight: 600;
+}
+
+    .btn-fems-active:hover,
+    .btn-fems-active:focus,
+    .btn-fems-active:active {
+        background-color: #0b7f75;
+        border-color: #0b7f75;
+        color: #fff;
+    }
