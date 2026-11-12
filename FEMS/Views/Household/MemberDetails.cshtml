@@ -132,7 +132,7 @@
         </div>
 
         <!-- Right: Member Personal Wallets List (UC-12) -->
-        <div class="col-lg-8">
+        <div class="col-lg-8" id="wallets-section">
             <div class="detail-card h-100">
                 <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
                     <div>
@@ -230,11 +230,11 @@
     </div>
 
     <!-- Row 2: Member Transactions History (Read-Only) (UC-16 / BR-16 / BR-20) -->
-    <div class="detail-card mt-4">
+    <div class="detail-card mt-4" id="transactions-section">
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
             <div>
                 <h5 class="detail-card-title mt-2 mb-0">
-                    Giao dịch của @Model.FullName (@Model.Transactions.Count bản ghi)
+                    Giao dịch của @Model.FullName (@Model.TotalTransactions bản ghi)
                 </h5>
             </div>
 
@@ -301,7 +301,7 @@
                 <tbody>
                     @if (Model.Transactions.Any())
                     {
-                        int stt = 1;
+                        int stt = (Model.CurrentPage - 1) * Model.PageSize + 1;
                         foreach (var tx in Model.Transactions)
                         {
                             bool isIncome = string.Equals(tx.TransactionType, "Income", StringComparison.OrdinalIgnoreCase);
@@ -358,6 +358,70 @@
                 </tbody>
             </table>
         </div>
+
+        @if (Model.TotalPages > 1)
+        {
+            <div class="d-flex flex-wrap justify-content-between align-items-center mt-3 pt-3 border-top gap-2">
+                <div class="small text-muted">
+                    Hiển thị <strong>@Model.Transactions.Count</strong> trên tổng số <strong>@Model.TotalTransactions</strong> giao dịch (Trang @Model.CurrentPage / @Model.TotalPages)
+                </div>
+
+                <nav aria-label="Phân trang giao dịch">
+                    <ul class="pagination pagination-sm mb-0">
+                        <li class="page-item @(Model.CurrentPage <= 1 ? "disabled" : "")">
+                            <a class="page-link"
+                               asp-controller="Household"
+                               asp-action="MemberDetails"
+                               asp-route-id="@Model.MemberId"
+                               asp-route-walletId="@Model.SelectedWalletId"
+                               asp-route-type="@Model.SelectedType"
+                               asp-route-search="@Model.SearchKeyword"
+                               asp-route-page="@(Model.CurrentPage - 1)"
+                               asp-fragment="transactions-section">
+                                &lt;
+                            </a>
+                        </li>
+
+                        @for (int p = 1; p <= Model.TotalPages; p++)
+                        {
+                            <li class="page-item @(p == Model.CurrentPage ? "active" : "")">
+                                <a class="page-link"
+                                   asp-controller="Household"
+                                   asp-action="MemberDetails"
+                                   asp-route-id="@Model.MemberId"
+                                   asp-route-walletId="@Model.SelectedWalletId"
+                                   asp-route-type="@Model.SelectedType"
+                                   asp-route-search="@Model.SearchKeyword"
+                                   asp-route-page="@p"
+                                   asp-fragment="transactions-section">
+                                    @p
+                                </a>
+                            </li>
+                        }
+
+                        <li class="page-item @(Model.CurrentPage >= Model.TotalPages ? "disabled" : "")">
+                            <a class="page-link"
+                               asp-controller="Household"
+                               asp-action="MemberDetails"
+                               asp-route-id="@Model.MemberId"
+                               asp-route-walletId="@Model.SelectedWalletId"
+                               asp-route-type="@Model.SelectedType"
+                               asp-route-search="@Model.SearchKeyword"
+                               asp-route-page="@(Model.CurrentPage + 1)"
+                               asp-fragment="transactions-section">
+                                &gt;
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        }
+        else if (Model.TotalTransactions > 0)
+        {
+            <div class="small text-muted mt-3 pt-3 border-top text-end">
+                Hiển thị toàn bộ <strong>@Model.TotalTransactions</strong> giao dịch
+            </div>
+        }
     </div>
 
 </div>

@@ -58,6 +58,12 @@ namespace FEMS.ViewModels.Household
 
         public List<MemberWalletItemViewModel> Wallets { get; set; } = new();
         public List<MemberTransactionItemViewModel> Transactions { get; set; } = new();
+
+        // Phân trang danh sách giao dịch
+        public int CurrentPage { get; set; } = 1;
+        public int PageSize { get; set; } = 7;
+        public int TotalTransactions { get; set; }
+        public int TotalPages => PageSize > 0 ? (int)Math.Ceiling((double)TotalTransactions / PageSize) : 0;
     }
 }
 

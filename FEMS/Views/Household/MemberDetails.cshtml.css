@@ -401,3 +401,42 @@
     }
 }
 
+/* =========================================
+   PAGINATION STYLING (Primary Teal #0D9488)
+   ========================================= */
+.pagination {
+    gap: 4px;
+}
+
+.pagination .page-item .page-link {
+    color: #0f766e;
+    background-color: #ffffff;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    padding: 5px 10px;
+    font-size: 12.5px;
+    font-weight: 600;
+    text-decoration: none !important;
+    transition: all 0.15s ease;
+}
+
+.pagination .page-item .page-link:hover {
+    background-color: #ccfbf1;
+    color: #0D9488;
+    border-color: #99f6e4;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #0D9488 !important;
+    border-color: #0D9488 !important;
+    color: #ffffff !important;
+}
+
+.pagination .page-item.disabled .page-link {
+    background-color: #f3f4f6;
+    color: #9ca3af;
+    border-color: #e5e7eb;
+    cursor: not-allowed;
+}
+
+
