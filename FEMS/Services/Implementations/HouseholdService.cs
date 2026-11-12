@@ -734,7 +734,9 @@ namespace FEMS.Services.Implementations
             int targetHouseholdMemberId,
             int? walletId = null,
             string? transactionType = null,
-            string? search = null)
+            string? search = null,
+            int page = 1,
+            int pageSize = 7)
         {
             var manager = await _householdRepository.GetActiveMemberByUserIdAsync(managerUserId);
             if (manager == null || !string.Equals(manager.Role, "Manager", StringComparison.OrdinalIgnoreCase))
@@ -875,6 +877,15 @@ namespace FEMS.Services.Implementations
                 .ThenByDescending(t => t.TransactionId)
                 .ToList();
 
+            int totalTransactions = sortedTransactions.Count;
+            if (page < 1) page = 1;
+            if (pageSize <= 0) pageSize = 7;
+
+            var pagedTransactions = sortedTransactions
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
             var detailVm = new MemberFinanceDetailViewModel
             {
                 HouseholdId = targetMember.HouseholdId,
@@ -894,7 +905,10 @@ namespace FEMS.Services.Implementations
                 SelectedType = transactionType,
                 SearchKeyword = search,
                 Wallets = walletItems,
-                Transactions = sortedTransactions
+                Transactions = pagedTransactions,
+                CurrentPage = page,
+                PageSize = pageSize,
+                TotalTransactions = totalTransactions
             };
 
             return (true, string.Empty, detailVm);

@@ -299,9 +299,9 @@
     font-weight: 600;
     line-height: 1;
     white-space: nowrap !important;
-    background-color: #f8fafc;
-    color: #334155 !important;
-    border: 1px solid #cbd5e1;
+    background-color: #f0fdfa;
+    color: #0f766e !important;
+    border: 1px solid #99f6e4;
     text-decoration: none !important;
     transition: all 0.15s ease;
 }

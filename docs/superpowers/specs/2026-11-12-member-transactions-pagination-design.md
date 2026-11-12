@@ -107,3 +107,4 @@ Style pagination controls:
 - Compile project with `dotnet build` confirming 0 errors, 0 warnings.
 - Verify filtering + pagination preserves search/wallet query params.
 - Verify correct calculation of STT index across pages (e.g. Page 1: 1-7, Page 2: 8-14).
+
