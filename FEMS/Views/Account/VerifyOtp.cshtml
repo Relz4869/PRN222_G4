@@ -1,0 +1,243 @@
+@model FEMS.ViewModels.Account.VerifyOtpViewModel
+
+@{
+    Layout = "~/Views/Shared/_AuthLayout.cshtml";
+    ViewData["Title"] = "Xác minh tài khoản";
+}
+
+<div class="auth-viewport-wrapper">
+    <div class="auth-card">
+        <!-- BÊN TRÁI: FORM XÁC MINH OTP -->
+        <section class="auth-form-column">
+            <div class="auth-brand-badge">
+                <span class="brand-badge-name">FEMS</span>
+            </div>
+
+            <div class="auth-form-header">
+                <h1 class="auth-title">Xác minh tài khoản</h1>
+                <p class="auth-subtitle">
+                    Nhập mã xác minh 8 chữ số đã được gửi đến email:<br />
+                    <strong style="color: #1B4332;">@Model.Email</strong>
+                </p>
+            </div>
+
+            @if (TempData["InfoMessage"] != null)
+            {
+                <div class="auth-alert auth-alert-info">
+                    <span class="alert-icon">&#8505;</span>
+                    <span>@TempData["InfoMessage"]</span>
+                </div>
+            }
+
+            <form asp-controller="Account"
+                  asp-action="VerifyOtp"
+                  method="post"
+                  id="otpForm"
+                  class="auth-form-body">
+                @Html.AntiForgeryToken()
+
+                <input type="hidden" asp-for="Email" />
+                <input type="hidden" asp-for="Otp" id="hiddenOtpInput" />
+
+                <div asp-validation-summary="ModelOnly" class="auth-validation-summary"></div>
+
+                <!-- 8 ô nhập mã OTP -->
+                <div class="auth-form-group">
+                    <label class="auth-label">Mã xác minh OTP (8 chữ số)</label>
+                    <div class="otp-inputs-wrapper" id="otpBoxContainer">
+                        <input type="text" class="otp-digit-box" maxlength="1" inputmode="numeric" pattern="[0-9]*" autofocus autocomplete="off" />
+                        <input type="text" class="otp-digit-box" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="off" />
+                        <input type="text" class="otp-digit-box" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="off" />
+                        <input type="text" class="otp-digit-box" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="off" />
+                        <input type="text" class="otp-digit-box" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="off" />
+                        <input type="text" class="otp-digit-box" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="off" />
+                        <input type="text" class="otp-digit-box" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="off" />
+                        <input type="text" class="otp-digit-box" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="off" />
+                    </div>
+                    <span asp-validation-for="Otp" class="auth-field-error"></span>
+                </div>
+
+                <!-- Hàng Countdown & Gửi lại mã -->
+                <div class="otp-resend-row">
+                    <div>
+                        Hiệu lực mã: <strong id="expiryCountdown" style="color: #2D6A4F;">05:00</strong>
+                    </div>
+                    <div>
+                        <button type="button" id="resendOtpBtn" class="resend-btn" disabled>
+                            Gửi lại mã (<span id="resendCountdown">60</span>s)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="auth-submit-btn" id="verifyBtn">
+                    Xác minh
+                </button>
+
+                <!-- Back Link -->
+                <a asp-controller="Account" asp-action="ForgotPassword" class="auth-secondary-link">
+                    &#8592; Nhập lại địa chỉ email
+                </a>
+            </form>
+        </section>
+
+        <!-- BÊN PHẢI: KHU VỰC GIỚI THIỆU -->
+        <section class="auth-intro-column">
+            <div class="intro-decoration-circle circle-1"></div>
+            <div class="intro-decoration-circle circle-2"></div>
+            <div class="intro-decoration-ring"></div>
+            <div class="intro-decoration-grid"></div>
+
+            <div class="intro-content">
+                <div class="intro-brand-tag">
+                    <span class="intro-brand-icon">&#128273;</span>
+                    <span class="intro-brand-title">XÁC THỰC HAI LỚP</span>
+                </div>
+
+                <h2 class="intro-heading">Bảo vệ thông tin tài chính</h2>
+
+                <p class="intro-description">
+                    Mã xác minh chỉ được gửi tới địa chỉ email chính chủ và tự động vô hiệu hóa sau 5 phút hoặc khi nhập sai quá 5 lần.
+                </p>
+
+                <div class="intro-action">
+                    <a asp-controller="Account"
+                       asp-action="Login"
+                       class="intro-pill-btn">
+                        Đăng nhập
+                    </a>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const boxes = document.querySelectorAll('.otp-digit-box');
+            const hiddenOtp = document.getElementById('hiddenOtpInput');
+            const form = document.getElementById('otpForm');
+            const resendBtn = document.getElementById('resendOtpBtn');
+            const resendCountdownSpan = document.getElementById('resendCountdown');
+            const expiryCountdownSpan = document.getElementById('expiryCountdown');
+
+            // 1. Quản lý 8 ô nhập OTP (Focus, Auto-advance, Backspace, Paste)
+            boxes.forEach((box, index) => {
+                box.addEventListener('input', function (e) {
+                    const val = this.value.replace(/\D/g, '');
+                    this.value = val ? val[0] : '';
+                    if (this.value && index < boxes.length - 1) {
+                        boxes[index + 1].focus();
+                    }
+                    syncHiddenOtp();
+                });
+
+                box.addEventListener('keydown', function (e) {
+                    if (e.key === 'Backspace' && !this.value && index > 0) {
+                        boxes[index - 1].focus();
+                    }
+                });
+
+                box.addEventListener('paste', function (e) {
+                    e.preventDefault();
+                    const pastedData = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '');
+                    if (pastedData) {
+                        for (let i = 0; i < boxes.length; i++) {
+                            boxes[i].value = pastedData[i] || '';
+                        }
+                        const nextFocus = Math.min(pastedData.length, boxes.length - 1);
+                        boxes[nextFocus].focus();
+                        syncHiddenOtp();
+                    }
+                });
+            });
+
+            function syncHiddenOtp() {
+                let code = '';
+                boxes.forEach(b => code += b.value);
+                hiddenOtp.value = code;
+            }
+
+            form.addEventListener('submit', function () {
+                syncHiddenOtp();
+            });
+
+            // 2. Countdown hiệu lực mã (5 phút = 300 giây)
+            let expirySeconds = 300;
+            const expiryInterval = setInterval(function () {
+                expirySeconds--;
+                if (expirySeconds <= 0) {
+                    clearInterval(expiryInterval);
+                    expiryCountdownSpan.innerText = "Đã hết hạn";
+                    expiryCountdownSpan.style.color = "#B91C1C";
+                } else {
+                    const m = Math.floor(expirySeconds / 60).toString().padStart(2, '0');
+                    const s = (expirySeconds % 60).toString().padStart(2, '0');
+                    expiryCountdownSpan.innerText = `${m}:${s}`;
+                }
+            }, 1000);
+
+            // 3. Countdown gửi lại mã (60 giây)
+            let resendSeconds = 60;
+            let resendInterval = startResendTimer();
+
+            function startResendTimer() {
+                resendBtn.disabled = true;
+                return setInterval(function () {
+                    resendSeconds--;
+                    if (resendSeconds <= 0) {
+                        clearInterval(resendInterval);
+                        resendBtn.disabled = false;
+                        resendBtn.innerText = "Gửi lại mã";
+                    } else {
+                        resendCountdownSpan.innerText = resendSeconds;
+                    }
+                }, 1000);
+            }
+
+            // 4. Xử lý Gửi lại mã qua AJAX
+            resendBtn.addEventListener('click', function () {
+                resendBtn.disabled = true;
+                resendBtn.innerText = "Đang gửi...";
+
+                const tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
+                const email = document.querySelector('input[name="Email"]').value;
+
+                fetch('/Account/ResendOtp', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        'email': email,
+                        '__RequestVerificationToken': tokenInput ? tokenInput.value : ''
+                    })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    alert(data.message);
+                    if (data.success) {
+                        // Reset lại timers
+                        resendSeconds = data.cooldown || 60;
+                        resendBtn.innerHTML = `Gửi lại mã (<span id="resendCountdown">${resendSeconds}</span>s)`;
+                        resendInterval = startResendTimer();
+
+                        expirySeconds = 300;
+                        expiryCountdownSpan.style.color = "#2D6A4F";
+                    } else {
+                        resendBtn.disabled = false;
+                        resendBtn.innerText = "Gửi lại mã";
+                    }
+                })
+                .catch(err => {
+                    alert("Có lỗi kết nối khi yêu cầu gửi lại mã. Vui lòng thử lại.");
+                    resendBtn.disabled = false;
+                    resendBtn.innerText = "Gửi lại mã";
+                });
+            });
+        });
+    </script>
+}
+
